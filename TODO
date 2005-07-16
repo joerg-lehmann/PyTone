@@ -1,0 +1,41 @@
+TOCHECK:
+- what happens to mpg123 when pytone crashes
+- song is not registered as currently being played, when its playback
+  is resumed after a restart of PyTone (in particular, player window
+  titlebar is wrong)
+- update playingtime when updating song!
+
+USER WISHLIST:
+
+- allow user to turn the secondary player on and off (or alternatively to stop it)
+  (requested by Stuart Pook)
+- streaming sources
+- Fish: Song der auf zweitem Player kommt, anzeigen
+- Tomas Menzl <xmenzl at aldebaran dot feld dot cvut dot cz>:
+  o show number of albums etc
+  o handle collections better
+- start not at beginning but a few seconds later when prehearing song
+- fade out at exit (Dag Wieers <dag@wieers.com>)
+
+- General:
+  o timer interface
+  o user authentication and permissions
+  o allow up- and download of songs
+  o make automatic backups of database
+  o database reconstruction
+  o undo for playlist changes
+  o take metadata in song hash
+  o can we get rid of setDaemon
+  o do not use database "main" in pytonectl
+  o check whether we can merge dbrequestsongs and dbrequestlist in songdb.py
+
+- Performance improvements:
+  o move number of decades, genres, playlists (do it like for songs)
+  o make length calculation of filtereddecade and filteredgenre smarter
+
+- UI Improvements:
+  o improve behaviour on scroll bar mouse clicks
+  o scrollbars are sometimes too short
+  o list of seldomly played songs
+  o make showing of last added list configurable (similarly for rest)
+  o visual indicator that PyTone is busy

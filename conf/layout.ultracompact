@@ -1,0 +1,19 @@
+[filelistwindow]
+border = ultracompact
+
+[playlistwindow]
+border = ultracompact
+
+[iteminfowindow]
+border = ultracompact
+
+[playerwindow]
+border = ultracompact
+
+[colors.filelistwindow]
+title = color green
+activeborder = color green
+
+[colors.playlistwindow]
+title = color green
+activeborder = color green

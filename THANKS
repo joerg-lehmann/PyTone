@@ -1,0 +1,64 @@
+Thanks to all who have contributed to PyTone by reporting problems,
+suggesting improvements, submitting bug fixes, or even new code. Here is an
+alphabetically sorted list of these people:
+
+Davide Alessio <dalessio@softhome.net>
+        for translating the PyTone user interface into Italian
+Jack Bakeman <jbakeman@indra.com>
+        for his patient testing
+Han Boetes <han@mijncomputer.nl>
+        for providing Mandrake RPMs of PyTone
+Andreas Bourges <andreas.bourges@web.de>
+        for all the testing
+David Braaten <xiticix47@hotmail.com>
+        for contributing a small fix
+Michal Cihar <michal@cihar.com>
+        for improving the unicode decoding in the tags of Ogg Vorbis files
+Stéphane Doyon <s.doyon@videotron.ca>
+        for improving the behaviour of PyTone when using Braille displays
+Byron Ellacott <bje@apnic.net>
+        for adding Ogg Vorbis support to PyTone
+Nicolas Évrard <nicoe@altern.org>
+        for translating the PyTone user interface into French, for
+        writing a first prototype of the plugin system and for
+        contribution an AudioScrobbler plugin
+Toma¸ Ficko <tomaz@gmx.net>
+        for some bug fixes and for providing me with a new version of
+        the MP3Info module
+Damjan Georgeivski <penguinista@mail.net.mk>
+        for locating a bug that I was not able to find
+Harald Görl <goerl@luga.de>
+        for suggesting the name PyTone
+David Kågedal <davidk@lysator.liu.se>
+        for a suggesting a simple workaround I could not come up with
+Bill Kearney <wkearney99@hotmail.com>
+        for many feature requests
+Thomas Klein-Hitpaß <thomas@projekt-barrierefrei.de>
+        for reporting some problems with the Ogg Vorbis support detection
+Brian Lenihan <brian_l@mac.com>
+        for various small patches and ideas
+Tomas Menzl <xmenzl@aldebaran.feld.cvut.cz>
+        for implementing player seeking, various bugfixes and suggestions
+Johannes Mockenhaupt <jmockenhaupt@gmx.net>
+        for providing an extension module which adds transparency support
+        also for older Python versions
+Maurizio Panniello <maurizio@iac.es> 
+        for making playlists work again
+John Plevyak <jplevyak@acm.org>
+        for various bug reports and patches
+Stuart Pook <Stuart.Pook@infres.enst.fr>
+        for various suggestions and help with the ALSA driver
+Iñigo Serna <inigoserna@telefonica.net>
+        for feedback and sundry patches
+Linus Sjöberg <lsjoberg@aland.net>
+        for a small patch
+Zoltan Szalontai <szazol@e98.hu>
+        for contributing a small fix
+Dag Wieers <dag@wieers.com>
+        for writing the first plugins and contribution various fixes
+Alexander Wirt <formorer@formorer.de>
+        for packaging and maintaining PyTone for Debian, my favourite
+        distribution
+Krzysztof Zych <kzych@manta.univ.gda.pl>
+        for some hints and patches and for translating PyTone's user interface
+        into Polish

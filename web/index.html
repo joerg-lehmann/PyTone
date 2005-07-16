@@ -1,0 +1,711 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-15">
+  <title>PyTone: MP3 jukebox redux</title>
+  <link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+
+<div class="content">
+
+<h1>PyTone</h1>
+
+<div style="margin-left: 2em; font-style: italic">MP3 Jukebox redux</div>
+
+<hr style="height: 0px;">
+
+<h2><a name="summary"></a>Summary</h2>
+
+<p>PyTone is a music jukebox written in Python with a curses based GUI.
+   While providing advanced features like crossfading and multiple
+   players, special emphasis is put on ease of use, turning PyTone into
+   an ideal jukebox system for use at parties.</p>
+
+<h2><a name="features"></a>Features</h2>
+
+<ul>
+ <li>concise curses based GUI</li>
+ <li>simple song selection
+    <ul>
+      <li>using an arbitrary number of music databases with hierarchical (artist/album/songs,
+      genre/artist/album/songs, decades/artist/albums/songs, or rating/artist/albums/songs) navigation,
+      </li>
+      <li>from list of top and last played songs,</li>
+      <li>from list of most recently added songs,</li>
+      <li>random song list,</li>
+      <li>stored playlists, or</li>
+      <li>alternatively from file system</li>
+    </ul>
+ </li>
+ <li>editable playlist:
+    <ul>
+      <li>deletion</li>
+      <li>move song up/down</li>
+      <li>delete played songs</li>
+      <li>shuffle</li>
+      <li>repetition</li>
+      <li>automatic addition of random songs, when the playlist is empty</li>
+      <li>save to and load from <tt>.m3u</tt> file</li>
+    </ul>
+ </li>
+ <li>pluggable players, currently
+    <ul>
+      <li>internal mp3/Ogg Vorbis player with crossfading and gap killing and/or</li>
+      <li>xmms based external player and/or</li>
+      <li>mpg321 or (the non-free) mpg123 based external player</li>
+    </ul>
+ </li>
+ <li>display of information for currently selected song:
+    <ul>
+      <li>ID3 tag</li>
+      <li>length</li>
+      <li>times played</li>
+      <li>last played</li>
+      <li>song rating (1 to 5 stars)</li>
+    </ul>
+ </li>
+ <li>plays currently selected song on second player (if your computer has a second
+   sound card or one card with more than one line out)
+ </li>
+ <li>search functionality:
+    <ul>
+      <li>quick search by first letter</li>
+      <li>incremental search by regular expression</li>
+    </ul>
+ </li>
+ <li>random song selection taking into account song rating and time at which song was last played</li>
+ <li>description of important key bindings in status bar and context
+     sensitive help</li>
+ <li>logging of played songs</li>
+ <li>execution of arbitrary command when playback of new song starts</li>
+ <li>basic mixer functionality</li>
+ <li>customizable key bindings</li>
+ <li>customizable look</li>
+ <li>English, French, German, Italian and Polish user interface</li>
+ <li>external control, e.g. from the shell</li>
+ <li>plugin system; currently plugins for the AudioScrobbler service and for displaying the title in the terminal window and using xosd are included</li>
+</ul>
+
+<h2><a name="news"></a>News</h2>
+
+<dl>
+
+<dt>2005/06/20</dt>
+
+<dd>Version 2.2.4 released. With this release the network
+functionality has been restored (note that doing so, I've cleaned up
+the network configuration options a bit, so you may need to update
+your config files). An AudioScrobbler plugin provided by Nicolas
+Évrard and plugins for displaying the currently playing song in the
+X11 terminal title bar and using the xosd program (contributed by Dag
+Wieers) are now contained in the distribution. It is now possible to
+display not only the currently selected song in the item info window
+but alternatively the song currently being played on the
+players. Various bugs have been fixed.<dd>
+
+<dt>2005/05/09</dt>
+
+<dd>Thanks to Dag Wieers, there are now <a href="http://dag.wieers.com/packages/pytone/"> 
+Red Hat/Fedora RPM packages for PyTone and its dependencies</a>.<dd>
+
+
+<dt>2005/04/27</dt>
+
+<dd>Version 2.2.3 released containing bug fixes only.<dd>
+
+
+<dt>2005/03/16</dt>
+
+<dd>Version 2.2.2 released, which adds support for seeking in the song
+(thanks to Tomas Menzl for providing a patch). The complete contents
+of the playlist are now being kept after a restart of PyTone. When for
+a given artist only songs from a single album are registered, PyTone can
+now optionally skip the album selection directory. Directly jumping to
+the album of the currently selected song in the playlist window has
+been implemented. Changes to the database are now better reflected in
+the database view. Database checkpointing works again.  A couple of
+other bugs have been fixed.</dd>
+
+
+<dt>2005/02/07</dt>
+
+<dd>Version 2.2.1 released, which fixes a regression in the metadata
+scanning code. More debugging output has been added. Services are now
+automatically restarted when an exception occurs. More checks for the
+database configuration options have been added. A problem with the
+caching layer has been fixed.</dd>
+
+<dt>2005/02/01</dt>
+
+<dd>Version 2.2.0 released, which adds support for more than two
+databases and a virtual database, which contains the songs from all
+databases. A database caching layer was added for improved
+performance. Thanks to a prototype by Nicolas Évrard, PyTone's
+functionality can now be extended by plugins. A coupled of minor
+bugs have been fixed.  </dd>
+
+<dt>2004/11/29</dt>
+
+<dd>Version 2.1.3 released, which fixes a couple of bugs in the
+playlist and database code. Support for the latest pyxmms module and a
+French translation of the UI (many thanks to Nicolas Évrard) have been
+added. </dd>
+
+<dt>2004/11/08</dt>
+
+<dd>Version 2.1.2 released, which fixes some bugs introduced in the
+last version. Furthermore, unneeded log files are now also removed if
+the bsddb version doesn't support automatic removal. Many thanks to
+Tomaž Ficko who for the changes contained in this release.  </dd>
+
+<dt>2004/11/07</dt>
+
+<dd>Version 2.1.1 released, which mainly contains bugfixes for various
+issues.  A window which shows more detailed information about the
+currently selected item has been added.</dd>
+
+<dt>2004/08/03</dt>
+
+<dd>Version 2.1.0 released. This release contains mostly user
+requests: Filtering songs by their rating is now possible. One of the
+most often requested features, namely going back one song in the play
+list finally has been implemented. Various configuration options now
+allow the user to customise id3 tag transformations. The step size
+used when changing the volume can be configure now. Incremental
+searching and repetition of the last search have been implemented. A
+song is now considered as not having been played if its playback has
+been aborted very early (currently during the first 10 seconds). An
+arbitrary shell command can be automatically executed when the
+playback of a new song starts. The scheduled starting time of a song
+can be displayed in the playlist. A coupled of bugs have been
+fixed.</dd>
+
+<dt>2004/07/22</dt>
+
+<dd>Version 2.0.14 released, which contains numerous bug fixes. A
+polish translation of the UI is now included (many thanks to Krzysztof
+Zych).  Support for the eyeD3 id3 parsing module has been added. The
+database code now makes use of the transactional capabilities provided
+by the Sleepycat bsddb.  Searching by regular expression is now
+possible.</dd>
+
+
+<dt>2004/06/13</dt>
+
+<dd>Version 2.0.13 released, which adds support for remote querying
+information about the currently being played song. Saving of the song
+databases in a single file is now possible. A couple of minor bugs
+have been fixed.</dd>
+
+<dt>2004/04/17</dt>
+
+<dd>Version 2.0.12 released, which allows the user to customize the
+window layout, adds an improved song length detection and fixes the
+crossfader.</dd>
+
+<dt>2004/04/04</dt>
+
+<dd>Version 2.0.11 released, which contains a new database layout that
+allows merging of all albums with the same name in the albums list.
+Passing arbitrary options to the ao library is now possible.  A race
+condition of the database rebuild thread was fixed.</dd>
+
+<dt>2004/03/17</dt>
+
+<dd>Version 2.0.10 released, which fixes a couple of bugs, adds a
+message log window to PyTone and allows the user to specify the size
+of the audio buffer used by the ALSA driver. Some files which
+erroneously have been missing in the last distribution are now
+included. When stopping the player, the currently playing song is
+marked as unplayed again.</dd>
+
+<dt>2004/03/17</dt>
+
+<dd>The PyTone users mailing list moved to the LUGA server. See this
+<a href="https://www.luga.de/mailman/listinfo/pytone-users/">page</a>
+for more info.</dd>
+
+
+<dt>2004/02/15</dt>
+
+<dd>Version 2.0.9 released, which adds support for transparent
+terminals, allows the user to turn of the cross fading of songs and
+improves the usability when using Braille displays. An endian issue on
+the PowerPC platform and the reencoding of unicode strings in Ogg
+Vorbis tags were fixed. PyTone is now more verbose when encountering errors during
+startup. When updating the song database, songs which are no longer
+accessible are deleted automatically.</dd>
+
+
+<dt>2004/01/18</dt>
+
+<dd>Version 2.0.8 released, which fixes a crash occurring during the
+first PyTone startup. Furthermore, the ID3 information of the selected
+song(s) can now be rescanned and Davide Alessio has translated the
+PyTone UI into Italian.<dd>
+
+<dt>2004/01/05</dt>
+
+<dd>Version 2.0.7 released, which allows to set the database cache
+size when using Python 2.3 and above, updates the ID3 parsing module,
+and adds a toggle pause function to the command line control
+program. Furthermore, a couple of bugs have been fixed.</dd>
+
+
+<dt>2003/12/12</dt>
+
+<dd>Version 2.0.6 released, which adds support for an external control
+of PyTone from the command line and allows to write to a file
+information about the song currently being played on the main
+player.</dd>
+
+<dt>2003/12/08</dt>
+
+<dd>Thanks to Han Boetes, there is now a PyTone RPM for Mandrake
+Linux. Instructions how to build it, can be found <a
+href="http://www.xs4all.nl/~hanb/software/rpms/pytone.html">here</a>.</dd>
+
+<dt>2003/11/27</dt>
+
+<dd>Version 2.0.5 released, which contains some fixes for bugs
+introduced in the last version.</dd>
+
+<dt>2003/11/25</dt>
+
+<dd>Version 2.0.4 released, which, apart from minor bug fixes,
+contains support for playlist repetition and automatic selection of a
+random song, when no more songs are present in the playlist. </dd>
+
+<dt>2003/10/18</dt>
+
+<dd>Version 2.0.3 released, which contains a couple of bug fixes and
+small improvements, amongst others, for monochrome terminals and for
+running PyTone over slow serial lines.
+</dd>
+
+<dt>2003/10/14</dt>
+
+<dd>Thanks to the packaging work of Alexander Wirt, PyTone is now
+available part of the Debian distribution. See the <a
+href="http://packages.debian.org/unstable/sound/pytone.html"> PyTone
+package page</a> for more information.  </dd>
+
+<dt>2003/07/27</dt>
+
+<dd>Version 2.0.2 released, featuring further fixes for small bugs and some code
+cleanups.  </dd>
+
+
+<dt>2003/07/25</dt>
+
+<dd>Version 2.0.1 released, containing fixes for playlist save and
+load bugs (thanks to Alexander Wirt for reporting this bugs) and for a
+small bug in the path expansion of the user config file (thanks to
+David Braaten). Furthermore, monochromatic terminals are supported
+again. A command-line switch for rebuilding the song databases has
+been added.</dd>
+
+<dt>2003/07/24</dt>
+
+<dd>If you experience Python segfaults when using the internal player, please
+<b>upgrade your pyao module to version 0.82</b>, which fixes a couple
+of bugs. Furthermore, I'll release a 2.0.1 version the next days,
+which basically contains fixes for various reported bugs.
+
+</dd>
+
+<dt>2003/07/18</dt>
+
+<dd>Version 2.0.0 released. Besides a huge code reorganisation, many
+new features are included: A new config file format, list of songs and
+albums, show most recently played songs, first steps towards a network
+functionality, currently played song is highlighted in playlist (thanks
+to IÃ±igo Serna), support ossaudiodev contained in Python 2.3, support
+for transparent background (needs a patched Python curses module). Many
+bugfixes, including an oft-reported crash with certain id3 tags
+containing \0 characters.   Note that the network functionality is not
+yet complete now. In particular, user authentication is not supported yet,
+so use this only one a trusted network.
+
+<br>
+Note that you cannot upgrade your <b>database</b> from old 1.x version of
+PyTone.
+
+<br>
+Finally note, that this is a .0 version, so don't be surprised if not
+everything works as expected -- I'm open for bug reports...
+
+</dd>
+
+
+<dt>2003/04/12</dt>
+
+<dd>Version 1.12.2 released, fixing a small bug preventing PyTone to
+run on Python 2.1.x.
+</dd>
+
+<dt>2003/04/06</dt>
+
+<dd>Version 1.12.1 released. This release features player pause,
+immediate song play and playlist shuffle. PyTone is now more verbose
+on some common configuration errors. The contents of the playlist can
+now be saved (and subsequently restored) upon a crash of PyTone.
+
+<br>
+Note that some new options have been added to the configuration file
+<tt>config.py</tt>. Please use the new one provided with this release.
+
+</dd>
+
+<dt>2003/02/06</dt>
+
+<dd>Version 1.12.0 released. Lots of bug fixes. Ogg Vorbis support was
+added (many thanks to Byron Ellacott for the patch). Configuration of
+scrolling behaviour, playlist location, position of virtual folders,
+etc. is now possible.
+
+<br>
+Note that you have to <b>upgrade your database</b>, if you
+<b>upgrade from PyTone 1.11.x</b> via
+<pre>
+$ python updatedb.py
+</pre>
+
+
+<dt>2003/01/21</dt>
+
+<dd>Version 1.11.0 released. Major bug fixes (special thanks to Damjan
+Georgeivski for pointing out a problem with the internal player which
+prevented playing with some sound drivers) and code rework. The
+database should not crash on exit anymore. Manual generation of the
+database is now supported, as well. New features include id3v2
+support, song rating, sorting by decades, new random recursive insert
+command, which takes into account the song rating.
+
+<br>
+Note that you have to <b>delete your old database</b>, if you
+<b>upgrade from PyTone 1.10.x or older</b>.  Sorry for this
+inconvenience. Furthermore, some new options have been added to the
+configuration file <tt>config.py</tt>. Please use the new one provided
+with this release. Note also that the <tt>r</tt> key is now used for
+the random song insertion function.
+</dd>
+
+<dt>2002/12/21</dt>
+
+<dd>Version 1.10.0 released. There are now lists of the last and most
+often played songs. Sorting by genre has been implemented.  The
+filesystem view has been integrated in the normal database
+view. Playlists are catalogued in the database, as well. Support for
+terminal resizing was added. Instead of crossfading two successive
+songs on the same album, only kill the gap between them. Major code
+rework.  Note that you have to <b>delete your old database</b>, if you
+<b>upgrade from PyTone 1.9.x</b>.  Furthermore, some options in the
+configuration file <tt>config.py</tt> have changed, so please use the
+new one provided with this release.</dd>
+
+<dt>2002/11/30</dt>
+
+<dd>Version 1.9.7 released. Mouse support was added. Furthermore, the
+look of PyTone can now be customized easily; a colored theme is
+provided as an example. Localization via GNU gettext is now also
+possible. The first and at the moment only supported language is
+German. A lot of bugs have been fixed in this release.
+</dd>
+
+<dt>2002/10/27</dt>
+
+<dd>Version 1.9.6 released. Implemented help window and basic mixer
+functionality. Performance optimizations and bug fixes in various areas.
+</dd>
+
+<dt>2002/09/22</dt>
+
+<dd>Version 1.9.5 released. All players and the automatic song
+registering are now running as separate threads. As a result, idle CPU
+usage is drastically reduced.  Various bug fixes in all parts of the
+program. </dd>
+
+<dt>2002/09/05</dt>
+<dd>Version 1.9.4 released featuring simplified build process, customizable key
+bindings, automatic start of playing and of course bug fixes.
+</dd>
+
+<dt>2002/08/28</dt>
+<dd>Version 1.9.3 released. First official release.</dd>
+</dl>
+
+
+<h2><a name="screenshot"></a>Screenshot</h2>
+
+<p>This is how PyTone 1.9.7 looks in action on a 80x25 terminal:</p>
+
+<p><img src="pytone.png" alt="screenshot of PyTone"></p>
+
+<h2><a name="prerequisistes"></a>Software prerequisites</h2>
+
+<ul>
+ <li>Python 2.3 (available from <a
+     href="http://www.python.org/">here</a>).
+ </li>
+ <li>for the mad based internal player (optional):
+   <ul>
+     <li>Python header files, </li>
+     <li>pymad (available from <a href="http://spacepants.org/src/pymad/">here</a>),</li>
+     <li>pyvorbis (optional, available from
+         <a href="http://www.andrewchatham.com/pyogg/">here</a>),
+     </li>
+     <li>pyao (available from <a href="http://www.andrewchatham.com/pyogg/">here</a>, please use version 0.82 or above)
+         or the new Python OSS module in Python 2.3.
+     </li>
+   </ul>
+ </li>
+ <li>for the xmms based external player (optional):
+   <ul>
+     <li>xmms 1.2.6 or higher (available <a href="http://www.xmms.org/">here</a>) and</li>
+     <li>pyxmms 2.00 or higher (available from <a href="http://www.via.ecp.fr/~flo/index.en.html">here</a>)</li>
+   </ul>
+ </li>
+ <li>for the mpg321 or mpg123 based external player (optional):
+   <ul>
+     <li>mpg321 (available from <a href="http://mpg321.sourceforge.net/">here</a>) or </li>
+     <li>mpg123 (available from <a href="http://www.mpg123.de/">here</a>)</li>
+   </ul>
+ </li>
+ <li>for the mixer interface (optional):
+   <ul>
+     <li>Python OSS module (included in Python 2.3, otherwise available from <a href="http://indra.com/~tim/ossmodule/">here</a>)</li>
+   </ul>
+ </li>
+
+</ul>
+
+<h2><a name="download"></a>Download</h2>
+
+<p>The latest version of PyTone can be downloaded as gzipped tar archive from
+<a href="download/PyTone-2.2.4.tar.gz">here</a>. The previous versions can still
+be found <a href="download/">here</a>.
+
+<h2><a name="installation"></a>Installation</h2>
+
+<p>If you want to use the internal libmad based player, you have to build one C
+extension module located in the <tt>pcm</tt> subdirectory. This can be
+done simply via</p>
+
+<pre>
+$ python setup.py build_ext -i
+</pre>
+
+<p>To enable support for transparent terminals set <tt>buildcursext
+= 1</tt> at the top of the <tt>setup.py</tt> file before running the
+above command.</p>
+
+<h2><a name="configuration"></a>Configuration</h2>
+
+<p>All configuration options of PyTone can be found in the sample
+   configuration file <tt>conf/pytonerc</tt>. Side-wide configuration
+   goes into /etc/pytonerc, user specific changes can be put into
+   <tt>~/.pytone/pytonerc</tt>.  Note that you only have to supply
+   options you want to change. Furthermore, while most of the standard
+   settings will probably fit your needs, you have to
+   change the variable <tt>musicbasedir</tt> in the section
+   <tt>[database.main]</tt> of the main database, which specifies the
+   root of your primary MP3 collection. A minimal version of your configuration file
+should thus contain </p>
+
+<pre>
+# minimal ~/.pytone/pytonerc defining the root of your music collection
+[database.main]
+musicbasedir=/root/of/your/music/collection
+</pre>
+
+<h2><a name="usage"></a>Usage</h2>
+
+<p>After having adjusted the basic configuration variables to your
+personal needs, just start the program with</p>
+
+<pre>
+$ ./pytone
+</pre>
+
+<p>and look how the database is being rebuilt. The key bindings
+described below should say all about the use of PyTone. A list of command line options can be obtained by </p>
+
+<pre>
+$ ./pytone --help
+</pre>
+
+<p>Then let it rock...</p>
+
+<h3>Key bindings</h3>
+
+<table>
+  <caption>In database/filelist window (left half of screen)</caption>
+  <tr><td><tt>ArrowUp</tt>/<tt>k</tt></td><td>move selection up</td></tr>
+  <tr><td><tt>ArrowDown</tt>/<tt>j</tt></td><td>move selection down</td></tr>
+  <tr><td><tt>PageUp</tt>/<tt>CTRL-P</tt></td><td>move selection one page up</td></tr>
+  <tr><td><tt>PageDown</tt>/<tt>CTRL-N</tt></td><td>move selection one page down</td></tr>
+  <tr><td><tt>Home</tt>/<tt>CTRL-A</tt></td><td>move selection to beginning</td></tr>
+  <tr><td><tt>End</tt>/<tt>CTRL-E</tt></td><td>move selection to end</td></tr>
+  <tr><td><tt>ArrowRight</tt>/<tt>Enter</tt>/<tt>Space</tt>/<tt>l</tt></td><td> enter directory / add song</td></tr>
+  <tr><td><tt>ArrowLeft</tt>/<tt>h</tt></td><td>exit directory</td></tr>
+  <tr><td><tt>i</tt>/<tt>ALT+ArrowRight</tt></td><td>add song or directory (recursively)</td></tr>
+  <tr><td><tt>r</tt></td><td>insert random selection of selected
+  directory (including subdirs)</td></tr>
+  <tr><td><tt>ALT+Enter</tt></td><td>immediately play song</td></tr>
+  <tr><td><tt>u</tt></td><td>update ID3 information for song/directory</td></tr>
+  <tr><td><tt>TAB</tt></td><td>switch to playlist window</td></tr>
+  <tr><td><tt>ALT+&lt;character&gt;</tt></td><td>Quick search: jump to next entry that begins with character</td></tr>
+  <tr><td><tt>CTRL-S</tt>/<tt>/</tt></td><td>Search in list</td></tr>
+</table>
+
+<h4></h4>
+
+<table>
+  <caption>In playlist window (lower right quarter half of screen)</caption>
+  <tr><td><tt>ArrowUp</tt>/<tt>k</tt></td><td>move selection up</td></tr>
+  <tr><td><tt>ArrowDown</tt>/<tt>j</tt></td><td>move selection down</td></tr>
+  <tr><td><tt>PageUp</tt>/<tt>CTRL-P</tt></td><td>move selection one page up</td></tr>
+  <tr><td><tt>PageDown</tt>/<tt>CTRL-N</tt></td><td>move selection one page down</td></tr>
+  <tr><td><tt>Home</tt>/<tt>CTRL-A</tt></td><td>move selection to beginning</td></tr>
+  <tr><td><tt>End</tt>/<tt>CTRL-E</tt></td><td>move selection to end</td></tr>
+  <tr><td><tt>+</tt></td><td>move selected song up</td></tr>
+  <tr><td><tt>-</tt></td><td>move selected song down</td></tr>
+  <tr><td><tt>d</tt></td><td>delete selected song</td></tr>
+  <tr><td><tt>ALT+Enter</tt></td><td>immediately play song</td></tr>
+  <tr><td><tt>r</tt></td><td>shuffle playlist</td></tr>
+  <tr><td><tt>u</tt></td><td>update ID3 information for song</td></tr>
+  <tr><td><tt>TAB</tt>/<tt>ArrowLeft</tt>/<tt>ArrowRight</tt>/<tt>h</tt></td><td>switch to database/filelist window</td></tr>
+  <tr><td><tt>ArrowRight</tt>/<tt>l</tt></td><td>jump to currently selected song in filelist window</td></tr>
+</table>
+
+
+<table>
+  <caption>Always active</caption>
+  <tr><td><tt>p</tt></td><td>start/pause playing</td></tr>
+  <tr><td><tt>S</tt></td><td>stop playing</td></tr>
+  <tr><td><tt>n</tt></td><td>advance to next song in playlist</td></tr>
+  <tr><td><tt>b</tt></td><td>go back to previous song in playlist</td></tr>
+  <tr><td><tt>></tt></td><td>fast forward in song</td></tr>
+  <tr><td><tt><</tt></td><td>rewind in song</td></tr>
+  <tr><td><tt>BACKSPACE</tt></td><td>delete played songs</td></tr>
+  <tr><td><tt>CTRL-D</tt></td><td>clear playlist</td></tr>
+  <tr><td><tt>CTRL-U</tt></td><td>mark all songs in playlist unplayed</td></tr>
+  <tr><td><tt>CTRL-T</tt></td><td>toggle playlist mode (no repeat, repeat, or random song)</td></tr>
+  <tr><td><tt>CTRL-W</tt></td><td>save playlist to file</td></tr>
+  <tr><td><tt>CTRL-R</tt></td><td>load playlist from file</td></tr>
+  <tr><td><tt>(</tt></td><td>decrease output volume</td></tr>
+  <tr><td><tt>)</tt></td><td>increase output volume</td></tr>
+  <tr><td><tt>1</tt> - <tt>5</tt></td><td>change rating of selected item</td></tr>
+  <tr><td><tt>ALT-1</tt> - <tt>ALT-5</tt></td><td>change rating of currently played song</td></tr>
+  <tr><td><tt>?</tt></td><td>show help</td></tr>
+  <tr><td><tt>!</tt></td><td>show message log</td></tr>
+  <tr><td><tt>=</tt></td><td>show information about selected item</td></tr>
+  <tr><td><tt>CTRL-V</tt></td><td>toggle information shown in item info window</td></tr>
+  <tr><td><tt>F10</tt></td><td>toggle UI layout (one/two column)</td></tr>
+  <tr><td><tt>CTRL-X CTRL-X</tt></td><td>exit program (the keypresses have to be maximally one tenth of a second apart)</td></tr>
+</table>
+
+<h2><a name="list"></a>Mailing list</h2>
+
+<p>For discussions on PyTone, a mailing list has been created. For
+more information on subscribing and for the list archive, see <a
+href="https://www.luga.de/mailman/listinfo/pytone-users">here</a>.</p>
+
+<h2><a name="history"></a>History</h2>
+
+<p>PyTone was written since my favourite MP3 Jukebox (KJukebox) wasn't
+maintained anymore. Its simple user interface and good usability even
+without a mouse combined with the crossfading ability of the player,
+have not been reached by any other free program. Especially for the
+use at a party, KJukebox was very well suited.</p>
+
+<p>However, after looking around on the net for sometime, I found <a
+href="http://mjs.sourceforge.net/">mjs</a>, a curses based MP3 Jukebox system,
+which featured a really simple and efficient GUI. Unfortunately, it was
+written in C and already the first attempts to tailor it to my needs showed
+that probably a Python version of this program would be a great win. That's
+how the development of PyTone started...</p>
+
+<p>After one week of intensive programming version 1.0 of what was then called pyjuke
+was ready and was deployed during a three day long party. It proved to be very
+usable (even on a 38400 baud serial terminal) and astoundingly stable, even
+under extreme, Woodstock like conditions (very heavy rain + deep mud <tt>:-)</tt> )</p>
+
+<p>Subsequently, the internal mad based player was written, which provides
+crossfading capabilities without using xmms, a new, more imaginative name was found
+(kudos to Harry!) and PyTone was released. </p>
+
+<h2><a name="author"></a>Copyright and author</h2>
+
+<p>PyTone was written by J&ouml;rg Lehmann and is free software
+licensed under the GNU GPL Version 2.</p>
+
+<p>Please send comments, wishes, bug reports and patches to the <a
+href="https://www.luga.de/mailman/listinfo/pytone-users/">mailing
+list</a> or directly to <a href="mailto:joerg@luga.de">me</a>.  Of
+course, I always like to hear of happy users of PyTone.</p>
+
+</div>
+
+<div class="navbar">
+
+<div id="title">PyTone</div>
+
+<div id="subtitle">MP3 Jukebox redux</div>
+
+<div class="box">
+
+<div id="navbartitle">Navigation</div>
+
+<a href="#summary">Summary</a><br>
+<a href="#features">Features</a><br>
+<a href="#news">News</a><br>
+<a href="#screenshot">Screenshot</a><br>
+<a href="#prerequisistes">Software prerequisites</a><br>
+<a href="#download">Download</a><br>
+<a href="#installation">Installation</a><br>
+<a href="#configuration">Configuration</a><br>
+<a href="#usage">Usage</a><br>
+<a href="#list">Mailing list</a><br>
+<a href="#history">History</a><br>
+<a href="#author">Copyright and author</a><br>
+
+</div>
+
+<br>
+
+<p align="center">
+  <a href="http://ukcdr.org/issues/cd/quick/">
+    <img border="0"
+         width="160"
+         height="40"
+         src="badcd002.png"
+         alt="Say NO to corrupt audio discs">
+  </a>
+</p>
+
+<p align="center">
+  <a href="http://validator.w3.org/check/referer">
+    <img border="0"
+         src="valid-html401.png"
+         alt="Valid HTML 4.01!" height="31" width="88">
+  </a>
+</p>
+
+<p align="center">
+  <a href="http://jigsaw.w3.org/css-validator/check/referer">
+    <img style="border:0;width:88px;height:31px"
+         src="vcss.png"
+         alt="Valid CSS!" >
+  </a>
+</p>
+
+</div>
+
+</body>
+</html>

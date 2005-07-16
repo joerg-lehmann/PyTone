@@ -1,0 +1,16 @@
+Metadata-Version: 1.0
+Name: PyTone
+Version: 2.2.4+
+Summary: Powerful music jukebox with a curses based GUI.
+Home-page: http://www.luga.de/pytone/
+Author: Jörg Lehmann
+Author-email: joerg@luga.de
+License: GPL
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Console :: Curses
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: Programming Language :: Python
+Classifier: Topic :: Multimedia :: Sound/Audio :: Players

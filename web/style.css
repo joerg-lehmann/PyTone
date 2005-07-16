@@ -1,0 +1,149 @@
+body { 
+	background-color:#f3f3f3;
+        color:#333; 
+        margin:20px;
+	padding:0px;
+	font:14px verdana, helvetica, sans-serif;
+}
+
+p {
+	margin:0px 0px 16px 1em;
+	padding:0px;
+}
+
+h1 {
+	color:#888;
+	margin:0px 0px 10px 0px;
+	padding:0px;
+	font-size:28px;
+	font-weight:900;
+}
+
+h2 { 
+        color:#07a; 
+	font-size: 130%;
+	font-weight: bolder;
+	margin: 5px 5px 5px 0px;
+	padding: 0px;
+}
+
+h3 {
+	font-size: 120%;
+	margin: 0px 0px 5px 1em;
+	padding: 0px;
+}
+
+h4 {
+	font-size: 100%;
+	margin: 0px 0px 5px 1.5em;
+	padding: 0px;
+}
+
+table caption {
+	font-weight: bold;
+	text-align: center;
+}
+
+.content table {
+	background-color:#f3f3f3;
+	border:1px solid black;
+	width: 700px;
+	padding: 5px;
+	margin-bottom: 20px;
+}
+
+pre { 
+        margin-left: 3em;
+}
+
+address { 
+        margin-left: 3em; 
+	margin-bottom: 15px; 
+}
+
+table { 
+	margin-left: 3em 
+}
+
+#title {
+	color:#888;
+	margin: 10px 10px 10px 10px;
+	padding:0px;
+	font-size:28px;
+	font-weight:900;
+	text-align: center;
+}
+
+#subtitle {
+	margin: 0px 10px 15px 10px;
+	padding:0px;
+	font-style: italic;
+	text-align: right;
+}
+
+#navbartitle, #newsboxtitle {
+        margin:0px 0px 10px 0px;
+     	padding: 0px;
+	font-size: 120%;
+	font-weight: bold;
+}
+
+a:link { 
+        color:#07a; 
+	text-decoration: None;
+}
+
+a:active { 
+        color:#07a; 
+	text-decoration: None;
+}
+
+a:visited { 
+        color:#07a;
+	text-decoration: None;
+}
+
+.navbar a:visited { 
+        color:#07a;
+}
+
+a:hover { 
+        text-decoration: underline;
+}
+
+.content { 
+	position:relative; /* Position is declared "relative" to gain control of stacking order (z-index). */
+	width:auto;
+	min-width:120px;
+	margin: 0px 000px 20px 200px;
+	border:1px solid black;
+	background-color:#ffe;
+	padding:10px;
+	z-index:1; /* This allows the content to overlap the right menu in narrow windows in good browsers. */
+}
+
+.navbar {
+	position:fixed;
+	width:170px;
+	top:20px;
+	left:20px;
+	z-index:2;
+}
+
+.box {
+	width:160px;
+	margin: 10px 0px 10px 0px;
+	border:1px solid black;
+        font-size: 90%;
+	background-color:#ffe;
+	padding:10px;
+	z-index:1;
+}
+
+/* I've heard this called the "be nice to Opera 5" rule. Basically, it feeds correct 
+length values to user agents that exhibit the parsing error exploited above yet get 
+the CSS box model right and understand the CSS2 parent-child selector. ALWAYS include
+a "be nice to Opera 5" rule every time you use the Tantek Celik hack (above). */
+
+body>#navbar {width:128px;}
+body>#newsbox {width:128px;}

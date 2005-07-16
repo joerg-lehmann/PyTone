@@ -1,0 +1,676 @@
+# PyTone configuration file
+
+##############################################################################
+# general configuration settings
+##############################################################################
+
+[general]
+# playlistdir: Directory, where new playlists should be stored
+#
+# Note that PyTone searches for playlists in all subdirs of
+# basedir. This option only specifies the directory, where new playlists
+# should be stored if no path is specified.
+playlistdir = /mnt/mp3/playlists
+
+# randominsertlength:
+#
+# Total length of songs in seconds after which the random song insert
+# algorithm stops. The following means, that you get at least one
+# hour of your favourite music upon pressing "r" when a folder
+# is selected. :-)
+randominsertlength = 3600
+
+# logfile: Name of the file, where the played songs are logged.
+#
+# Set this to an empty value to disable this feature
+logfile = ~/.pytone/pytone.log
+
+# songchangecommand: command executed in shell when the playback of a new song starts
+#
+# Set this to an empty value to disable this feature. String interpolation like for
+# the songformat option (see playlistwindow section below with the exception that 
+# playstarthours & Co cannot be used here) is performed.
+songchangecommand =
+
+# use the following (or a variant thereof) if you have installed the osd_cat binary
+# songchangecommand = echo "%(artist)s - %(title)s (%(length)s)" | osd_cat -p middle -A center -f "-adobe-helvetica-bold-r-normal-*-*-320-*-*-p-*-iso8859-1" -l 1 -
+
+# playerinfofile: Name of the file, where information on the song currently
+#                 being played on the main player is recorded
+#
+# Set this to an empty value to disable this feature
+playerinfofile = ~/.pytone/playerinfo
+
+# dumpfile: Name of PyTone dump file
+#
+# PyTone can try to save it's state in a dump file upon a crash.
+# During the following restart, PyTone then tries to reconstruct the
+# playlist.
+# Set this to an empty value to disable this feature
+dumpfile = ~/.pytone/pytone.dump
+
+# debugfile: Name of PyTone deug file
+#
+# You can specify a file to which PyTone outputs some 
+# debugging information
+# Set this to an empty value to disable this feature
+debugfile = 
+
+# colorsupport: either auto, on or off
+#
+# Enable terminal colors. If you set this to auto, PyTone tries
+# to check automatically whether your terminal supports colors,
+# which not always works reliably.
+colorsupport = auto
+
+# layout: onecolumn or twocolumn
+#
+# Layout of main PyTone windows
+layout = twocolumn
+
+# throttleoutput: limit screen updates
+#
+# Set this to an integer larger than zero, if your terminal
+# is slow and you experience problems with the sound output (skips).
+# This setting specifies, how many screen updates are being skipped 
+# if there is still user input.
+throttleoutput = 0
+
+# autoplaymode: initial play mode of playlist: off, repeat, random
+#
+# off:    stop playing, when playlist is empty
+# repeat: repeat playlist, when end of playlist has been reached
+# random: choose a random song for playing when playlist is empty
+#
+# During runtime, this setting can be changed by pressing a key
+# specified in [keybindings.general] playlisttoggleautoplaymode (see below).
+autoplaymode = off
+
+# plugins: whitespace separated list of PyTone plugins to be loaded
+#
+# Plugins may have a config section [plugin.pluginname], where pluginname is 
+# the name of the plugin.
+plugins = 
+
+##############################################################################
+# database configuration
+##############################################################################
+
+# The song database stores all relevant informations of your songs.
+# In principle, there can be more than one songdb, for instance one local
+# and one remote, so there can be an arbitrary number of [database.*] 
+# sections.
+
+# type: type of database: "local", "remote", "off"
+
+# the different database types have different options, summarized in the following
+
+# type = local: local bsddb database
+#
+# basename:                 Prefix of the files used for the song database. The
+#                           actual files are named "<songdbbase>_songs.db" and
+#                           "<songdbbase>_artists.db",  etc. Set this to an empty
+#                           value, if you want to use the dbfile option.
+# dbfile:                   Name of the database file which contains all databases.
+#                           Set this to an empty value, if you want to use the
+#                           basename option.
+# dbenvdir:                 Name of the directory for the bsddb database
+#                           environment. Note that every database must have
+#                           its own database environment directory!
+# musicbasedir:             basedir for filesystem based navigation and auto
+#                           registering of songs in database.
+#                           !!! You have to adjust this setting !!!
+# tracknrandtitlere         Regular expression used for obtaining track nr and title 
+#                           from the song filename.
+# tags_capitalize:          Should the artist, album and song names  be capitalized
+#                           automatically.
+# tags_stripleadingarticle: Should a lead "The " be striped from the artist name.
+# tags_removeaccents.       Should accents be removed in artist, album and song
+#                           names.
+# autoregisterer:           start song and playlist autoregisterer?
+#                           If yes, PyTone tries to find new songs and playlists
+#                           in musicbasedir when it is started.
+#                           You may want to disable the automatic song registering
+#                           after you have once populated your database. Then, you 
+#                           register new songs using the -r (--rebuild) command
+#                           line option. Alternatively, you can press "u" to update
+#                           a selected directory in the filelist window.
+# playingstatslength:       how many songs show PyTone take into account
+#                           for the lists of last and top played songs
+# cachesize:                size of cache in kBytes used for database 
+#                           (only available when using Python 2.3 and above)
+
+#
+#
+# type = remote: remote song database
+#
+# networklocation:          either server_address:port or socket filename of remote database
+
+# type = off:    this database is not used
+
+
+[database.main]
+type = local
+
+# store song database in multiple files starting with the prefix given
+basename = ~/.pytone/mp3
+dbfile =
+dbenvdir = ~/.pytone/mp3
+
+tracknrandtitlere = ^\[?(\d+)\]? ?[- ] ?(.*)\.(mp3|ogg)$
+tags_capitalize = true 
+tags_stripleadingarticle = true
+tags_removeaccents = true
+
+
+# Alternatively, you can also store all database in a single file:
+# basename = 
+# dbfile = ~/.pytone/mp3.db
+
+musicbasedir = 
+
+autoregisterer = on
+playingstatslength = 100
+cachesize = 1000
+
+#[database.secondary]
+
+#type = remote
+#networklocation = localhost:1972
+#networklocation = ~/.pytone/pytonectl
+
+##############################################################################
+# mixer configuration
+##############################################################################
+[mixer]
+# set sevice to "" to turn the mixer off
+device = /dev/mixer
+
+# mixer names (see the oss module for all possibilities)
+# for instance:
+# control PCM output level...
+channel = SOUND_MIXER_PCM
+# ... or control master output level
+# channel = SOUND_MIXER_VOLUME
+
+# step size (in percent) used when turning volume up and down
+stepsize = 5
+
+##############################################################################
+# network configuration
+##############################################################################
+
+[network]
+# if socketfile is a non-empty string, it is opened as a UNIX domain socket
+# for the remote control of pytone
+socketfile = ~/.pytone/pytonectl
+
+# additionally, PyTone can repond to connections made via client connected by
+# a network. If you want PyTone to do this, set this config option to a true value
+# Note that you should only do this on a TRUSTED NETWORK!
+enableserver = false
+
+# port on which server listens for connections (if enableserver is true)
+port = 1972
+
+# here you can specify the domain name on which the server will listen
+# (if enableserver is true)
+bind = localhost
+
+##############################################################################
+# player configuration
+##############################################################################
+
+# common option:
+#
+# autoplay: enable automatic start of playing, if songs are in playlist 
+
+# type: type of player: "internal", "xmms", "mpg123", "remote", or "off"
+
+# the different players have different options, summarized in the following
+
+# type = internal: internal player (output with libao)
+#
+# options:
+#   driver:              "alsa", "alsa09", "arts", "esd", "oss", or "sun"
+#   device:              path of dsp used for output (for oss, sun and alsa09 driver)
+#   bufsize:             size of audio buffer used by PyTone itself in kBytes
+#                        Note: A large buffer may prevent clicking but
+#                        leads to a delayed response for instance to play next
+#                        song requests
+#   crossfading:         on/off
+#   crossfadingstart:    start of crossfading in seconds before the end of 
+#                        the currently playing song (only used when crossfading is on)
+#   crossfadingduration: duration of crossfading in seconds (only used when 
+#                        crossfading is on)
+#   aooptions:           additional options passed to the ao library. Format:
+#                        name=value ...
+
+# type = mpg123: external player using mpg123/mpg321
+#
+# option:
+#   cmdline:             command line for player start
+
+# type = xmms: external player using xmms
+#
+# options:
+#   session:  xmms session number (usually 0)
+#   noqueue:  0=no internal queue for song
+#             1=internal queue for songs, such that crossfading (via xmms-crossfade)
+#               is possible
+
+# type = remote:  remote player 
+#
+# options:
+#   
+# networklocation:          either server_address:port or socket filename of remote player
+
+[player.main] 
+
+# This player will be used for playing of the songs in the playlist.
+
+autoplay = true
+
+type = internal
+driver = oss
+device = /dev/dsp
+bufsize = 100
+crossfading = on
+crossfadingstart = 5
+crossfadingduration = 6
+
+#aooptions=period_time=100 use_mmap=1
+
+# example for an internal player using alsa
+#type = internal
+#driver = alsa09
+#device = default
+#bufsize = 100
+#crossfading = on
+#crossfadingstart = 5
+#crossfadingduration = 6
+
+# example for an internal player which outputs with a small buffer to aRts
+#type = internal
+#driver = arts
+#bufsize = 100
+#crossfading = on
+#crossfadingstart = 5
+#crossfadingduration = 6
+
+# example for an internal player which outputs with a small buffer to esd
+#type = internal
+#driver = esd
+#bufsize = 100
+#crossfading = on
+#crossfadingstart = 5
+#crossfadingduration = 6
+
+# example for an external player using xmms
+#type = xmms
+#session = 0
+#noqueue = false
+
+# example for an external player using mpg321
+#type = mpg123
+#cmdline = /usr/bin/mpg321 --skip-printing-frames=5 -a /dev/dsp
+#here the command line for mpg123
+#cmdline = /usr/bin/mpg123 -a /dev/dsp"
+
+# examle for remote players
+#type = remote
+#networklocation = localhost:1972
+#networklocation = ~/.pytone/pytonectl
+
+
+[player.secondary]
+# the secondary player always plays the currently selected song. 
+# To be able to use it, you need either need two outputs on your soundcard 
+# (or two soundcards) or a remote main player on another computer
+
+autoplay = false
+
+type = off
+
+#type = internal
+#driver = oss
+#device = /dev/dsp1
+#bufsize = 0
+#crossfading = on
+#crossfadingstart = 1
+#crossfadingduration = 2
+
+#aooptions=period_time=100 use_mmap=1
+
+#type = xmms
+#session = 1
+#noqueue = false
+
+#type = mpg123
+#cmdline = /usr/bin/mpg321 --skip-printing-frames=5 -a /dev/dsp1
+
+##############################################################################
+# window configuration
+##############################################################################
+
+[filelistwindow]
+# the filelist window allows the selection of the songs in your
+# database
+
+# border: define borders of filelist window
+# 
+
+# Either you can use the predefined settings "off", "all", "compact"
+# or "ultracompact" or specify the border manual using a combination
+# of "left", "right", "top", and "bottom". An empty string means no
+# border
+border = all
+
+# scrollbar: should the filelist window have a scrollbar
+scrollbar = true
+
+# scrollmode: either "line" or "page"
+#
+# scrolled up or down one line or one page when you attempt to move across a
+# screen boundary. Setting this to "page" is useful for slow links to
+# avoid many redraws).
+scrollmode = page
+
+# virtualdirectoriesattop:
+#
+# should the virtual directories be displayed at the top of the
+# filelist window?
+virtualdirectoriesattop = false
+
+# skipsinglealbums:
+#
+# should one directly enter the album of an artist with a single album only
+skipsinglealbums = true
+
+
+[playlistwindow]
+# the playlist window shows the currently scheduled songs for playing
+
+# border: define borders of playlist window
+# 
+# The format is described in the filelistwindow section.
+border = all
+
+# scrollbar: should the playlist window have a scrollbar
+scrollbar = true
+
+# scrollmode: either "line" or "page"
+#
+# scrolled up or down one line or one page when you attempt to move across a
+# screen boundary. Setting this to "page" is useful for slow links to
+# avoid many redraws).
+scrollmode = page
+
+# songformat: format string used for playlist entries
+#
+# A normal python format string can be used, whereby access to 
+# a dict with the following keys is available:
+#   title:    title of song (string)
+#   album:    album of song(string)
+#   artist:   artist of song (string)
+#   path:     path of song (string)
+#   name:     basename of song (string)
+#   length:   length of song formated as mm:ss (string)
+#   minutes:  minutes of song length (int)
+#   seconds:  seconds of song length (int)
+#   year:     year of song (int)
+#   genre:    genre of song (string)
+#   tracknr:  track number of song (string)
+#   playstarthours, playstartminutes, playstartseconds: scheduled start time for song playback (int) 
+songformat = %(artist)s - %(title)s
+#songformat = %(artist)s - %(album)s - %(title)s
+#songformat = [%(playstarthours)2d:%(playstartminutes)02d:%(playstartseconds)02d] %(artist)s - %(album)s - %(title)s
+
+
+[playerwindow]
+# the player window shows the song currently being played on the main player
+
+# border: define borders of player window
+# 
+# The format is described in the filelistwindow section.
+border = all
+
+# songformat: format string used for player window title
+# 
+# The format is the same as above.
+songformat = %(artist)s - %(title)s
+#songformat = %(artist)s - %(album)s - %(title)s
+
+
+[iteminfowindow]
+# the item info window shows information about the item currently selected
+
+# border: define borders of item info window
+# 
+# The format is described in the filelistwindow section.
+border = all
+
+
+[inputwindow]
+# window appearing, when PyTone expects an input from the user's side
+# (for searching, file names, etc.)
+
+# type: either "popup" or "statusbar"
+#
+# If type="popup", PyTone opens a new window on top of the other windows
+# If type="statusbar", PyTone expects the input in the status bar
+type = popup
+
+
+[mixerwindow]
+# window for built-in mixer (if present)
+
+# type: either "popup" or "statusbar"
+#
+# If type="popup", PyTone opens a new mixer window on top of the other windows
+# If type="statusbar", the mixer appears in the statusbar of PyTone.
+type = popup
+
+# times in seconds after which mixer windows disappears
+# automatically.  Use 0 to disable the automatic closing.
+autoclosetime = 5
+
+
+[helpwindow]
+# popup window for online help
+
+# times in seconds after which the help window disappears
+# automatically.  Use 0 to disable the automatic closing.
+autoclosetime = 10
+
+[logwindow]
+# popup window for message log
+
+# times in seconds after which the message log disappears
+# automatically.  Use 0 to disable the automatic closing.
+autoclosetime = 10
+
+
+##############################################################################
+# color configuration
+##############################################################################
+
+# specification of colors goes á la mutt: 
+# use for colors: color fgcolor bgcolor
+# - fgcolor may be prefixed by bright
+# - bgcolor can be left away, resulting in the default background color
+# use for mono terminals: mono attr
+# - attr=none, bold, underline, reverse, standout
+# you may also specify a color and a mono directive to support both
+# types of colors. If only a color is given, "mono none" is implicitely assumed
+
+[colors.filelistwindow]
+background            = color white
+border                = color green
+activeborder          = color brightgreen mono bold
+title                 = color brightgreen mono bold
+activetitle           = color brightgreen mono bold
+scrollbar             = color green
+scrollbarhigh         = color brightgreen mono bold
+scrollbararrow        = color brightgreen mono bold
+song                  = color white
+artist_album          = color brightblue mono bold
+directory             = color brightcyan mono bold
+selected_song         = color white red mono reverse
+selected_artist_album = color brightblue red mono reverse
+selected_directory    = color brightcyan red mono reverse
+
+[colors.playlistwindow]
+background            = color white
+border                = color green
+activeborder          = color brightgreen mono bold
+title                 = color brightgreen mono bold
+activetitle           = color brightgreen mono bold	
+scrollbar             = color green
+scrollbarhigh         = color brightgreen mono bold
+scrollbararrow        = color brightgreen mono bold
+unplayedsong          = color brightwhite mono bold
+playingsong           = color yellow mono underline
+playedsong            = color white
+selected_unplayedsong = color brightwhite red mono reverse
+selected_playingsong  = color yellow red mono reverse
+selected_playedsong   = color white red mono reverse
+
+[colors.playerwindow]
+# the player window shows informations about the song which is 
+# currently being played on the main player
+background      = color white
+border          = color green
+activeborder    = color brightgreen mono bold
+title           = color brightgreen mono bold
+description     = color brightcyan mono bold
+content         = color white
+progressbar     = color cyan cyan 
+progressbarhigh = color red red mono bold
+
+[colors.iteminfowindow]
+# the iteminfo window shows informations about the currently selected item
+# (song, artist, album, playlist, etc.)
+background   = color white
+border       = color green
+activeborder = color brightgreen mono bold
+title        = color brightgreen mono bold
+description  = color brightcyan mono bold
+content      = color white
+
+[colors.statusbar]
+background  = color white
+key         = color brightcyan mono bold
+description = color white
+
+[colors.inputwindow]
+# colors (the border and title colors are only relevant if inputwindow.type="popup")
+background   = color white
+border       = color green
+activeborder = color brightgreen mono bold
+title        = color brightgreen mono bold
+description  = color brightcyan mono bold
+content      = color white
+
+[colors.mixerwindow]
+# colors (the border and title colors are only relevant, if type="popup")
+background   = color white
+border       = color green
+activeborder = color brightgreen mono bold
+title        = color brightgreen mono bold
+description  = color brightcyan mono bold
+content      = color white
+bar          = color cyan cyan
+barhigh      = color red red mono bold
+
+[colors.helpwindow]
+background   = color white
+border       = color green
+activeborder = color brightgreen mono bold
+title        = color brightgreen mono bold
+key          = color brightcyan mono bold
+description  = color white
+
+[colors.logwindow]
+background   = color white
+border       = color green
+activeborder = color brightgreen mono bold
+time         = color brightgreen mono bold
+debug        = color white
+info         = color white
+warning      = color cyan
+error        = color red mono bold
+
+##############################################################################
+# keybindings
+##############################################################################
+
+# each entry is a space separated list of keys, where for each key:
+# - the prefixes alt- and ctrl- may be used
+# - case is important
+# - KEY_... identifiers from the curses library (+KEY_SPACE for the space key) 
+#   may be used
+
+[keybindings.general]
+# keybindings independent of filelist and playlist window
+refresh                   = ctrl-l
+# note that the exit key has to be pressed two times in fast succession
+exit                      = ctrl-x
+playerstart               = p P
+playerpause               = p P
+playernextsong            = n N
+playerprevioussong        = b B
+playerforward             = >
+playerrewind              = <
+playerstop                = S
+playlistdeleteplayedsongs = KEY_BACKSPACE
+playlistclear             = ctrl-d
+playlistsave              = ctrl-w
+playlistload              = ctrl-r
+playlistreplay            = ctrl-u
+playlisttoggleautoplaymode= ctrl-t
+togglelayout              = KEY_F10
+showhelp                  = ?
+showlog                   = !
+showiteminfolong          = =
+toggleiteminfowindow      = ctrl-v
+volumeup                  = )
+volumedown                = (
+
+[keybindings.filelistwindow]
+# additional keybindings when filelist window is active
+
+selectnext        = KEY_DOWN j
+selectprev        = KEY_UP k
+selectnextpage    = ctrl-n KEY_NPAGE
+selectprevpage    = ctrl-p KEY_PPAGE
+selectfirst       = ctrl-a KEY_HOME
+selectlast        = ctrl-e KEY_END
+dirdown           = KEY_RIGHT KEY_SPACE \n KEY_ENTER l
+dirup             = KEY_LEFT h
+addsongtoplaylist = KEY_SPACE \n KEY_ENTER KEY_RIGHT l
+adddirtoplaylist  = i I KEY_IC alt-KEY_RIGHT
+playselectedsong  = alt-\n alt-KEY_ENTER
+activateplaylist  = \t
+insertrandomlist  = r R
+rescan            = u U
+search            = / ctrl-s
+repeatsearch      = ctrl-g
+
+[keybindings.playlistwindow]
+# additional keybindings when playlist window is active
+
+selectnext       = KEY_DOWN j
+selectprev       = KEY_UP k
+selectnextpage   = ctrl-n KEY_NPAGE
+selectprevpage   = ctrl-p KEY_PPAGE
+selectfirst      = ctrl-a KEY_HOME
+selectlast       = ctrl-e KEY_END
+moveitemup       = +
+moveitemdown     = -
+deleteitem       = d D KEY_DC
+activatefilelist = \t KEY_LEFT h
+playselectedsong = alt-\n alt-KEY_ENTER
+shuffle          = r R
+rescan           = u U
+filelistjumptoselectedsong = KEY_RIGHT l
