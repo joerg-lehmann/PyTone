@@ -48,7 +48,7 @@
 
 	* events.py: Renamed attribute songs -> items in playlistchanged
 	event.
-	
+
 
 2005-05-28 Jörg Lehmann  <joerg@luga.de>
 
