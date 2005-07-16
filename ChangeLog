@@ -4,7 +4,7 @@
 
 	* plugin.py. Daemonize threaded plugins, in order to prevent a blocking of misbehaved plugins 
 	on shutdown.
-	
+
 
 2005-06-30 Jörg Lehmann  <joerg@luga.de>
 
@@ -13,7 +13,7 @@
 	with PyTone have been changed in this regard.
 
 	* plugins/audioscrobbler/scrobbler.py: Fix typos in backlog code.
-	
+
 
 2005-06-28 Jörg Lehmann  <joerg@luga.de>
 
