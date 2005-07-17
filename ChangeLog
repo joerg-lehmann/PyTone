@@ -3,6 +3,9 @@
 	* plugin.py: Use thread-local channel in threadedplugin to make it
 	actually a threaded plugin.
 
+	* log.py: Add time and current thread to debugging output and prune
+	common path from module name.
+
 
 2005-07-16 Jörg Lehmann  <joerg@luga.de>
 
