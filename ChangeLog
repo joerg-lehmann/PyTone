@@ -1,9 +1,17 @@
-2005-07-15 Jörg Lehmann  <joerg@luga.de>
+2005-07-16 Jörg Lehmann  <joerg@luga.de>
+
+	* plugin.py: Use thread-local channel in threadedplugin to make it
+	actually a threaded plugin.
+
+
+2005-07-16 Jörg Lehmann  <joerg@luga.de>
 
 	* filelist.py. Update window contents in filelistjumptosong().
 
 	* plugin.py. Daemonize threaded plugins, in order to prevent a blocking of misbehaved plugins 
 	on shutdown.
+
+	* Initial checkin into Subversion repository.
 
 
 2005-06-30 Jörg Lehmann  <joerg@luga.de>
