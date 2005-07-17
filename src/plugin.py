@@ -38,7 +38,7 @@ class plugin:
 class threadedplugin(service.service, plugin):
 
     def __init__(self, channel, config, mainscreen):
-        service.service.__init__(self, self.__class__.__name__, daemonize=True)
+        service.service.__init__(self, self.__class__.__name__)
         # as independent thread, we have to use our own channel which has
         # been created by the service constructor
         plugin.__init__(self, self.channel, config, mainscreen)
