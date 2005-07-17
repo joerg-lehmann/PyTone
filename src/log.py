@@ -18,7 +18,9 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import inspect
+import os.path
 import sys
+import threading
 import time
 import traceback
 
@@ -40,6 +42,9 @@ LOGLEVEL = _INFO
 # open file for log output, if necessary
 debugfile = None
 
+# length of path prefix (used to obtain module name from path)
+pathprefixlen = len(os.path.dirname(__file__))
+
 def initdebugfile(debugfilename):
     """ direct debugging output to debugfilename """
     global debugfile
@@ -57,7 +62,11 @@ def log(s, level):
         try:
             frame = inspect.stack()
             try:
-                debugfile.write("%s [%s] %s\n" % (_desc[level], frame[2][1][1:-3], s))
+                timestamp = time.strftime("%H:%M:%S", time.localtime())
+                modulename = frame[2][1][pathprefixlen+1:-3]
+                threadname = threading.currentThread().getName()
+                
+                debugfile.write("%s [%s|%s|%s] %s\n" % (_desc[level], timestamp, threadname, modulename, s))
             finally:
                 del frame
         except:
@@ -85,3 +94,5 @@ def debug_traceback():
     tblist = traceback.extract_tb(sys.exc_info()[2])
     for s in traceback.format_list(tblist):
         debug(s[:-1])
+
+
