@@ -63,9 +63,8 @@ def log(s, level):
             frame = inspect.stack()
             try:
                 timestamp = time.strftime("%H:%M:%S", time.localtime())
-                modulename = frame[2][1][pathprefixlen+1:-3]
                 threadname = threading.currentThread().getName()
-                
+                modulename = frame[2][1][pathprefixlen+1:-3]
                 debugfile.write("%s [%s|%s|%s] %s\n" % (_desc[level], timestamp, threadname, modulename, s))
             finally:
                 del frame
