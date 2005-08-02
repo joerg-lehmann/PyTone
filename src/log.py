@@ -93,5 +93,3 @@ def debug_traceback():
     tblist = traceback.extract_tb(sys.exc_info()[2])
     for s in traceback.format_list(tblist):
         debug(s[:-1])
-
-

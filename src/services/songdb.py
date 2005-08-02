@@ -17,7 +17,7 @@
 # along with PyTone; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import copy, math, random, service, time
+import copy, gc, math, random, service, time
 import config
 import events, hub, requests
 import dbitem, item, log
@@ -85,6 +85,12 @@ def _genrandomchoice(songs):
     return result
 
 #
+#
+#
+class songdbstats:
+    pass
+
+#
 # the song database manager class
 #
 
@@ -110,12 +116,14 @@ class songdbmanager(service.service):
         self.songdbids = []
 
         # result cache containing a mapping hash(request) -> (request, result, lastaccess)
-        self.resultcache = {}
-        # maximal number of items stored in cache
-        self.resultcachesize = 500
+        self.requestcache = {}
+        # maximal number of objects referred by request cache
+        self.requestcachemaxsize = config.database.requestcachesize
         # cache use statististics
-        self.resultcachehits = 0
-        self.resultcachemisses = 0
+        self.requestcachehits = 0
+        self.requestcachemisses = 0
+        # current number of objects referred to by items in result cache
+        self.requestcachesize = 0 
         
         # we are a database service provider...
         self.channel.supply(requests.dbrequestsingle, self.dbrequestsingle)
@@ -132,7 +140,7 @@ class songdbmanager(service.service):
 
     def resetafterexception(self):
         # when an exception occurs, we clear the cache
-        self.resultcache = {}
+        self.requestcache = {}
 
     def addsongdb(self, id, config):
         """ add songdb with id defined by config
@@ -162,31 +170,38 @@ class songdbmanager(service.service):
     def cacheresult(requesthandler):
         """ method decorator which caches results of the request """
         def newrequesthandler(self, request):
-            #if self.resultcachemisses>0:
-            #    log.debug("%3d%% cache hits" % (100.*self.resultcachehits/(self.resultcachehits+self.resultcachemisses)))
+            if self.requestcachemisses > 0:
+                log.debug("%3d%% cache hits (%d requests and %d objects cached)" %
+                          (100.*self.requestcachehits/(self.requestcachehits+self.requestcachemisses),
+                           len(self.requestcache),
+                           self.requestcachesize))
             requesthash = hash(request)
             log.debug("dbrequest cache query for request: %s, %d" % (request, requesthash))
             try:
                 # try to get the result from the cache
-                result = self.resultcache[requesthash][0]
+                result = self.requestcache[requesthash][0]
                 # update atime
-                self.resultcache[requesthash][2] = time.time()
-                self.resultcachehits += 1
+                self.requestcache[requesthash][2] = time.time()
+                self.requestcachehits += 1
                 log.debug("dbrequest cache hit for request: %s" % request)
             except KeyError:
                 # make a copy of request for later storage in cache
                 requestcopy = copy.copy(request)
                 result = requesthandler(self, request)
-                self.resultcache[requesthash] = [result, requestcopy, time.time()]
-                self.resultcachemisses += 1
+                resultnoobjects = len(gc.get_referents(result)) + 1
+                self.requestcache[requesthash] = [result, requestcopy, time.time(), resultnoobjects]
+                self.requestcachemisses += 1
+                self.requestcachesize += resultnoobjects
                 # remove least recently used items from cache
-                if len(self.resultcache) > self.resultcachesize:
-                    log.info("db rqeuest cache: purging old items")
-                    cachebytime = [(item[2], key) for key, item in self.resultcache.items()]
+                if self.requestcachesize > self.requestcachemaxsize:
+                    log.debug("db rqeuest cache: purging old items")
+                    cachebytime = [(item[2], key) for key, item in self.requestcache.items()]
                     cachebytime.sort()
                     for atime, key in cachebytime[-10:]:
-                        del self.resultcache[key]
-                log.debug("db request cache miss for request: %s (%d requests cached)" % (request, len(self.resultcache)))
+                        self.requestcachesize -= self.requestcache[key][3]
+                        del self.requestcache[key]
+                log.debug("db request cache miss for request: %s (%d requests and %d objects cached)" %
+                          (request, len(self.requestcache), self.requestcachesize))
             return result
         return newrequesthandler
 
@@ -215,7 +230,7 @@ class songdbmanager(service.service):
     # cache update
 
     def updatecache(self, event):
-        """ update/clear resultcache when database event sent """
+        """ update/clear requestcache when database event sent """
         if isinstance(event, (events.checkpointdb, events.autoregistersongs)):
             return
         if isinstance(event, events.updatesong):
@@ -231,15 +246,15 @@ class songdbmanager(service.service):
                 # only the playing information was changed, so we just
                 # delete the relevant cache results
 
-                for key, item in self.resultcache.items():
+                for key, item in self.requestcache.items():
                     if isinstance(item[1], (requests.gettopplayedsongs, requests.getlastplayedsongs)):
-                        del self.resultcache[key]
+                        del self.requestcache[key]
                 return
         # otherwise we delete the queries for the correponding database (and all compound queries)
-        for key, item in self.resultcache.items():
+        for key, item in self.requestcache.items():
             songdbid = item[1].songdbid
             if songdbid is None or songdbid == event.songdbid:
-                del self.resultcache[key]
+                del self.requestcache[key]
 
     # event handlers
 

@@ -1,3 +1,17 @@
+2005-08-02 Jörg Lehmann  <joerg@luga.de>
+
+	* services/songdb.py. Measure cache size not by number
+	of stored requests but by the number of objects the requests
+	refer to.
+
+	* services/songdb.py: rename resultcache -> requestcache.
+
+	* conf/pytonerc, config.py, services/songdb.py: Add new section
+	database with currently only one option requestcachesize, which
+	allows one to configure the maximal number of objects contained
+	in the cache.
+
+
 2005-07-16 Jörg Lehmann  <joerg@luga.de>
 
 	* plugin.py: Use thread-local channel in threadedplugin to make it

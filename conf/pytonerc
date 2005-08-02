@@ -97,9 +97,20 @@ plugins =
 ##############################################################################
 
 # The song database stores all relevant informations of your songs.
-# In principle, there can be more than one songdb, for instance one local
-# and one remote, so there can be an arbitrary number of [database.*] 
-# sections.
+
+[database]
+# requestcachesize: number of objects stored in the database request cache
+#
+# In between the various databases and the rest of PyTone sits a database
+# management layer which dispatches, merges and caches the requests to 
+# the various song databases. The maximal size of its cache (in number of
+# objects) can be configured via this option. The optimal setting depends
+# on the amount of RAM you have available. Note that there are also
+# cachesize settings for the local bsddb databases.
+requestcachesize = 50000
+
+# For each song database, there has to be a corresponding [database.name]
+# section, where name is the name used to identify the database.
 
 # type: type of database: "local", "remote", "off"
 

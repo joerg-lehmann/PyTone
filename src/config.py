@@ -379,6 +379,7 @@ class general(configsection):
     plugins = configlist("")
 
 class database(configsection):
+    requestcachesize = configint("50000")
     class __template__(configsection):
         type = configalternatives("local", ["local", "remote"])
         basename = configpath("~/.pytone/mp3")

@@ -196,7 +196,7 @@ class song(dbitem):
         if not self.genre:
             self.genre = UNKNOWN
 
-        if not self.year or self.year=="0":
+        if not self.year or self.year == "0":
             self.year = None
         else:
             try:
