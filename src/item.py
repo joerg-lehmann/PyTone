@@ -447,20 +447,12 @@ class filtereditem(diritem):
         self.indexid = indexid
         self.nritems = None
 
-
     def getid(self):
         return self.item.getid()
 
     def getname(self):
         if isinstance(self.item, albums) or isinstance(self.item, songs):
-            if self.nritems is None:
-                if isinstance(self.item, songs):
-                    self.nritems = hub.request(requests.getnumberofsongs(self.songdbid,
-                                                                         artist=self.item.artist,
-                                                                         indexname=self.indexname,
-                                                                         indexid=self.indexid))
-                else:
-                    self.nritems = len(self.getcontents())
+            self.nritems = len(self.getcontents())
             return "%s (%d) <%s>/" % (self.item.name, self.nritems, self.fname)
         else:
             return "%s <%s>/" % (self.item.name, self.fname)
@@ -551,8 +543,8 @@ class filtereditem(diritem):
                                                         random=True))
         elif isinstance(self.item, songs) or isinstance(self.item, albums):
             return hub.request(requests.getsongs(self.songdbid,
-                                                       indexname=self.indexnam, indexid=self.indexid,
-                                                       random=True))
+                                                 indexname=self.indexname, indexid=self.indexid,
+                                                 random=True))
 
         # should not happen
         return []
@@ -579,7 +571,6 @@ class filtereddecade(filtereditem):
         self.decade = indexid
         self.fname = "%s=%s" % (_("Decade"),
                                 self.decade and "%ds" % self.decade or _("Unknown"))
-        self.name = "%s <%s>" % (self.item.name, self.fname)
 
 
 class filteredgenre(filtereditem):
@@ -590,7 +581,7 @@ class filteredgenre(filtereditem):
         filtereditem.__init__(self, songdbid, item, indexname="genre", indexid=indexid)
         self.genre = indexid
         self.fname = "%s=%s" % (_("Genre"), self.genre)
-        self.name = "%s <%s>" % (self.item.getname(), self.fname)
+
 
 class filteredrating(filtereditem):
 
@@ -603,7 +594,7 @@ class filteredrating(filtereditem):
             self.fname = "%s=%s" % (_("Rating"), "*" * self.rating)
         else:
             self.fname = "%s=%s" % (_("Rating"), _("Not rated"))
-        self.name = "%s <%s>" % (self.item.getname(), self.fname)
+
 
 class index(diritem):
 
@@ -618,12 +609,16 @@ class index(diritem):
     def getid(self):
         return self.indexname
 
-    def getcontents(self):
-        def artistwrapper(aartist, asongdbid):
-            return self.indexclass(self.songdbid, artist(self.songdbid, aartist.name), self.indexid)
+    def cmpitem(x, y):
+        return cmp(x.item.name.lower(), y.item.name.lower())
+    cmpitem = staticmethod(cmpitem)
 
+    def _artistwrapper(self, aartist, asongdbid):
+        return self.indexclass(self.songdbid, artist(self.songdbid, aartist.name), self.indexid)
+
+    def getcontents(self):
         contents = hub.request(requests.getartists(self.songdbid, indexname=self.indexname, indexid=self.indexid,
-                                                   wrapperfunc=artistwrapper, sort=self.cmpitem))
+                                                   wrapperfunc=self._artistwrapper, sort=self.cmpitem))
         contents = contents + [ self.indexclass(self.songdbid, albums(self.songdbid), self.indexid),
                                 self.indexclass(self.songdbid, songs(self.songdbid), self.indexid) ]
         return contents
@@ -631,11 +626,8 @@ class index(diritem):
     def getcontentsrecursivesorted(self):
         # we cannot rely on the default implementation since we don't want
         # to have the albums and songs included trice
-        def artistwrapper(aartist, asongdbid):
-            return self.indexclass(self.songdbid, artist(self.songdbid, aartist.name), self.indexid)
-
         artists = hub.request(requests.getartists(self.songdbid, indexname=self.indexname, indexid=self.indexid,
-                                                  wrapperfunc=artistwrapper, sort=self.cmpitem))
+                                                  wrapperfunc=self._artistwrapper, sort=self.cmpitem))
         result = []
         for aartist in artists:
             result.extend(aartist.getcontentsrecursivesorted())
@@ -891,10 +883,11 @@ class genres(diritem):
             self.nrgenres = hub.request(requests.getnumberofgenres(self.songdbid))
         return "[%s (%d)]/" % (_("Genres"), self.nrgenres)
 
+    def _genrewrapper(self, agenre, songdbid):
+        return genre(songdbid, agenre.name)
+
     def getcontents(self):
-        def genrewrapper(agenre, songdbid):
-            return genre(self.songdbid, agenre.name)
-        genres = hub.request(requests.getgenres(self.songdbid, wrapperfunc=genrewrapper, sort=self.cmpitem))
+        genres = hub.request(requests.getgenres(self.songdbid, wrapperfunc=self._genrewrapper, sort=self.cmpitem))
         return genres
 
     def getcontentsrecursive(self):
@@ -925,10 +918,11 @@ class decades(diritem):
             self.nrdecades = hub.request(requests.getnumberofdecades(self.songdbid))
         return "[%s (%d)]/" % (_("Decades"), self.nrdecades)
 
+    def _decadewrapper(self, adecade, songdbid):
+        return decade(songdbid, adecade)
+
     def getcontents(self):
-        def decadewrapper(adecade, songdbid):
-            return decade(self.songdbid, adecade)
-        decades = hub.request(requests.getdecades(self.songdbid, decadewrapper, sort=self.cmpitem))
+        decades = hub.request(requests.getdecades(self.songdbid, self._decadewrapper, sort=self.cmpitem))
         return decades
 
     def getcontentsrecursive(self):
@@ -967,10 +961,11 @@ class ratings(diritem):
             return cmp(y.rating, x.rating)
     cmpitem = staticmethod(cmpitem)
 
+    def _ratingwrapper(self, arating, songdbid):
+        return rating(songdbid, arating.rating)
+
     def getcontents(self):
-        def ratingwrapper(arating, songdbid):
-            return rating(self.songdbid, arating.rating)
-        ratings = hub.request(requests.getratings(self.songdbid, wrapperfunc=ratingwrapper, sort=self.cmpitem))
+        ratings = hub.request(requests.getratings(self.songdbid, wrapperfunc=self._ratingwrapper, sort=self.cmpitem))
         return ratings
 
     def getcontentsrecursive(self):
@@ -1147,60 +1142,57 @@ class basedir(diritem):
         self.virtualdirectoriesattop = virtualdirectoriesattop
         self.nrsongs = None
 
+        if self.type=="local":
+            self.filesystemdir = filesystemdir(self.songdbid, self.basedir, self.basedir)
+        else:
+            self.filesystemdir = None
+        self.songs = songs(self.songdbid)
+        self.albums = albums(self.songdbid)
+        self.decades = decades(self.songdbid)
+        self.genres = genres(self.songdbid)
+        self.ratings = ratings(self.songdbid)
+        self.topplayedsongs = topplayedsongs(self.songdbid)
+        self.lastplayedsongs = lastplayedsongs(self.songdbid)
+        self.lastaddedsongs = lastaddedsongs(self.songdbid)
+        self.randomsonglist = randomsonglist(self.songdbid, self.maxnr)
+        self.playlists = playlists(self.songdbid)
+        if len(self.songdbids) > 1:
+            self.subbasedirs = [basedir([songdbid], self.maxnr, self.virtualdirectoriesattop)
+                                for songdbid in self.songdbids]
+        else:
+            self.subbasedirs = []
+
+        self.virtdirs = [self.songs,
+                         self.albums,
+                         self.decades,
+                         self.genres,
+                         self.ratings,
+                         self.topplayedsongs,
+                         self.lastplayedsongs,
+                         self.lastaddedsongs,
+                         self.randomsonglist,
+                         self.playlists]
+        if self.filesystemdir is not None:
+            self.virtdirs[:0] = [self.filesystemdir]
+        self.virtdirs.extend(self.subbasedirs)
+
     def getname(self):
         return "[%s]/" % self.getheader(None)
 
+    def _artistwrapper(self, aartist, songdbid):
+        return artist(self.songdbid, aartist.name)
+
     def getcontents(self):
-        def artistwrapper(aartist, songdbid):
-            return artist(self.songdbid, aartist.name)
-
-        aartists = hub.request(requests.getartists(self.songdbid, wrapperfunc=artistwrapper, sort=self.cmpitem))
-        if self.type=="local":
-            afilesystemdir = filesystemdir(self.songdbid, self.basedir, self.basedir)
-        else:
-            afilesystemdir = None
-        asongs = songs(self.songdbid)
-        aalbums = albums(self.songdbid)
-        adecades = decades(self.songdbid)
-        agenres = genres(self.songdbid)
-        aratings = ratings(self.songdbid)
-        atopplayedsongs = topplayedsongs(self.songdbid)
-        alastplayedsongs = lastplayedsongs(self.songdbid)
-        alastaddedsongs = lastaddedsongs(self.songdbid)
-        arandomsonglist = randomsonglist(self.songdbid, self.maxnr)
-        aplaylists = playlists(self.songdbid)
-        if len(self.songdbids) > 1:
-            asubbasedirs = [basedir([songdbid], self.maxnr, self.virtualdirectoriesattop)
-                            for songdbid in self.songdbids]
-        else:
-            asubbasedirs = []
-
-        virtdirs = [asongs,
-                    aalbums,
-                    adecades,
-                    agenres,
-                    aratings,
-                    atopplayedsongs,
-                    alastplayedsongs,
-                    alastaddedsongs,
-                    arandomsonglist,
-                    aplaylists]
-        if afilesystemdir is not None:
-            virtdirs[:0] = [afilesystemdir]
-        virtdirs.extend(asubbasedirs)
-
+        aartists = hub.request(requests.getartists(self.songdbid, wrapperfunc=self._artistwrapper, sort=self.cmpitem))
         if self.virtualdirectoriesattop:
-            return virtdirs + aartists
+            return self.virtdirs + aartists
         else:
-            return aartists + virtdirs
+            return aartists + self.virtdirs
 
     def getcontentsrecursivesorted(self):
         # we cannot rely on the default implementation since we don't want
         # to have the albums and songs included trice
-        def artistwrapper(aartist, songdbid):
-            return artist(self.songdbid, aartist.name)
-
-        artists = hub.request(requests.getartists(self.songdbid, wrapperfunc=artistwrapper, sort=self.cmpitem))
+        artists = hub.request(requests.getartists(self.songdbid, wrapperfunc=self.artistwrapper, sort=self.cmpitem))
         result = []
         for aartist in artists:
             result.extend(aartist.getcontentsrecursivesorted())

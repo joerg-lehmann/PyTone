@@ -11,6 +11,9 @@
 	allows one to configure the maximal number of objects contained
 	in the cache.
 
+	* item.py: Create genres/ratings/etc. instances only once to
+	permit the caching of the requests involving them.
+
 
 2005-07-16 Jörg Lehmann  <joerg@luga.de>
 
