@@ -501,6 +501,13 @@ autoclosetime = 10
 # automatically.  Use 0 to disable the automatic closing.
 autoclosetime = 10
 
+[statswindow]
+# popup window for database statistics
+
+# times in seconds after which the database statistics window disappears
+# automatically.  Use 0 to disable the automatic closing.
+autoclosetime = 10
+
 
 ##############################################################################
 # color configuration
@@ -612,6 +619,15 @@ info         = color white
 warning      = color cyan
 error        = color red mono bold
 
+[colors.statswindow]
+background   = color white
+border       = color green
+activeborder = color brightgreen mono bold
+title        = color brightgreen mono bold
+description  = color brightcyan mono bold
+content      = color white
+
+
 ##############################################################################
 # keybindings
 ##############################################################################
@@ -643,6 +659,7 @@ playlisttoggleautoplaymode= ctrl-t
 togglelayout              = KEY_F10
 showhelp                  = ?
 showlog                   = !
+showstats                 = %
 showiteminfolong          = =
 toggleiteminfowindow      = ctrl-v
 volumeup                  = )

@@ -193,6 +193,7 @@ Key bindings
    ALT-1 - ALT-5                change rating of currently playing song
    ?                            show help
    !                            show message log
+   %                            show statistical information about database(s)
    =                            show information about selected item
    CTRL-V                       toggle information shown in item info window
    F10                          toggle UI layout (one/two column)

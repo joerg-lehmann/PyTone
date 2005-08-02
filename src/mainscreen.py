@@ -31,6 +31,7 @@ import inputwin
 import mixerwin
 import log
 import logwin
+import statswin
 import statusbar
 import config
 
@@ -65,6 +66,7 @@ class mainscreen:
         self.helpwin = helpwin.helpwin(screen, self.h, self.w, self.channel)
 
         self.logwin = logwin.logwin(screen, self.h, self.w, self.channel)
+        self.statswin = statswin.statswin(screen, self.h, self.w, self.channel, len(songdbids))
 
         self.iteminfowinlong = iteminfowin.iteminfowinlong(screen, self.h, self.w, self.channel)
 
@@ -290,6 +292,7 @@ class mainscreen:
         self.statusbar.resize(self.h-1, self.w)
         self.helpwin.resize(self.h, self.w)
         self.logwin.resize(self.h, self.w)
+        self.statswin.resize(self.h, self.w)
         self.inputwin.resize(self.h, self.w)
 
         if self.mixerwin:
@@ -333,6 +336,8 @@ class mainscreen:
             self.helpwin.showhelp(context)
         elif key in self.keybindings["showlog"]:
             self.logwin.show()
+        elif key in self.keybindings["showstats"]:
+            self.statswin.show()
         elif key in self.keybindings["showiteminfolong"]:
             self.iteminfowinlong.show()
         elif key in self.keybindings["togglelayout"]:

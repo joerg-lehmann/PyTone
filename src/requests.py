@@ -96,8 +96,7 @@ class dbrequestlist(dbrequest):
 # database requests which yield a single result
 #
 
-class getdatabaseinfo(dbrequestsingle):
-    # XXX make this a db request. Like this it's bogus.
+class getdatabaseinfo(dbrequest):
     """ return tuple (type, location) of database """
     pass
         
@@ -278,6 +277,9 @@ class getnumberofsongs(dbrequest):
 class getnumberofalbums(dbrequest):
     pass
 
+class getnumberofartists(dbrequest):
+    pass
+
 class getnumberofdecades(dbrequest):
     pass
 
@@ -285,6 +287,14 @@ class getnumberofgenres(dbrequest):
     pass
 
 class getnumberofratings(dbrequest):
+    pass
+
+# songdbmanager
+
+class getsongdbmanagerstats(request):
+    """ request statistical information about songdbs and the request cache
+
+    Returns services.songdb.songdbmanagerstats instance."""
     pass
 
 #

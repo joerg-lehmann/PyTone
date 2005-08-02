@@ -162,7 +162,7 @@ try:
             pluginconfig = pluginconfig()
             plugins.append((pluginmodule, pluginconfig))
         except Exception, e:
-             log.error(_("Cannot load plugin '%s': %s" % (name, e)))
+             log.error(_("Cannot load plugin '%s': %s") % (name, e))
 except:
     # if something goes wrong, shutdown all already running services
     hub.notify(events.quit(), 100)

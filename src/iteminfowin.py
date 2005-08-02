@@ -208,7 +208,7 @@ class iteminfowinlong(messagewin.messagewin):
         self.clear()
         for lno in range(len(info)):
             line = l[lno]
-            self.move(1+lno, self.ix)
+            self.move(self.iy+lno, self.ix)
             self.addstr(line[0].ljust(wc1)[:wc1], self.colors.description)
             self.addstr(line[1].ljust(wc2)[:wc2], self.colors.content)
             self.addch(" ")

@@ -193,6 +193,7 @@ class songdb(service.service):
         self.channel.supply(requests.getsongs, self.getsongs)
         self.channel.supply(requests.getnumberofsongs, self.getnumberofsongs)
         self.channel.supply(requests.getnumberofalbums, self.getnumberofalbums)
+        self.channel.supply(requests.getnumberofartists, self.getnumberofartists)
         self.channel.supply(requests.getnumberofgenres, self.getnumberofgenres)
         self.channel.supply(requests.getnumberofdecades, self.getnumberofdecades)
         self.channel.supply(requests.getnumberofratings, self.getnumberofratings)
@@ -1276,6 +1277,12 @@ class songdb(service.service):
             raise hub.DenyRequest
         # see above
         return len(self.albums.keys())
+
+    def getnumberofartists(self, request):
+        if self.id!=request.songdbid:
+            raise hub.DenyRequest
+        # see above
+        return len(self.artists.keys())
 
     def queryregistersong(self, request):
         if self.id!=request.songdbid:

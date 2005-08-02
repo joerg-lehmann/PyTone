@@ -487,6 +487,10 @@ class logwindow(configsection):
     autoclosetime = configfloat("10")
 
 
+class statswindow(configsection):
+    autoclosetime = configfloat("10")
+
+
 class iteminfolongwindow(configsection):
     autoclosetime = configfloat("10")
 
@@ -591,6 +595,14 @@ class colors(configsection):
         activeborder = configcolor("color brightgreen mono bold")
         border = configcolor("color green")
 
+    class statswindow(configsection):
+        title = configcolor("color brightgreen mono bold")
+        content = configcolor("color white")
+        background = configcolor("color white")
+        description = configcolor("color brightcyan mono bold")
+        activeborder = configcolor("color brightgreen mono bold")
+        border = configcolor("color green")
+
     class statusbar(configsection):
         key = configcolor("color brightcyan mono bold")
         background = configcolor("color white")
@@ -617,6 +629,7 @@ class keybindings(configsection):
         togglelayout = configkeys("KEY_F10")
         showhelp = configkeys("?")
         showlog = configkeys("!")
+        showstats = configkeys("%")
         showiteminfolong = configkeys("=")
         toggleiteminfowindow = configkeys("ctrl-v")
         volumeup = configkeys(")")
@@ -661,7 +674,7 @@ class keybindings(configsection):
 #
 
 sections = ['mixerwindow', 'helpwindow', 'filelistwindow', 'database', 'iteminfowindow',
-            'logwindow', 'iteminfolongwindow', 'mixer', 'colors', 'playerwindow', 'playlistwindow',
+            'logwindow', 'statswindow', 'iteminfolongwindow', 'mixer', 'colors', 'playerwindow', 'playlistwindow',
             'general', 'inputwindow', 'network', 'player', 'keybindings']
 
 ##############################################################################
