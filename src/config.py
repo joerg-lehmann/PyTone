@@ -294,7 +294,10 @@ class configalternatives(configitem):
 
 class configpath(configitem):
     def _convert(self, s):
-        return os.path.expanduser(s)
+        if s != "":
+            return os.path.normpath(os.path.expanduser(s))
+        else:
+            return ""
 
 
 class confignetworklocation(configitem):

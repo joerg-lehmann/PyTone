@@ -1,3 +1,7 @@
+2005-08-03 Jörg Lehmann  <joerg@luga.de>
+
+	* Normalize all paths in config files.
+
 2005-08-02 Jörg Lehmann  <joerg@luga.de>
 
 	* services/songdb.py. Measure cache size not by number
