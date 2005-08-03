@@ -96,8 +96,8 @@ class dbrequestlist(dbrequest):
 # database requests which yield a single result
 #
 
-class getdatabaseinfo(dbrequest):
-    """ return tuple (type, location) of database """
+class getdatabasestats(dbrequest):
+    """ return songdbstats instance for database """
     pass
         
 

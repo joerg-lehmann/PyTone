@@ -128,6 +128,25 @@ class dbenv:
             os.unlink(logfile)
 
 #
+# statistical information about songdb
+#
+
+class songdbstats:
+    def __init__(self, id, type, basedir, location, dbenvdir, cachesize,
+                 numberofsongs, numberofalbums, numberofartists, numberofgenres, numberofdecades):
+        self.id = id
+        self.type = type
+        self.basedir = basedir
+        self.location = location
+        self.dbenvdir = dbenvdir
+        self.cachesize = cachesize
+        self.numberofsongs = numberofsongs
+        self.numberofalbums = numberofalbums
+        self.numberofartists = numberofartists
+        self.numberofgenres = numberofgenres
+        self.numberofdecades = numberofdecades
+
+#
 # songdb class
 #
 
@@ -146,6 +165,8 @@ class songdb(service.service):
         self.tagcapitalize = config.tags_capitalize
         self.tagstripleadingarticle = config.tags_stripleadingarticle
         self.tagremoveaccents = config.tags_removeaccents
+        self.dbenvdir = config.dbenvdir
+        self.cachesize = config.cachesize
 
         if not os.path.isdir(self.basedir):
             raise errors.configurationerror("musicbasedir '%s' of database %s is not a directory." % (self.basedir, self.id))
@@ -153,7 +174,7 @@ class songdb(service.service):
         if not os.access(self.basedir, os.X_OK | os.R_OK):
             raise errors.configurationerror("you are not allowed to access and read config.general.musicbasedir.")
 
-        self.dbenv = dbenv(config.dbenvdir, config.cachesize)
+        self.dbenv = dbenv(self.dbenvdir, self.cachesize)
 
         self.indices = ["genre", "year", "rating"]
 
@@ -183,7 +204,7 @@ class songdb(service.service):
         hub.notify(events.sendeventin(events.checkpointdb(self.id), checkpointinterval, repeat=checkpointinterval))
 
         # we are a database service provider...
-        self.channel.supply(requests.getdatabaseinfo, self.getdatabaseinfo)
+        self.channel.supply(requests.getdatabasestats, self.getdatabasestats)
         self.channel.supply(requests.queryregistersong, self.queryregistersong)
         self.channel.supply(requests.getartists, self.getartists)
         self.channel.supply(requests.getalbums, self.getalbums)
@@ -1237,10 +1258,13 @@ class songdb(service.service):
             
     # request handlers
 
-    def getdatabaseinfo(self, request):
+    def getdatabasestats(self, request):
         if self.id != request.songdbid:
             raise hub.DenyRequest
-        return ("local", self.basedir)
+        numberofdecades = self.getnumberofdecades(requests.getnumberofdecades(self.id))
+        return songdbstats(self.id, "local", self.basedir, None, self.dbenvdir, self.cachesize,
+                           len(self.songs), len(self.albums), len(self.artists),
+                           len(self.genres), numberofdecades)
 
     def getnumberofsongs(self, request):
         if self.id != request.songdbid:
@@ -1248,7 +1272,7 @@ class songdb(service.service):
         return len(self.songs)
 
     def getnumberofdecades(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
         decades = []
         for year in self.years.keys():
@@ -1259,27 +1283,27 @@ class songdb(service.service):
         return len(decades)
 
     def getnumberofgenres(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
         # XXX why does len(self.genres) not work???
         # return len(self.genres)
         return len(self.genres.keys())
 
     def getnumberofratings(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
         # XXX why does len(self.genres) not work???
         # return len(self.genres)
         return len(self.ratings.keys())
 
     def getnumberofalbums(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
         # see above
         return len(self.albums.keys())
 
     def getnumberofartists(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
         # see above
         return len(self.artists.keys())

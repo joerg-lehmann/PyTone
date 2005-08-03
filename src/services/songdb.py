@@ -88,21 +88,12 @@ def _genrandomchoice(songs):
 # a collection of statistical information
 #
 
-class songdbstats:
-    def __init__(self, id, type, location, numberofsongs, numberofalbums, numberofartists, numberofgenres, numberofdecades):
-        self.id = id
-        self.type = type
-        self.location = location
-        self.numberofsongs = numberofsongs
-        self.numberofalbums = numberofalbums
-        self.numberofartists = numberofartists
-        self.numberofgenres = numberofgenres
-        self.numberofdecades = numberofdecades
-
 class songdbmanagerstats:
-    def __init__(self, songdbsstats, requestcachesize, requestcacherequests, requestcachehits, requestcachemisses):
+    def __init__(self, songdbsstats, requestcachesize, requestcachemaxsize,
+                 requestcacherequests, requestcachehits, requestcachemisses):
         self.songdbsstats = songdbsstats
         self.requestcachesize = requestcachesize
+        self.requestcachemaxsize = requestcachemaxsize
         self.requestcacherequests = requestcacherequests
         self.requestcachehits = requestcachehits
         self.requestcachemisses = requestcachemisses
@@ -146,7 +137,7 @@ class songdbmanager(service.service):
         self.channel.supply(requests.dbrequestsingle, self.dbrequestsingle)
         self.channel.supply(requests.dbrequestsongs, self.dbrequestsongs)
         self.channel.supply(requests.dbrequestlist, self.dbrequestlist)
-        self.channel.supply(requests.getdatabaseinfo, self.getdatabaseinfo)
+        self.channel.supply(requests.getdatabasestats, self.getdatabasestats)
         self.channel.supply(requests.getnumberofsongs, self.getnumberofsongs)
         self.channel.supply(requests.getnumberofalbums, self.getnumberofalbums)
         self.channel.supply(requests.getnumberofartists, self.getnumberofartists)
@@ -381,7 +372,7 @@ class songdbmanager(service.service):
                 return result
     dbrequestlist = cacheresult(sortresult(dbrequestlist))
 
-    def getdatabaseinfo(self, request):
+    def getdatabasestats(self, request):
         if request.songdbid is None:
             return "Virtual", ""
         elif request.songdbid not in self.songdbids:
@@ -441,21 +432,10 @@ class songdbmanager(service.service):
 
     def getsongdbmanagerstats(self, request):
         songdbsstats = []
-        if len(self.songdbids) > 1:
-            songdbids = [None] + self.songdbids
-        else:
-            songdbids = self.songdbids
-        for songdbid in songdbids:
-            type, location = self.getdatabaseinfo(requests.getdatabaseinfo(songdbid))
-            numberofsongs = self.getnumberofsongs(requests.getnumberofsongs(songdbid))
-            numberofalbums = self.getnumberofalbums(requests.getnumberofalbums(songdbid))
-            numberofartists = self.getnumberofartists(requests.getnumberofartists(songdbid))
-            numberofgenres = self.getnumberofgenres(requests.getnumberofgenres(songdbid))
-            numberofdecades = self.getnumberofdecades(requests.getnumberofdecades(songdbid))
-            songdbsstats.append(songdbstats(songdbid, type, location,
-                                            numberofsongs, numberofalbums, numberofartists,
-                                            numberofgenres, numberofdecades))
+        for songdbid in self.songdbids:
+            songdbsstats.append(self.songdbhub.request(requests.getdatabasestats(songdbid)))
         return songdbmanagerstats(songdbsstats,
-                                  self.requestcachesize, len(self.requestcache),
+                                  self.requestcachesize, self.requestcachemaxsize,
+                                  len(self.requestcache),
                                   self.requestcachehits, self.requestcachemisses)
         

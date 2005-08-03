@@ -242,8 +242,8 @@ class playlist(service.service):
         # check whether this is the case.
         # XXX make this behaviour configurable?
         if isinstance(song, item.song):
-            dbtype, location = hub.request(requests.getdatabaseinfo(song.songdbid))
-            if dbtype == "local":
+            stats = hub.request(requests.getdatabasestats(song.songdbid))
+            if stats.type == "local":
                 return song
         if os.path.isfile(song.path):
             # first we try to access the song via its filesystem path

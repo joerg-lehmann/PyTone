@@ -1133,7 +1133,9 @@ class basedir(diritem):
         self.songdbids = songdbids
         if len(songdbids) == 1:
             self.songdbid = songdbids[0]
-            self.type, self.basedir = hub.request(requests.getdatabaseinfo(self.songdbid))
+            stats = hub.request(requests.getdatabasestats(self.songdbid))
+            self.type = stats.type
+            self.basedir = stats.basedir
         else:
             self.songdbid = None
             self.type = "virtual"

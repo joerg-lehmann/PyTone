@@ -2,6 +2,9 @@
 
 	* Normalize all paths in config files.
 
+	* Rework dbstats system.
+
+
 2005-08-02 Jörg Lehmann  <joerg@luga.de>
 
 	* services/songdb.py. Measure cache size not by number
