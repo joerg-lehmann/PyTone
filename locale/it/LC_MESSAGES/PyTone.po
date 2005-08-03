@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PyTone 2.0.8\n"
-"POT-Creation-Date: 2005-08-03 00:34+CEST\n"
+"POT-Creation-Date: 2005-08-03 15:21+CEST\n"
 "PO-Revision-Date: 2005-01-16 16:17+0100\n"
 "Last-Translator: davide alessio <dalessio@softhome.net>\n"
 "MIME-Version: 1.0\n"
@@ -593,15 +593,15 @@ msgstr "Filesystem"
 msgid "Song Database"
 msgstr "Database delle canzoni"
 
-#: src/item.py:1211
+#: src/item.py:1213
 msgid "Database (%s, %d songs)"
 msgstr "Database (%s, %d canzoni)"
 
-#: src/item.py:1213
+#: src/item.py:1215
 msgid "%d databases (%d songs)"
 msgstr "%d databases (%d canzoni)"
 
-#: src/item.py:1216
+#: src/item.py:1218
 msgid "Database"
 msgstr ""
 
@@ -704,49 +704,49 @@ msgstr "Nome"
 msgid "Load playlist"
 msgstr "Carica la playlist"
 
-#: src/services/songdbs/local.py:242
+#: src/services/songdbs/local.py:263
 msgid ""
 "database %s: basedir %s, %d songs, %d artists, %d albums, %d genres, %d "
 "playlists"
 msgstr ""
 
-#: src/services/songdbs/local.py:290
+#: src/services/songdbs/local.py:311
 msgid "updating song database %s from version 1 to version 2"
 msgstr ""
 
-#: src/services/songdbs/local.py:292
+#: src/services/songdbs/local.py:313
 msgid "Updating song database %s from version 1 to version 2:"
 msgstr ""
 
-#: src/services/songdbs/local.py:352
+#: src/services/songdbs/local.py:373
 msgid "updating song database %s from version 2 to version 3"
 msgstr ""
 
-#: src/services/songdbs/local.py:353
+#: src/services/songdbs/local.py:374
 msgid "Updating song database %s from version 2 to version 3:"
 msgstr ""
 
-#: src/services/songdbs/local.py:469
+#: src/services/songdbs/local.py:490
 msgid "updating song database %s from version 3 to version 4"
 msgstr ""
 
-#: src/services/songdbs/local.py:470
+#: src/services/songdbs/local.py:491
 msgid "Updating song database %s from version 3 to version 4:"
 msgstr ""
 
-#: src/services/songdbs/local.py:1548
+#: src/services/songdbs/local.py:1572
 msgid "database %s: scanning for songs in %s"
 msgstr ""
 
-#: src/services/songdbs/local.py:1570
+#: src/services/songdbs/local.py:1594
 msgid "database %s: finished scanning for songs in %s"
 msgstr ""
 
-#: src/services/songdbs/local.py:1574
+#: src/services/songdbs/local.py:1598
 msgid "database %s: rescanning %d songs"
 msgstr ""
 
-#: src/services/songdbs/local.py:1580
+#: src/services/songdbs/local.py:1604
 msgid "database %s: finished rescanning %d songs"
 msgstr ""
 
@@ -758,32 +758,52 @@ msgstr ""
 msgid "PyTone Statistics"
 msgstr ""
 
-#: src/statswin.py:47
+#: src/statswin.py:44
 #, fuzzy
-msgid "Virtual database:"
-msgstr "passa ai database"
-
-#: src/statswin.py:49
-#, fuzzy
-msgid "Database %s:"
+msgid "Database %s"
 msgstr "Database delle canzoni"
 
-#: src/statswin.py:50
-msgid "%5d songs, %4d albums, %4d artists, %2d genres, %1d decades"
+#: src/statswin.py:45
+msgid "%d songs, %d albums, %d artists, %d genres, %d decades"
 msgstr ""
+
+#: src/statswin.py:52
+msgid "local database (dbenv directory: %s)"
+msgstr ""
+
+#: src/statswin.py:54
+msgid "remote database (server: %s)"
+msgstr ""
+
+#: src/statswin.py:55
+msgid "type"
+msgstr ""
+
+#: src/statswin.py:56
+#, fuzzy
+msgid "base directory"
+msgstr "vai nella directory superiore"
 
 #: src/statswin.py:58
-msgid "Request cache size:"
+msgid "cache size"
 msgstr ""
 
-#: src/statswin.py:59
-msgid "%d requests, %d objects"
+#: src/statswin.py:61
+msgid "%d requests, %d / %d objects"
 msgstr ""
 
 #: src/statswin.py:65
-msgid "Request cache stats:"
+msgid "Request cache size"
 msgstr ""
 
-#: src/statswin.py:66
+#: src/statswin.py:71
+msgid "Request cache stats"
+msgstr ""
+
+#: src/statswin.py:72
 msgid "%d hits / %d requests"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Virtual database:"
+#~ msgstr "passa ai database"
