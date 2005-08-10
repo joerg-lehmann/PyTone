@@ -123,9 +123,9 @@ class bufferedaudiodev(threading.Thread):
                     self.restart.wait()
                     self.restart.clear()
                 buff, bytes = self.queue.get(1)
-                if self.audiodev is None:
-                    self.opendevice()
                 if buff != 0 and bytes != 0:
+                    if self.audiodev is None:
+                        self.opendevice()
                     self.audiodev.play(buff, bytes)
             except:
                 log.warning("exception occured in bufferedaudiodev")

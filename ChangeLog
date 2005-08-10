@@ -7,6 +7,9 @@
 	algorithm by a linear in time version to avoid huge system loads
 	at the end of the song registering process.
 
+	* services/players/internal.py: Do not open audiodevice without need.
+
+
 2005-08-09 Jörg Lehmann  <joerg@luga.de>
 
 	* help.py, helpwin.py, statusbar.py: Introduced getkeyname function
