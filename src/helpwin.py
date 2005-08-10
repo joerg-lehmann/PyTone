@@ -29,9 +29,7 @@ def getitems(section):
         for function in config.keybindings[section].asdict().keys():
             keys = list(config.keybindings[section][function])
             keys.sort()
-            keynames = []
-            for key in keys:
-                keynames += [help.keynames[key]]
+            keynames = [help.getkeyname(key) for key in keys]
             descr = help.descriptions[section][function][1]
             items += [(keynames, descr)]
 

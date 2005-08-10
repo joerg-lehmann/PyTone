@@ -28,8 +28,8 @@ terminate = [("TERMINATE", 0)]
 
 def generatedescription(section, name):
     primarykey = config.keybindings[section][name][0]
-    keyname = help.keynames[primarykey]
-    
+    keyname = help.getkeyname(primarykey)
+
     # save some space
     if keyname.startswith("<") and keyname.endswith(">"):
         keyname = keyname[1:-1]

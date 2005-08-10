@@ -100,7 +100,7 @@ descriptions = {
           }
     }
 
-# prefill keynames 
+# prefill keynames
 keynames = {}
 for c in range(32):
     keynames[c] = _("CTRL")+"-"+chr(c+64)
@@ -121,18 +121,23 @@ keynames[curses.KEY_ENTER]     = _("<Enter>")
 keynames[curses.KEY_HOME]      = _("<Home>")
 keynames[curses.KEY_IC]        = _("<Insert>")
 keynames[curses.KEY_LEFT]      = _("<Left>")
+keynames[curses.KEY_SLEFT]     = _("<Shift-Left>")
 keynames[curses.KEY_NPAGE]     = _("<PageDown>")
 keynames[curses.KEY_PPAGE]     = _("<PageUp>")
 keynames[curses.KEY_RIGHT]     = _("<Right>")
+keynames[curses.KEY_SRIGHT]    = _("<Shift-Right>")
 keynames[curses.KEY_UP]        = _("<Up>")
 
 # function keys
-for nr in range(1, 13):
+for nr in range(1, 23):
     keynames[eval("curses.KEY_F%d" % nr)] = "<F%d>" %nr
-
 
 # alt+key
 for key in keynames.keys():
-    keynames[key+1024] = _("ALT")+"-"+keynames[key]
+    keynames[key+1024] = "%s-%s"% (_("Alt"), keynames[key])
 
-
+def getkeyname(key):
+    try:
+        return keynames[key]
+    except KeyError:
+        return "Key_%d" % key 
