@@ -1486,16 +1486,33 @@ class songautoregisterer(service.service):
         # support file extensions
         self.supportedextensions = metadata.getextensions()
 
+        # checkpoint count used to determine the number of requests in between 
+        # checkpoint calls
+        self.checkpointcount = 0
+
         self.channel.subscribe(events.autoregistersongs, self.autoregistersongs)
         self.channel.subscribe(events.rescansongs, self.rescansongs)
 
+    def _notify(self, event):
+        """ wait until db is not busy, send event and checkpoint db regularly """
+        while self.dbbusymethod():
+            time.sleep(0.1)
+        hub.notify(event, -100)
+        self.checkpointcount += 1
+        if self.checkpointcount == 100:
+            hub.notify(events.checkpointdb(self.songdbid), -100)
+            self.checkpointcount = 0
+
     def registerdirtree(self, dir):
         """ scan for songs and playlists in dir and its subdirectories, returning all items which have been scanned """
+        log.debug("registerer: entering %s"% dir)
         self.channel.process()
         if self.done: return []
         songpaths = []
         playlistpaths = []
         registereditems = []
+        # number of songs sent to the database at one time
+        dividesongsby = 5
 
         # scan for paths of songs and playlists and recursively call registering of subdirectories
         for name in os.listdir(dir):
@@ -1523,20 +1540,22 @@ class songautoregisterer(service.service):
                                      self.tracknrandtitlere,
                                      self.tagcapitalize, self.tagstripleadingarticle, self.tagremoveaccents))
         if songs:
-            hub.notify(events.registersongs(self.songdbid, songs), -100)
-        registereditems.extend(songs)
+            for i in xrange(0, len(songs), dividesongsby):
+                self._notify(events.registersongs(self.songdbid, songs[i:i+dividesongsby]))
+            registereditems.extend(songs)
 
         # ... and playlists
         playlists = [dbitem.playlist(path) for path in playlistpaths]
         if playlists:
-            hub.notify(events.registerplaylists(self.songdbid, playlists), -100)
+            self._notify(events.registerplaylists(self.songdbid, playlists))
 
-        # do not stress the database too much
+        # checkpoint regularly to prevent overly large transaction logs and wait until the
+        # database is not busy any more
         if songs or playlists:
-            while self.dbbusymethod():
-                time.sleep(0.1)
+            self._notify(events.checkpointdb(self.songdbid))
 
         registereditems.extend(playlists)
+        log.debug("registerer: leaving %s"% dir)
         return registereditems
 
     def run(self):
@@ -1544,28 +1563,28 @@ class songautoregisterer(service.service):
         time.sleep(2)
         service.service.run(self)
 
-    #
-    # event handler
-    #
-
     def rescansong(self, song):
+        """ queue song for being rescaned """
         # to take load of the database thread, we also enable the songautoregisterer
         # to rescan songs
         try:
             song.scanfile(self.basedir,
                           self.tracknrandtitlere,
                           self.tagcapitalize, self.tagstripleadingarticle, self.tagremoveaccents)
-            hub.notify(events.updatesong(self.songdbid, song))
+            self._notify(events.updatesong(self.songdbid, song))
         except IOError:
-            hub.notify(events.delsong(self.songdbid, song))
-
+            self._notify(events.delsong(self.songdbid, song))
 
     def rescanplaylist(self, playlist):
         try:
             newplaylist = dbitem.playlist(playlist.path)
-            hub.notify(events.updateplaylist(self.songdbid, newplaylist))
+            self._notify(events.updateplaylist(self.songdbid, newplaylist))
         except IOError:
-            hub.notify(events.delplaylist(self.songdbid, playlist))
+            self._notify(events.delplaylist(self.songdbid, playlist))
+
+    #
+    # event handler
+    #
 
     def autoregistersongs(self, event):
         if self.songdbid == event.songdbid:
@@ -1576,30 +1595,28 @@ class songautoregisterer(service.service):
             oldplaylists = hub.request(requests.getplaylists(self.songdbid))
 
             # scan for all songs and playlists in the filesystem
+            log.debug("database %s: searching for new songs" % self.songdbid)
             registereditems = self.registerdirtree(self.basedir)
 
             # update information for songs which have not yet been scanned (in particular
             # remove songs which are no longer present in the database)
+            log.info("database %s: removing stale songs" % self.songdbid)
+            registereditemshash = {}
+            for item in registereditems:
+                registereditemshash[item] = None
             for song in oldsongs:
-                if song not in registereditems:
+                if song not in registereditemshash:
                     self.rescansong(song)
-                    while self.dbbusymethod():
-                        time.sleep(0.1)
             for playlist in oldplaylists:
-                if playlist not in registereditems:
+                if playlist not in registereditemshash:
                     self.rescanplaylist(playlist)
-                    while self.dbbusymethod():
-                        time.sleep(0.1)
 
             log.info(_("database %s: finished scanning for songs in %s") % (self.songdbid, self.basedir))
 
     def rescansongs(self, event):
         if self.songdbid == event.songdbid:
             log.info(_("database %s: rescanning %d songs") % (self.songdbid, len(event.songs)))
-
             for song in event.songs:
                 self.rescansong(song)
-                while self.dbbusymethod():
-                    time.sleep(0.1)
             log.info(_("database %s: finished rescanning %d songs") % (self.songdbid, len(event.songs)))
 

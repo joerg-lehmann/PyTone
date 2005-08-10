@@ -1,3 +1,13 @@
+2005-08-10 Jörg Lehmann  <joerg@luga.de>
+
+	* services/songdbs/internal.py: Checkpoint database regularly during
+	registering of songs to prevent oversized transaction logs.
+
+	* services/songdbs/internal.py: Replace quadratic in number of songs
+	algorithm by a linear in time version to avoid huge system loads
+	at the end of the song registering process.
+
+
 2005-08-03 Jörg Lehmann  <joerg@luga.de>
 
 	* Normalize all paths in config files.
