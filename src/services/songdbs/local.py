@@ -1564,7 +1564,6 @@ class songautoregisterer(service.service):
         service.service.run(self)
 
     def rescansong(self, song):
-        """ queue song for being rescaned """
         # to take load of the database thread, we also enable the songautoregisterer
         # to rescan songs
         try:
@@ -1600,7 +1599,7 @@ class songautoregisterer(service.service):
 
             # update information for songs which have not yet been scanned (in particular
             # remove songs which are no longer present in the database)
-            log.info("database %s: removing stale songs" % self.songdbid)
+            log.debug("database %s: removing stale songs" % self.songdbid)
             registereditemshash = {}
             for item in registereditems:
                 registereditemshash[item] = None
