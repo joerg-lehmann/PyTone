@@ -185,6 +185,7 @@ class player(genericplayer):
             self.audiodev = bufferedao.bufferedao(bufsize, self.SIZE, aodevice, rate=self.rate, options=aooptions)
             # we have to start a new thread for the bufferedao device
             thread.start_new(self.audiodev.start, ())
+            log.debug("bufferedao device opened")
         else:
             # create audio device thread
             self.audiodev = bufferedaudiodev(aodevice, aooptions, bufsize, self.rate, self.SIZE)
