@@ -22,7 +22,8 @@ packages = ["pytone",
 #
 # list of extension modules to be built
 #
-ext_modules = [Extension("pytone.pcm", sources=["src/pcm/pcm.c"])]
+ext_modules = [Extension("pytone.pcm", sources=["src/pcm/pcm.c"]),
+               Extension("pytone.bufferedao", sources=["src/bufferedao.c"], libraries=["ao"])]
 
 if buildcursext:
     ext_modules.append(Extension("pytone.cursext",
