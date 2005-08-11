@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <ao/ao.h>
+#include <assert.h>
 
 static PyObject *bufferedaoerror;
 
@@ -37,23 +38,24 @@ typedef struct {
     ao_sample_format format;
     ao_option *options;
 
-    ao_device *dev;          /* pointer to the ao_device if open, NULL otherwise */
+    ao_device *dev;              /* pointer to the ao_device if open, NULL otherwise */
 
     int ispaused;
     int done;
 
     /* ring buffer */
-    int SIZE;                /* size in bytes of one item in the buffer */
-    int buffersize;          /* number of items in the buffer */
+    int SIZE;                     /* size in bytes of one item in the buffer */
+    int buffersize;               /* number of items in the buffer */
     bufitem *buffer;
-    int in;                  /* position of next item put in the buffer */
-    int out;                 /* position of next item read from buffer */
-    int nritems;             /* number of items currently in buffer */
-    pthread_mutex_t mutex;   /* mutex protecting the ring buffer */
-    pthread_cond_t notempty; /* condition variable signalizing that the ring buffer is not empty */
-    pthread_cond_t notfull;  /* ... and not full */
-    pthread_mutex_t restartmutex;   /* mutex protecting the restart condition variable */
-    pthread_cond_t restart;  /* condition variable signalizing that we should restart after being paused */
+    int in;                       /* position of next item put in the buffer */
+    int out;                      /* position of next item read from buffer */
+    int nritems;                  /* number of items currently in buffer */
+    pthread_mutex_t buffermutex;  /* mutex protecting the ring buffer */
+    pthread_cond_t notempty;      /* condition variable signalizing that the ring buffer is not empty */
+    pthread_cond_t notfull;       /* ... and not full */
+    pthread_mutex_t restartmutex; /* mutex protecting the restart condition variable */
+    pthread_cond_t restart;       /* condition variable signalizing that we should restart after being paused */
+    pthread_mutex_t devmutex;     /* mutex protecting dev */
 } bufferedao;
 
 /* helper methods */
@@ -103,11 +105,12 @@ bufferedao_dealloc(bufferedao* self)
             free(self->buffer[i].buff);
         free(self->buffer);
     }
-    pthread_mutex_destroy(&self->mutex);
+    pthread_mutex_destroy(&self->buffermutex);
     pthread_cond_destroy(&self->notempty);
     pthread_cond_destroy(&self->notfull);
     pthread_mutex_destroy(&self->restartmutex);
     pthread_cond_destroy(&self->restart);
+    pthread_mutex_destroy(&self->devmutex);
     self->ob_type->tp_free((PyObject*)self);
 }
 
@@ -186,7 +189,7 @@ bufferedao_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     self->out = 0;
     self->nritems = 0;
 
-    pthread_mutex_init(&self->mutex, 0);
+    pthread_mutex_init(&self->buffermutex, 0);
     pthread_cond_init(&self->notempty, 0);
     pthread_cond_init(&self->notfull, 0);
 
@@ -194,6 +197,7 @@ bufferedao_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     self->done = 0;
     pthread_mutex_init(&self->restartmutex, 0);
     pthread_cond_init(&self->restart, 0);
+    pthread_mutex_init(&self->devmutex, 0);
 
     return (PyObject *)self;
 }
@@ -201,11 +205,10 @@ bufferedao_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 /* own methods */
 
 static PyObject *
-bufferedao_run(bufferedao *self)
+bufferedao_start(bufferedao *self)
 {
     char *buff;
     int bytes;
-    ao_device *dev;
 
     Py_BEGIN_ALLOW_THREADS
     while ( !self->done ) {
@@ -215,33 +218,36 @@ bufferedao_run(bufferedao *self)
         pthread_mutex_unlock(&self->restartmutex);
 
         /* ring-buffer get code */
-        pthread_mutex_lock(&self->mutex);
-        if ( self->nritems == 0 )
-           pthread_cond_wait(&self->notempty, &self->mutex);
+        pthread_mutex_lock(&self->buffermutex);
+        while ( self->nritems == 0 )
+           pthread_cond_wait(&self->notempty, &self->buffermutex);
+
+        if (self->nritems <= 0)
+            printf("************** %d\n", self->nritems);
 
         buff = self->buffer[self->out].buff;
         bytes = self->buffer[self->out].bytes;
 
         if (bytes) {
+            pthread_mutex_lock(&self->devmutex);
             /* try to open audiodevice, if this has not yet happened.
              * This corresponds to the opendevice method in Python code. However, we have to be more careful here
              * since we have to guarantee, that the pointer we get has not been modified (i.e. set to NULL) by 
              * the closedevice method */
-            dev = self->dev;
-            while (dev == NULL )  {
-                dev = ao_open_live(self->driver_id, &self->format, self->options);
-                if ( dev == NULL )
+            while (self->dev == NULL )  {
+                self->dev = ao_open_live(self->driver_id, &self->format, self->options);
+                if ( self->dev == NULL )
                      sleep(1);
             }
-            ao_play(dev, buff, bytes);
-            self->dev = dev;
+            ao_play(self->dev, buff, bytes);
+            pthread_mutex_unlock(&self->devmutex);
         }
 
         self->out = (self->out + 1) % self->buffersize;
         self->nritems--;
 
         pthread_cond_signal(&self->notfull);
-        pthread_mutex_unlock(&self->mutex);
+        pthread_mutex_unlock(&self->buffermutex);
     }
     Py_END_ALLOW_THREADS
 
@@ -265,9 +271,9 @@ bufferedao_play(bufferedao *self, PyObject *args)
 
     Py_BEGIN_ALLOW_THREADS
     /* ring-buffer put code */
-    pthread_mutex_lock(&self->mutex);
-    if ( self->nritems == self->buffersize )
-       pthread_cond_wait(&self->notfull, &self->mutex);
+    pthread_mutex_lock(&self->buffermutex);
+    while ( self->nritems == self->buffersize )
+       pthread_cond_wait(&self->notfull, &self->buffermutex);
 
     memcpy(self->buffer[self->in].buff, buff, len);
     self->buffer[self->in].bytes = bytes;
@@ -276,7 +282,7 @@ bufferedao_play(bufferedao *self, PyObject *args)
     self->nritems++;
 
     pthread_cond_signal(&self->notempty);
-    pthread_mutex_unlock(&self->mutex);
+    pthread_mutex_unlock(&self->buffermutex);
     Py_END_ALLOW_THREADS
 
     Py_INCREF(Py_None);
@@ -286,16 +292,15 @@ bufferedao_play(bufferedao *self, PyObject *args)
 static PyObject *
 bufferedao_closedevice(bufferedao *self)
 {
-    ao_device *openaudiodev = self->dev;
-    if (openaudiodev) {
-       /* We use self.dev == NULL as a marker for a closed audio device.
-        * To avoid race conditions we thus first have to mark the device as
-        * closed before really closing it. Note that when we try to reopen the device
-        * later, and it has not yet been closed, the play method will retry
-        * this. */
+    Py_BEGIN_ALLOW_THREADS
+    pthread_mutex_lock(&self->devmutex);
+    if (self->dev) {
+        ao_close(self->dev);
+        /* we use self->dev == NULL as a marker for a closed audio device */
         self->dev = NULL;
-        ao_close(openaudiodev);
     }
+    pthread_mutex_unlock(&self->devmutex);
+    Py_END_ALLOW_THREADS
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -313,12 +318,12 @@ static PyObject *
 bufferedao_flush(bufferedao *self)
 {
     Py_BEGIN_ALLOW_THREADS
-    pthread_mutex_lock(&self->mutex);
+    pthread_mutex_lock(&self->buffermutex);
     self->nritems = 0;
     self->in = 0;
     self->out = 0;
     pthread_cond_signal(&self->notfull);
-    pthread_mutex_unlock(&self->mutex);
+    pthread_mutex_unlock(&self->buffermutex);
     Py_END_ALLOW_THREADS
 
     Py_INCREF(Py_None);
@@ -343,13 +348,14 @@ bufferedao_pause(bufferedao *self)
 static PyObject *
 bufferedao_unpause(bufferedao *self)
 {
-    Py_BEGIN_ALLOW_THREADS
-    pthread_mutex_lock(&self->restartmutex);
-    self->ispaused = 0;
-    pthread_mutex_unlock(&self->restartmutex);
-    pthread_cond_signal(&self->restart);
-    Py_END_ALLOW_THREADS
-
+    if ( self->ispaused ) {
+        Py_BEGIN_ALLOW_THREADS
+        pthread_mutex_lock(&self->restartmutex);
+        self->ispaused = 0;
+        pthread_mutex_unlock(&self->restartmutex);
+        pthread_cond_signal(&self->restart);
+        Py_END_ALLOW_THREADS
+    }
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -371,7 +377,7 @@ bufferedao_quit(bufferedao *self)
     Py_DECREF(retval);
 
     pthread_mutex_lock(&self->restartmutex);
-    self.ispaused = 0
+    self->ispaused = 0;
     pthread_mutex_unlock(&self->restartmutex);
     pthread_cond_signal(&self->restart);
 
@@ -380,8 +386,8 @@ bufferedao_quit(bufferedao *self)
 }
 
 static PyMethodDef bufferedao_methods[] = {
-    {"run", (PyCFunction) bufferedao_run, METH_VARARGS,
-     "run main processing routine (blocks and thus has to be called from a new thread)"
+    {"start", (PyCFunction) bufferedao_start, METH_VARARGS,
+     "start main processing routine (blocks and thus has to be called from a new thread)"
     },
     {"play", (PyCFunction) bufferedao_play, METH_VARARGS,
      "put buff, bytes on buffer"

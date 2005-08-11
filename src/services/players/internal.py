@@ -27,9 +27,26 @@ import decoder
 from services.player import genericplayer
 import log
 
+try:
+    import bufferedao
+    import thread
+    bufferedao_present = True
+except ImportError:
+    bufferedao_present = False
+    try:
+        import ao
+        ao_present = True
+    except ImportError:
+        ao_present = False
+    try:
+        import ossaudiodev
+        ossaudiodev_present = False
+    except ImportError:
+        ossaudiodev_present = False
+    
+
 class aoaudiodev:
     def __init__(self, aodevice, rate, options):
-        import ao
         self.ao = ao.AudioDevice(aodevice, rate=rate, options=options)
 
     def play(self, buff, bytes):
@@ -43,7 +60,6 @@ class aoaudiodev:
 
 class ossaudiodev:
     def __init__(self, device, rate):
-        import ossaudiodev
         self.ossdevice = ossaudiodev.open(device, "w")
         if sys.byteorder == 'little':
             self.ossdevice.setfmt(ossaudiodev.AFMT_S16_LE)
@@ -85,10 +101,10 @@ class bufferedaudiodev(threading.Thread):
         while self.audiodev is None:
             try:
                 if self.aodevice=="oss":
-                    try:
+                    if ossaudiodev_present:
                         self.audiodev = ossaudiodev(self.aooptions["dsp"], self.rate)
                         log.debug("ossaudiodev audio device opened")
-                    except:
+                    else:
                         self.audiodev = aoaudiodev(self.aodevice, rate=self.rate, options=self.aooptions)
                         log.debug("ao audio device opened")
                 else:
@@ -146,8 +162,9 @@ class bufferedaudiodev(threading.Thread):
         self.closedevice()
 
     def unpause(self):
-        self.ispaused = False
-        self.restart.set()
+        if self.ispaused:
+            self.ispaused = False
+            self.restart.set()
 
     def quit(self):
         self.done = True
@@ -163,9 +180,15 @@ class player(genericplayer):
         self.rate = 44100
         self.SIZE = 4096
 
-        # create audio device thread
-        self.audiodev = bufferedaudiodev(aodevice, aooptions, bufsize, self.rate, self.SIZE)
-        self.audiodev.start()
+        # use C version of buffered audio device if present
+        if bufferedao_present:
+            self.audiodev = bufferedao.bufferedao(bufsize, self.SIZE, aodevice, rate=self.rate, options=aooptions)
+            # we have to start a new thread for the bufferedao device
+            thread.start_new(self.audiodev.start, ())
+        else:
+            # create audio device thread
+            self.audiodev = bufferedaudiodev(aodevice, aooptions, bufsize, self.rate, self.SIZE)
+            self.audiodev.start()
 
         # songs currently playing
         self.songs = []
@@ -194,8 +217,7 @@ class player(genericplayer):
         """decode songs and mix them together"""
 
         # unpause buffered ao if necessary
-        if self.audiodev.ispaused:
-            self.audiodev.unpause()
+        self.audiodev.unpause()
 
         if len(self.songs) == 1:
             song = self.songs[0]

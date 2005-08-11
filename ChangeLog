@@ -1,3 +1,15 @@
+2005-08-11 Jörg Lehmann  <joerg@luga.de>
+
+	* bufferedao.c: New C extension module corresponding to
+	services/players/interal/buffereddevice with an ao device. The
+	advantage of the C module is that it does not have to rely on holding
+	the GIL when doing the output, which should help preventing sound
+	dropouts.
+
+	* services/players/internal.py: Make use of new extension module
+	bufferedao.
+
+
 2005-08-10 Jörg Lehmann  <joerg@luga.de>
 
 	* services/songdbs/internal.py: Checkpoint database regularly during
