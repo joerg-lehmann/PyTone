@@ -23,6 +23,8 @@
 #include <ao/ao.h>
 #include <assert.h>
 
+#define NRITEMS() ((self->in >= self->out) ? self->in-self->out : self->in+self->buffersize-self->out)
+
 static PyObject *bufferedaoerror;
 
 typedef struct {
@@ -49,7 +51,6 @@ typedef struct {
     bufitem *buffer;
     int in;                       /* position of next item put in the buffer */
     int out;                      /* position of next item read from buffer */
-    int nritems;                  /* number of items currently in buffer */
     pthread_mutex_t buffermutex;  /* mutex protecting the ring buffer */
     pthread_cond_t notempty;      /* condition variable signalizing that the ring buffer is not empty */
     pthread_cond_t notfull;       /* ... and not full */
@@ -187,7 +188,6 @@ bufferedao_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     }
     self->in = 0;
     self->out = 0;
-    self->nritems = 0;
 
     pthread_mutex_init(&self->buffermutex, 0);
     pthread_cond_init(&self->notempty, 0);
@@ -219,11 +219,11 @@ bufferedao_start(bufferedao *self)
 
         /* ring-buffer get code */
         pthread_mutex_lock(&self->buffermutex);
-        while ( self->nritems == 0 )
+        while ( self->in == self->out )
            pthread_cond_wait(&self->notempty, &self->buffermutex);
-
-        if (self->nritems <= 0)
-            printf("************** %d\n", self->nritems);
+        /* we can safely drop the mutex here, assuming that we are the only reader, and thus 
+         * the only one modyfing self->in and the corresponding buffer item */
+        pthread_mutex_unlock(&self->buffermutex);
 
         buff = self->buffer[self->out].buff;
         bytes = self->buffer[self->out].bytes;
@@ -247,10 +247,8 @@ bufferedao_start(bufferedao *self)
         }
 
         self->out = (self->out + 1) % self->buffersize;
-        self->nritems--;
 
         pthread_cond_signal(&self->notfull);
-        pthread_mutex_unlock(&self->buffermutex);
     }
     Py_END_ALLOW_THREADS
 
@@ -275,17 +273,20 @@ bufferedao_play(bufferedao *self, PyObject *args)
     Py_BEGIN_ALLOW_THREADS
     /* ring-buffer put code */
     pthread_mutex_lock(&self->buffermutex);
-    while ( self->nritems == self->buffersize )
+    /* note that we can store actually only one item less then buffersize, because
+     * otherwise we are not able to detect whether the ring buffer is empty or full */
+    while ( NRITEMS() == self->buffersize-1 )
        pthread_cond_wait(&self->notfull, &self->buffermutex);
+    /* we can safely drop the mutex here, assuming that we are the only writer, and thus 
+     * the only one modyfing self->in and the corresponding buffer item */
+    pthread_mutex_unlock(&self->buffermutex);
 
     memcpy(self->buffer[self->in].buff, buff, len);
     self->buffer[self->in].bytes = bytes;
 
     self->in = (self->in + 1) % self->buffersize;
-    self->nritems++;
 
     pthread_cond_signal(&self->notempty);
-    pthread_mutex_unlock(&self->buffermutex);
     Py_END_ALLOW_THREADS
 
     Py_INCREF(Py_None);
@@ -313,7 +314,7 @@ static PyObject *
 bufferedao_queuelen(bufferedao *self)
 {
     return PyFloat_FromDouble(1.0/(self->format.channels * self->format.bits / 8)
-                              * self->SIZE / self->format.rate * self->nritems);
+                              * self->SIZE / self->format.rate * NRITEMS());
 }
 
 
@@ -322,7 +323,6 @@ bufferedao_flush(bufferedao *self)
 {
     Py_BEGIN_ALLOW_THREADS
     pthread_mutex_lock(&self->buffermutex);
-    self->nritems = 0;
     self->in = 0;
     self->out = 0;
     pthread_cond_signal(&self->notfull);
