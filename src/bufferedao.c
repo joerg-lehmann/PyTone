@@ -246,7 +246,10 @@ bufferedao_start(bufferedao *self)
             pthread_mutex_unlock(&self->devmutex);
         }
 
+        /* we have to reacquire the mutex before sending the signal */
+        pthread_mutex_lock(&self->buffermutex);
         self->out = (self->out + 1) % self->buffersize;
+        pthread_mutex_unlock(&self->buffermutex);
 
         pthread_cond_signal(&self->notfull);
     }
@@ -284,7 +287,10 @@ bufferedao_play(bufferedao *self, PyObject *args)
     memcpy(self->buffer[self->in].buff, buff, len);
     self->buffer[self->in].bytes = bytes;
 
+    /* we have to reacquire the mutex before sending the signal */
+    pthread_mutex_lock(&self->buffermutex);
     self->in = (self->in + 1) % self->buffersize;
+    pthread_mutex_unlock(&self->buffermutex);
 
     pthread_cond_signal(&self->notempty);
     Py_END_ALLOW_THREADS
