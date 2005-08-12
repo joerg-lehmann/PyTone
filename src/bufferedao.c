@@ -236,8 +236,11 @@ bufferedao_start(bufferedao *self)
              * the closedevice method */
             while (self->dev == NULL )  {
                 self->dev = ao_open_live(self->driver_id, &self->format, self->options);
-                if ( self->dev == NULL )
+                if ( self->dev == NULL ) {
+                     pthread_mutex_unlock(&self->devmutex);
                      sleep(1);
+                     pthread_mutex_lock(&self->devmutex);
+                }
             }
             ao_play(self->dev, buff, bytes);
             pthread_mutex_unlock(&self->devmutex);
