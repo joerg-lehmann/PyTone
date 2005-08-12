@@ -140,16 +140,18 @@ class bufferedaudiodev(threading.Thread):
                     self.restart.clear()
                 buff, bytes = self.queue.get(1)
                 if buff != 0 and bytes != 0:
-                    if self.audiodev is None:
+                    audiodev = self.audiodev
+                    while audiodev is None:
                         self.opendevice()
-                    self.audiodev.play(buff, bytes)
+                        audiodev = self.audiodev
+                    audiodev.play(buff, bytes)
             except:
                 log.warning("exception occured in bufferedaudiodev")
                 log.debug_traceback()
 
     def play(self, buff, bytes):
         self.queue.put((buff, bytes))
-        
+
     def flush(self):
         while True:
             try:
