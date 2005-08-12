@@ -9,6 +9,12 @@ from version import version
 # You need the curses header files for building
 buildcursext = False
 
+# build extension module which replaces the Python audio output buffer
+# by a C version, which should help preventing audio dropouts.
+# You need the libao header files for building (but on the other hand,
+# you don't need the pyao extension module when you use bufferedao)
+buildbufferedaoext = True
+
 # list of supported locales
 locales = ["de", "it", "fr", "pl"]
 
@@ -22,14 +28,18 @@ packages = ["pytone",
 #
 # list of extension modules to be built
 #
-ext_modules = [Extension("pytone.pcm", sources=["src/pcm/pcm.c"]),
-               Extension("pytone.bufferedao", sources=["src/bufferedao.c"], libraries=["ao"])]
+ext_modules = [Extension("pytone.pcm", sources=["src/pcm/pcm.c"])]
 
 if buildcursext:
     ext_modules.append(Extension("pytone.cursext",
                                  sources=["src/cursext/cursextmodule.c"],
                                  libraries=["curses"]))
 
+
+if buildbufferedaoext:
+    ext_modules.append(Extension("pytone.bufferedao",
+                                 sources=["src/bufferedao.c"],
+                                 libraries=["ao"]))
 #
 # list of data files to be installed
 #
