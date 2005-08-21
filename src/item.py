@@ -1,6 +1,6 @@
 # -*- coding: ISO-8859-1 -*-
 
-# Copyright (C) 2002, 2003, 2004 Jörg Lehmann <joerg@luga.de>
+# Copyright (C) 2002, 2003, 2004, 2005 Jörg Lehmann <joerg@luga.de>
 #
 # This file is part of PyTone (http://www.luga.de/pytone/)
 #
@@ -19,13 +19,23 @@
 
 
 import os.path, string, time
-import dbitem, metadata
+import config, dbitem, metadata
 import events, hub, requests
 import helper
 
 # We import the _genrandomchoice function used in the songdb module.
 # Maybe we should instead put it in a separate module
 from services.songdb import _genrandomchoice
+
+# helper function for usage in getinfo methods, which merges information about
+# filters in third and forth columns of lines
+def _mergefilters(lines, filters):
+    for nr, filter in enumerate(filters[:4]):
+        if len(lines) > nr:
+            lines[nr][2:3] = [_("Filter:"), filter.name]
+        else:
+            lines.append(["", "", _("Filter:"), filter.name])
+    return lines
 
 
 class item:
@@ -123,6 +133,63 @@ class diritem(item):
         """ does self represent an album? """
         return False
 
+#
+# filters
+#
+
+class filter:
+    def __init__(self, name, indexname, indexid):
+        self.name = name
+        self.indexname = indexname
+        self.indexid = indexid
+
+    def __hash__(self):
+        return hash("%s=%s" % (self.indexname, self.indexid))
+
+
+class decadefilter(filter):
+
+    """ filters items of a given decade """
+
+    def __init__(self, decade):
+        name = "%s=%s" % (_("Decade"), decade and "%ds" % decade or _("Unknown"))
+        filter.__init__(self, name, indexname="decade", indexid=decade)
+
+
+class genrefilter(filter):
+
+    """ filters only items of given genre """
+
+    def __init__(self, genre):
+        name = "%s=%s" % (_("Genre"), genre)
+        filter.__init__(self, name, indexname="genre", indexid=genre)
+
+
+class ratingfilter(filter):
+
+    """ filters only items of given rating """
+
+    def __init__(self, rating):
+        if rating is not None:
+            name = "%s=%s" % (_("Rating"), "*" * rating)
+        else:
+            name = "%s=%s" % (_("Rating"), _("Not rated"))
+        filter.__init__(self, name, indexname="rating", indexid=rating)
+
+class filters(tuple):
+
+     def getname(self):
+         if self:
+             return " <%s>" % (", ".join([filter.name for filter in self]))
+         else:
+             return ""
+
+     def filtered(self, filter):
+         return filters(self + (filter,))
+
+#
+# specialized classes
+#
 
 class song(item):
     def __init__(self, songdbid,  song, playingtime=None):
@@ -297,39 +364,41 @@ class artist(diritem):
 
     """ artist bound to specific songdb """
 
-    def __init__(self, songdbid, name):
+    def __init__(self, songdbid, name, filters):
         self.songdbid = songdbid
         self.name = name
+        self.filters = filters
 
     def __repr__(self):
-        return "artist(%s) in %s" % (self.name, self.songdbid)
+        return "artist(%s) in %s (filtered: %s)" % (self.name, self.songdbid, repr(self.filters))
 
     def _albumwrapper(self, aalbum, songdbid):
-        return album(self.songdbid, aalbum.id, self.name, aalbum.name)
+        return album(self.songdbid, aalbum.id, self.name, aalbum.name, self.filters)
 
     def getcontents(self):
-        albums = hub.request(requests.getalbums(self.songdbid, self.name, wrapperfunc=self._albumwrapper, sort=self.cmpitem))
+        albums = hub.request(requests.getalbums(self.songdbid, self.name, 
+                                                wrapperfunc=self._albumwrapper, sort=self.cmpitem, filters=self.filters))
         return albums + [songs(self.songdbid, self.name)]
 
     def getcontentsrecursive(self):
-        return hub.request(requests.getsongs(self.songdbid, artist=self.name))
+        return hub.request(requests.getsongs(self.songdbid, artist=self.name, filters=self.filters))
 
     def getcontentsrecursivesorted(self):
-        albums = hub.request(requests.getalbums(self.songdbid, self.name, wrapperfunc=self._albumwrapper, sort=self.cmpitem))
+        albums = hub.request(requests.getalbums(self.songdbid, self.name, 
+                                                wrapperfunc=self._albumwrapper, sort=self.cmpitem, filters=self.filters))
         result = []
         for aalbum in albums:
             result.extend(aalbum.getcontentsrecursivesorted())
         return result
 
     def getcontentsrecursiverandom(self):
-        return hub.request(requests.getsongs(self.songdbid, artist=self.name, random=True))
+        return hub.request(requests.getsongs(self.songdbid, artist=self.name, filters=self.filters, random=True))
 
     def getheader(self, item):
-        return self.name
+        return self.name + self.filters.getname()
 
     def getinfo(self):
-        l = [[_("Artist:"), self.name, "", ""]]
-        return l
+        return _mergefilters([[_("Artist:"), self.name, "", ""]], self.filters)
 
     def isartist(self):
         return True
@@ -344,15 +413,17 @@ class artist(diritem):
                 song.song.ratingsource = 2
                 song._updatesong()
 
+
 class album(diritem):
 
     """ album bound to specific songdb """
 
-    def __init__(self, songdbid, id, artist, name):
+    def __init__(self, songdbid, id, artist, name, filters):
         self.songdbid = songdbid
         self.id = id
         self.artist = artist
         self.name = name
+        self.filters = filters
 
     def __repr__(self):
         return "album(%s) in %s" % (self.id, self.songdbid)
@@ -368,28 +439,32 @@ class album(diritem):
         return self.id
 
     def getcontents(self):
-        songs = hub.request(requests.getsongs(self.songdbid, artist=self.artist, album=self.name, sort=self.cmpitem))
+        songs = hub.request(requests.getsongs(self.songdbid, artist=self.artist, album=self.name, sort=self.cmpitem,
+                                              filters=self.filters))
         return songs
 
     def getcontentsrecursive(self):
-        return hub.request(requests.getsongs(self.songdbid, artist=self.artist, album=self.name))
+        return hub.request(requests.getsongs(self.songdbid, artist=self.artist, album=self.name,
+                                             filters=self.filters))
 
     def getcontentsrecursiverandom(self):
         return hub.request(requests.getsongs(self.songdbid,
                                              artist=self.artist,
                                              album=self.name,
+                                             filters=self.filters,
                                              random=True))
 
     def getheader(self, item):
         if self.artist:
-            return self.artist + " - " + self.name
+            s = "%s - %s" % (self.artist, self.name)
         else:
-            return self.name
+            s = self.name
+        return s + self.filters.getname()
 
     def getinfo(self):
         l = [[_("Artist:"), self.artist is None and _("various") or self.artist, "", ""],
              [_("Album:"), self.name, "", ""]]
-        return l
+        return _mergefilters(l, self.filters)
 
     def isalbum(self):
         return True
@@ -436,298 +511,37 @@ class playlist(diritem):
     def getinfo(self):
         return [["%s:" % _("Playlist"), self.name, "", ""]]
 
-class filtereditem(diritem):
 
-    """ super class for item, which filters only items of a given kind"""
+class totaldiritem(diritem):
 
-    def __init__(self, songdbid, item, indexname, indexid):
-        self.songdbid = songdbid
-        self.item = item
-        self.indexname = indexname
-        self.indexid = indexid
-        self.nritems = None
-
-    def getid(self):
-        return self.item.getid()
-
-    def getname(self):
-        if isinstance(self.item, albums) or isinstance(self.item, songs):
-            self.nritems = len(self.getcontents())
-            return "%s (%d) <%s>/" % (self.item.name, self.nritems, self.fname)
-        else:
-            return "%s <%s>/" % (self.item.name, self.fname)
-
-    def cmpitem(self, x, y):
-        try:
-            return self.item.cmpitem(x.item, y.item)
-        except AttributeError:
-            return self.item.cmpitem(x, y)
-
-    def getheader(self, item):
-        if item is None:
-            return ""
-        if isinstance(self.item, albums):
-            return "%s <%s>" % (self.item.getheader(item.item),
-                                self.fname)
-        else:
-            return "%s <%s>" % (self.item.getheader(item),
-                                self.fname)
-
-    def _album_artist_wrapper(self, aalbum, songdbid):
-        return  self.__class__(self.songdbid,
-                               album(self.songdbid, aalbum.id, self.item.name, aalbum.name),
-                               self.indexid)
-
-    def _album_noartist_wrapper(self, aalbum, songdbid):
-        return  self.__class__(self.songdbid,
-                               album(self.songdbid, aalbum.id, None, aalbum.name),
-                               self.indexid)
-
-    def getcontents(self):
-        if isinstance(self.item, artist):
-            contents = hub.request(requests.getalbums(self.songdbid,
-                                                      self.item.name,
-                                                      indexname=self.indexname, indexid=self.indexid,
-                                                      wrapperfunc=self._album_artist_wrapper, sort=self.cmpitem))
-            contents = contents + [self.__class__(self.songdbid, songs(self.songdbid, artist=self.item.name), self.indexid)]
-        elif isinstance(self.item, album):
-            contents = hub.request(requests.getsongs(self.songdbid,
-                                                     artist=self.item.artist,
-                                                     album=self.item.name,
-                                                     indexname=self.indexname, indexid=self.indexid,
-                                                     sort=self.cmpitem))
-        elif isinstance(self.item, songs):
-            contents =  hub.request(requests.getsongs(self.songdbid,
-                                                      artist=self.item.artist,
-                                                      indexname=self.indexname, indexid=self.indexid,
-                                                      sort=self.cmpitem))
-        elif isinstance(self.item, albums):
-            contents = hub.request(requests.getalbums(self.songdbid,
-                                                      indexname=self.indexname, indexid=self.indexid,
-                                                      wrapperfunc = self._album_noartist_wrapper,
-                                                      sort=self.cmpitem))
-        else:
-            # should not happen
-            contents = []
-
-        return contents
-
-    def getcontentsrecursive(self):
-        if isinstance(self.item, artist):
-            return hub.request(requests.getsongs(self.songdbid,
-                                                 artist=self.item.name,
-                                                 indexname=self.indexname, indexid=self.indexid))
-        elif isinstance(self.item, album):
-            return hub.request(requests.getsongs(self.songdbid,
-                                                 artist=self.item.artist,
-                                                 album=self.item.name,
-                                                 indexname=self.indexname, indexid=self.indexid))
-        elif isinstance(self.item, songs) or isinstance(self.item, albums):
-            return hub.request(requests.getsongs(self.songdbid,
-                                                 indexname=self.indexname, indexid=self.indexid))
-
-        # should not happen
-        return []
-
-    def getcontentsrecursiverandom(self):
-        if isinstance(self.item, artist):
-            return hub.request(requests.getsongs(self.songdbid,
-                                                        artist=self.item.name,
-                                                        indexname=self.indexname, indexid=self.indexid,
-                                                        random=True))
-        elif isinstance(self.item, album):
-            return hub.request(requests.getsongs(self.songdbid,
-                                                        artist=self.item.artist,
-                                                        album=self.item.name,
-                                                        indexname=self.indexname, indexid=self.indexid,
-                                                        random=True))
-        elif isinstance(self.item, songs) or isinstance(self.item, albums):
-            return hub.request(requests.getsongs(self.songdbid,
-                                                 indexname=self.indexname, indexid=self.indexid,
-                                                 random=True))
-
-        # should not happen
-        return []
-
-
-    def getinfo(self):
-        l = self.item.getinfo()
-        l.append([_("Filter:"), self.fname, "", ""])
-        return l
+    """ diritem which contains the total database(s) as its contents """
     
-    def isartist(self):
-        return isinstance(self.item, artist)
-
-    def isalbum(self):
-        return isinstance(self.item, album)
-
-
-class filtereddecade(filtereditem):
-
-    """ item, which filters only items of agiven decade"""
-
-    def __init__(self, songdbid, item, indexid):
-        filtereditem.__init__(self, songdbid, item, indexname="decade", indexid=indexid)
-        self.decade = indexid
-        self.fname = "%s=%s" % (_("Decade"),
-                                self.decade and "%ds" % self.decade or _("Unknown"))
-
-
-class filteredgenre(filtereditem):
-
-    """ item, which filters only items of given genre"""
-
-    def __init__(self, songdbid, item, indexid):
-        filtereditem.__init__(self, songdbid, item, indexname="genre", indexid=indexid)
-        self.genre = indexid
-        self.fname = "%s=%s" % (_("Genre"), self.genre)
-
-
-class filteredrating(filtereditem):
-
-    """ item, which filters only items of given rating"""
-
-    def __init__(self, songdbid, item, indexid):
-        filtereditem.__init__(self, songdbid, item, indexname="rating", indexid=indexid)
-        self.rating = indexid
-        if self.rating is not None:
-            self.fname = "%s=%s" % (_("Rating"), "*" * self.rating)
-        else:
-            self.fname = "%s=%s" % (_("Rating"), _("Not rated"))
-
-
-class index(diritem):
-
-    """ artists, albums + songs filtered by a given index e in the corresponding database """
-
-    def __init__(self, songdbid, indexname, indexid, indexclass):
-        self.songdbid = songdbid
-        self.indexname = indexname
-        self.indexid= indexid
-        self.indexclass = indexclass
-
-    def getid(self):
-        return self.indexname
-
-    def cmpitem(x, y):
-        return cmp(x.item.name.lower(), y.item.name.lower())
-    cmpitem = staticmethod(cmpitem)
-
-    def _artistwrapper(self, aartist, asongdbid):
-        return self.indexclass(self.songdbid, artist(self.songdbid, aartist.name), self.indexid)
-
-    def getcontents(self):
-        contents = hub.request(requests.getartists(self.songdbid, indexname=self.indexname, indexid=self.indexid,
-                                                   wrapperfunc=self._artistwrapper, sort=self.cmpitem))
-        contents = contents + [ self.indexclass(self.songdbid, albums(self.songdbid), self.indexid),
-                                self.indexclass(self.songdbid, songs(self.songdbid), self.indexid) ]
-        return contents
-
-    def getcontentsrecursivesorted(self):
-        # we cannot rely on the default implementation since we don't want
-        # to have the albums and songs included trice
-        artists = hub.request(requests.getartists(self.songdbid, indexname=self.indexname, indexid=self.indexid,
-                                                  wrapperfunc=self._artistwrapper, sort=self.cmpitem))
-        result = []
-        for aartist in artists:
-            result.extend(aartist.getcontentsrecursivesorted())
-        return result
-
     def getcontentsrecursive(self):
-        return hub.request(requests.getsongs(self.songdbid,
-                                             indexname=self.indexname, indexid=self.indexid))
+        return hub.request(requests.getsongs(self.songdbid, filters=self.filters))
 
     def getcontentsrecursiverandom(self):
-        return hub.request(requests.getsongs(self.songdbid,
-                                             indexname=self.indexname, indexid=self.indexid,
-                                             random=True))
+        return hub.request(requests.getsongs(self.songdbid, filters=self.filters, random=True))
 
 
-class genre(index):
-
-    """ artists, albums + songs from a specific genre in the corresponding database """
-
-    def __init__(self, songdbid, name):
-        index.__init__(self, songdbid, indexname="genre", indexid=name, indexclass=filteredgenre)
-        self.name = name
-
-    def getheader(self, item):
-        return self.name
-
-    def getinfo(self):
-        return [["%s:" % _("Genre"), self.name, "", ""]]
-
-
-class decade(index):
-
-    """ artists, albums + songs from a specific decade in the corresponding database """
-
-    def __init__(self, songdbid, decade):
-        # decade = None, ..., 1960, 1970, ...
-        assert decade is None or decade%10 == 0, \
-               "decade has to be an integer multiple of 10 or None"
-
-        index.__init__(self, songdbid, indexname="decade", indexid=decade, indexclass=filtereddecade)
-        self.decade = decade
-        self.name = decade and "%ds" % decade or _("Unknown")
-
-    def getheader(self, item):
-        return self.name
-
-    def getinfo(self):
-        return [["%s:" % _("Decade"), self.name, "", ""]]
-
-class rating(index):
-
-    """ artists, albums + songs with a specific rating in the corresponding database """
-
-    def __init__(self, songdbid, rating):
-        index.__init__(self, songdbid, indexname="rating", indexid=rating, indexclass=filteredrating)
-        self.rating = rating
-
-    def getname(self):
-        if self.rating is not None:
-            return "%s/" % ("*" * self.rating)
-        else:
-            return ("%s/" % _("Not rated"))
-
-    def getheader(self, item):
-        if self.rating is not None:
-            return "*" * self.rating
-        else:
-            return _("Not rated")
-
-    def getinfo(self):
-        if self.rating is not None:
-            return [["%s:" % _("Rating"), "*" * self.rating, "", ""]]
-        else:
-            return [["%s:" % _("Rating"), _("Not rated"), "", ""]]
-
-
-class randomsonglist(diritem):
+class randomsonglist(totaldiritem):
 
     """ random list of songs out of  the corresponding database """
 
-    def __init__(self, songdbid, maxnr):
+    def __init__(self, songdbid, maxnr, filters):
         self.songdbid = songdbid
         self.name = "[%s]" % _("Random song list")
         self.maxnr = maxnr
+        self.filters = filters
 
     def getcontents(self):
         songs = []
         while len(songs)<self.maxnr:
-            newsongs = hub.request(requests.getsongs(self.songdbid, random=True))
+            newsongs = hub.request(requests.getsongs(self.songdbid, filters=self.filters, random=True))
             if len(newsongs) > 0:
                 songs.extend(newsongs)
             else:
                 break
         return songs[:self.maxnr]
-
-    def getcontentsrecursive(self):
-        return hub.request(requests.getsongs(self.songdbid))
-
-    def getcontentsrecursiverandom(self):
-        return hub.request(requests.getsongs(self.songdbid, random=True))
 
     def getheader(self, item):
         if item:
@@ -736,15 +550,16 @@ class randomsonglist(diritem):
             return _("Random song list")
 
     def getinfo(self):
-        return [[_("Random song list"), "", "", ""]]
+        return _mergefilters([[_("Random song list"), "", "", ""]], self.filters)
 
 
 class lastplayedsongs(diritem):
 
     """ songs last played out of the corresponding databases """
 
-    def __init__(self, songdbid):
+    def __init__(self, songdbid, filters):
         self.songdbid = songdbid
+        self.filters = filters
         self.name = "[%s]" % _("Last played songs")
 
     def cmpitem(x, y):
@@ -752,13 +567,13 @@ class lastplayedsongs(diritem):
     cmpitem = staticmethod(cmpitem)
 
     def getcontents(self):
-        songs = hub.request(requests.getlastplayedsongs(self.songdbid, sort=self.cmpitem))
+        songs = hub.request(requests.getlastplayedsongs(self.songdbid, sort=self.cmpitem, filters=self.filters))
         return songs
 
     getcontentsrecursive = getcontentsrecursivesorted = getcontents
 
     def getcontentsrecursiverandom(self):
-        return hub.request(requests.getlastplayedsongs(self.songdbid, random=True))
+        return hub.request(requests.getlastplayedsongs(self.songdbid, filters=self.filters, random=True))
 
     def getheader(self, item):
         if item:
@@ -767,15 +582,16 @@ class lastplayedsongs(diritem):
             return _("Last played songs")
 
     def getinfo(self):
-        return [[_("Last played songs"), "", "", ""]]
+        return _mergefilters([[_("Last played songs"), "", "", ""]], self.filters)
 
 
 class topplayedsongs(diritem):
 
     """ songs most often played of the corresponding databases """
 
-    def __init__(self, songdbid):
+    def __init__(self, songdbid, filters):
         self.songdbid = songdbid
+        self.filters = filters
         self.name = "[%s]" % _("Top played songs")
 
     def cmpitem(x, y):
@@ -783,13 +599,13 @@ class topplayedsongs(diritem):
     cmpitem = staticmethod(cmpitem)
 
     def getcontents(self):
-        songs = hub.request(requests.gettopplayedsongs(self.songdbid, sort=self.cmpitem))
+        songs = hub.request(requests.gettopplayedsongs(self.songdbid, sort=self.cmpitem, filters=self.filters))
         return songs
 
     getcontentsrecursive = getcontentsrecursivesorted = getcontents
 
     def getcontentsrecursiverandom(self):
-        return hub.request(requests.gettopplayedsongs(self.songdbid, random=True))
+        return hub.request(requests.gettopplayedsongs(self.songdbid, filters=self.filters, random=True))
 
     def getheader(self, item):
         if item:
@@ -798,16 +614,16 @@ class topplayedsongs(diritem):
             return _("Top played songs")
 
     def getinfo(self):
-        return [[_("Top played songs"), "", "", ""]]
-
+        return _mergefilters([[_("Top played songs"), "", "", ""]], self.filters)
 
 
 class lastaddedsongs(diritem):
 
     """ songs last added to the corresponding database """
 
-    def __init__(self, songdbid):
+    def __init__(self, songdbid, filters):
         self.songdbid = songdbid
+        self.filters = filters
         self.name = "[%s]" % _("Last added songs")
 
     def cmpitem(x, y):
@@ -815,12 +631,12 @@ class lastaddedsongs(diritem):
     cmpitem = staticmethod(cmpitem)
 
     def getcontents(self):
-        return hub.request(requests.getlastaddedsongs(self.songdbid, sort=self.cmpitem))
+        return hub.request(requests.getlastaddedsongs(self.songdbid, sort=self.cmpitem, filters=self.filters))
 
     getcontentsrecursive = getcontentsrecursivesorted = getcontents
 
     def getcontentsrecursiverandom(self):
-        return hub.request(requests.getlastaddedsongs(self.songdbid, random=True))
+        return hub.request(requests.getlastaddedsongs(self.songdbid, filters=self.filters, random=True))
 
     def getheader(self, item):
         if item:
@@ -829,178 +645,168 @@ class lastaddedsongs(diritem):
             return _("Last added songs")
 
     def getinfo(self):
-        return [[_("Last added songs"), "", "", ""]]
+        return _mergefilters([[_("Last added songs"), "", "", ""]], self.filters)
 
 
-class albums(diritem):
+class albums(totaldiritem):
 
     """ all albums in the corresponding database """
 
-    def __init__(self, songdbid):
+    def __init__(self, songdbid, filters):
         self.songdbid = songdbid
+        self.filters = filters
         self.name = _("Albums")
         self.nralbums = None
 
     def getname(self):
         if self.nralbums is None:
-            self.nralbums = hub.request(requests.getnumberofalbums(self.songdbid))
+            self.nralbums = hub.request(requests.getnumberofalbums(self.songdbid, filters=self.filters))
         return "[%s (%d)]/" % (self.name, self.nralbums)
 
     def getcontents(self):
         def albumwrapper(aalbum, songdbid):
-            return album(self.songdbid, aalbum.id, None, aalbum.name)
-        albums = hub.request(requests.getalbums(self.songdbid, wrapperfunc=albumwrapper, sort=self.cmpitem))
+            return album(self.songdbid, aalbum.id, None, aalbum.name, filters=self.filters)
+        albums = hub.request(requests.getalbums(self.songdbid, wrapperfunc=albumwrapper, sort=self.cmpitem, filters=self.filters))
         return albums
-
-    def getcontentsrecursive(self):
-        return hub.request(requests.getsongs(self.songdbid))
-
-    def getcontentsrecursiverandom(self):
-        return hub.request(requests.getsongs(self.songdbid, random=True))
 
     def getheader(self, item):
         #if item:
         #    return item.artist
         #else:
         #    return self.getname()[1:-2]
-        return self.getname()[1:-2]
+        return self.getname()[1:-2] + self.filters.getname()
 
     def getinfo(self):
-        return [[_("Albums"), "", "", ""]]
+        return _mergefilters([[_("Albums"), "", "", ""]], self.filters)
 
 
-class genres(diritem):
+class genres(totaldiritem):
 
     """ all genres in the corresponding database """
 
-    def __init__(self, songdbid):
+    def __init__(self, songdbid, songdbids, filters):
         self.songdbid = songdbid
+        self.songdbids = songdbids
+        self.filters = filters
         self.name = _("Genres")
         self.nrgenres = None
 
+    def cmpitem(x, y):
+        return cmp(x.description, y.description)
+    cmpitem = staticmethod(cmpitem)
+
     def getname(self):
         if self.nrgenres is None:
-            self.nrgenres = hub.request(requests.getnumberofgenres(self.songdbid))
+            self.nrgenres = hub.request(requests.getnumberofgenres(self.songdbid, filters=self.filters))
         return "[%s (%d)]/" % (_("Genres"), self.nrgenres)
 
     def _genrewrapper(self, agenre, songdbid):
-        return genre(songdbid, agenre.name)
+        return index(self.songdbids, "%s:" % _("Genre"), agenre.name, self.filters.filtered(genrefilter(agenre.name)))
 
     def getcontents(self):
-        genres = hub.request(requests.getgenres(self.songdbid, wrapperfunc=self._genrewrapper, sort=self.cmpitem))
-        return genres
-
-    def getcontentsrecursive(self):
-        return hub.request(requests.getsongs(self.songdbid))
-
-    def getcontentsrecursiverandom(self):
-        return hub.request(requests.getsongs(self.songdbid, random=True))
-
+        return hub.request(requests.getgenres(self.songdbid, wrapperfunc=self._genrewrapper, sort=self.cmpitem,
+                                              filters=self.filters))
     def getheader(self, item):
-        nrgenres = hub.request(requests.getnumberofgenres(self.songdbid))
-        return "%s (%d)" % (_("Genres"), nrgenres)
+        if self.nrgenres is None:
+            self.nrgenres = hub.request(requests.getnumberofgenres(self.songdbid, filters=self.filters))
+        return "%s (%d)" % (_("Genres"), self.nrgenres) + self.filters.getname()
 
     def getinfo(self):
-        return [[_("Genres"), "", "", ""]]
+        return _mergefilters([[_("Genres"), "", "", ""]], self.filters)
 
 
-class decades(diritem):
+class decades(totaldiritem):
 
     """ all decades in the corresponding database """
 
-    def __init__(self, songdbid):
+    def __init__(self, songdbid, songdbids, filters):
         self.songdbid = songdbid
+        self.songdbids = songdbids
+        self.filters = filters
         self.name = _("Decades")
         self.nrdecades = None
 
+    def cmpitem(x, y):
+        return cmp(x.description, y.description)
+    cmpitem = staticmethod(cmpitem)
+
     def getname(self):
         if self.nrdecades is None:
-            self.nrdecades = hub.request(requests.getnumberofdecades(self.songdbid))
+            self.nrdecades = hub.request(requests.getnumberofdecades(self.songdbid, filters=self.filters))
         return "[%s (%d)]/" % (_("Decades"), self.nrdecades)
 
     def _decadewrapper(self, adecade, songdbid):
-        return decade(songdbid, adecade)
+        description = adecade.decade and "%ds" % adecade.decade or _("Unknown")
+        return index(self.songdbids, "%s:" % _("Decade"), description, self.filters.filtered(decadefilter(adecade.decade)))
 
     def getcontents(self):
-        decades = hub.request(requests.getdecades(self.songdbid, self._decadewrapper, sort=self.cmpitem))
-        return decades
-
-    def getcontentsrecursive(self):
-        return hub.request(requests.getsongs(self.songdbid))
-
-    def getcontentsrecursiverandom(self):
-        return hub.request(requests.getsongs(self.songdbid, random=True))
+        return hub.request(requests.getdecades(self.songdbid, self._decadewrapper, sort=self.cmpitem, filters=self.filters))
 
     def getheader(self, item):
-        nrdecades = hub.request(requests.getnumberofdecades(self.songdbid))
-        return "%s (%d)" % (_("Decades"), nrdecades)
+        if self.nrdecades is None:
+            self.nrdecades = hub.request(requests.getnumberofdecades(self.songdbid))
+        return "%s (%d)" % (_("Decades"), self.nrdecades) + self.filters.getname()
 
     def getinfo(self):
-        return [[_("Decades"), "", "", ""]]
+        return _mergefilters([[_("Decades"), "", "", ""]], self.filters)
 
-class ratings(diritem):
+
+class ratings(totaldiritem):
 
     """ all ratings in the corresponding database """
 
-    def __init__(self, songdbid):
+    def __init__(self, songdbid, songdbids, filters):
         self.songdbid = songdbid
+        self.songdbids = songdbids
+        self.filters = filters
         self.name = _("Ratings")
         self.nrratings = None
 
     def getname(self):
         if self.nrratings is None:
-            self.nrratings = hub.request(requests.getnumberofratings(self.songdbid))
+            self.nrratings = hub.request(requests.getnumberofratings(self.songdbid, filters=self.filters))
         return "[%s (%d)]/" % (_("Ratings"), self.nrratings)
 
     def cmpitem(x, y):
-        if x.rating is None:
-            return 1
-        elif y.rating is None:
-            return -1
-        else:
-            return cmp(y.rating, x.rating)
+        return cmp(x.description, y.description)
     cmpitem = staticmethod(cmpitem)
 
     def _ratingwrapper(self, arating, songdbid):
-        return rating(songdbid, arating.rating)
+        if arating.rating is not None:
+            description =  "*" * arating.rating
+        else:
+            description =  _("Not rated")
+        return index(self.songdbids, "%s:" % _("Rating"), description,
+                       self.filters.filtered(ratingfilter(arating.rating)))
 
     def getcontents(self):
-        ratings = hub.request(requests.getratings(self.songdbid, wrapperfunc=self._ratingwrapper, sort=self.cmpitem))
-        return ratings
-
-    def getcontentsrecursive(self):
-        return hub.request(requests.getsongs(self.songdbid))
-
-    def getcontentsrecursiverandom(self):
-        return hub.request(requests.getsongs(self.songdbid, random=True))
+        return hub.request(requests.getratings(self.songdbid, wrapperfunc=self._ratingwrapper, sort=self.cmpitem,
+                                               filters=self.filters))
 
     def getheader(self, item):
-        nrratings = hub.request(requests.getnumberofratings(self.songdbid))
-        return "%s (%d)" % (_("Ratings"), nrratings)
+        if self.nrratings is None:
+            nrratings = hub.request(requests.getnumberofratings(self.songdbid, filters=self.filters))
+        return "%s (%d)" % (_("Ratings"), self.nrratings) + self.filters.getname()
 
     def getinfo(self):
-        return [[_("Ratings"), "", "", ""]]
+        return _mergefilters([[_("Ratings"), "", "", ""]], self.filters)
 
 
 class songs(diritem):
 
     """ all songs in the corresponding database """
 
-    def __init__(self, songdbid, artist=None):
+    def __init__(self, songdbid, artist=None, filters=None):
         self.songdbid = songdbid
         self.name = _("Songs")
         self.artist = artist
+        self.filters = filters
         self.nrsongs = None
 
     def getname(self):
-        if self.artist is None:
-            if self.nrsongs is None:
-                self.nrsongs = hub.request(requests.getnumberofsongs(self.songdbid))
-            return "[%s (%d)]/" % (self.name, self.nrsongs)
-        else:
-            if self.nrsongs is None:
-                self.nrsongs = len(self.getcontents())
-            return "[%s (%d)]/" % (_("Songs"), self.nrsongs)
+        if self.nrsongs is None:
+            self.nrsongs = hub.request(requests.getnumberofsongs(self.songdbid, artist=self.artist, filters=self.filters))
+        return "[%s (%d)]/" % (self.name, self.nrsongs)
 
     def cmpitem(x, y):
         return ( cmp(x.title, y.title) or
@@ -1010,29 +816,27 @@ class songs(diritem):
     cmpitem = staticmethod(cmpitem)
 
     def getcontents(self):
-        songs = hub.request(requests.getsongs(self.songdbid, artist=self.artist, sort=self.cmpitem))
-        return songs
+        return hub.request(requests.getsongs(self.songdbid, artist=self.artist, filters=self.filters, sort=self.cmpitem))
 
-    getcontentsrecursivesorted = getcontents
-
-    def getcontentsrecursive(self):
-        return hub.request(requests.getsongs(self.songdbid, artist=self.artist))
+    getcontentsrecursivesorted = getcontentsrecursive = getcontents
 
     def getcontentsrecursiverandom(self):
-        return hub.request(requests.getsongs(self.songdbid, artist=self.artist, random=True))
+        return hub.request(requests.getsongs(self.songdbid, artist=self.artist, filters=self.filters, random=True))
 
     def getheader(self, item):
         if item:
-            return item.artist + " - " + item.album
+            s = item.artist + " - " + item.album
         else:
-            return self.getname()[1:-2]
+            s = self.getname()[1:-2]
+        return s + self.filters.getname()
 
     def getinfo(self):
         if self.artist is not None:
-            return [[_("Artist:"), self.artist, "", ""],
+            l = [[_("Artist:"), self.artist, "", ""],
                     [_("Songs"), "", "", ""]]
         else:
-            return [[_("Songs"), "", "", ""]]
+            l = [[_("Songs"), "", "", ""]]
+        return _mergefilters(l, self.filters)
 
 
 class playlists(diritem):
@@ -1084,9 +888,6 @@ class filesystemdir(diritem):
         else:
             self.name = self.dir[len(self.basedir):].split("/")[-1]
 
-    def getname(self):
-        return "%s/" % self.name
-
     def getcontents(self):
         items = []
         try:
@@ -1123,70 +924,83 @@ class filesystemdir(diritem):
         """ return whether the filesystemdir is the basedir of a song database """
         return self.dir == self.basedir
 
+_dbstats = None
 
-class basedir(diritem):
+class basedir(totaldiritem):
 
     """ base dir of database view"""
 
-    def __init__(self, songdbids, maxnr, virtualdirectoriesattop):
-        self.name = _("Song Database")
+    def __init__(self, songdbids, filters=filters(())):
+        # XXX: as a really dirty hack, we cache the result of getdatabasestats for
+        # all databases because we cannot call this request safely later on
+        # (we might be handling another request which calls the basedir constructor)
+        global _dbstats
+        if _dbstats is None:
+            _dbstats = {}
+            for songdbid in songdbids:
+                _dbstats[songdbid] = hub.request(requests.getdatabasestats(songdbid))
+        self.name =  _("Song Database")
         self.songdbids = songdbids
         if len(songdbids) == 1:
             self.songdbid = songdbids[0]
-            stats = hub.request(requests.getdatabasestats(self.songdbid))
-            self.type = stats.type
-            self.basedir = stats.basedir
+            self.type = _dbstats[self.songdbid].type
+            self.basedir = _dbstats[self.songdbid].basedir
         else:
             self.songdbid = None
             self.type = "virtual"
             self.basedir = None
-        self.maxnr = maxnr
-        self.virtualdirectoriesattop = virtualdirectoriesattop
+        self.filters = filters
+        self.maxnr = 100
         self.nrsongs = None
+        self._initvirtdirs()
 
-        if self.type=="local":
-            self.filesystemdir = filesystemdir(self.songdbid, self.basedir, self.basedir)
+    def _initvirtdirs(self):
+        self.virtdirs = []
+        if self.type == "local" and not self.filters:
+            self.virtdirs.append(filesystemdir(self.songdbid, self.basedir, self.basedir))
+        self.virtdirs.append(songs(self.songdbid, filters=self.filters))
+        self.virtdirs.append(albums(self.songdbid, filters=self.filters))
+        for filter in self.filters:
+            if isinstance(filter, decadefilter):
+                break
         else:
-            self.filesystemdir = None
-        self.songs = songs(self.songdbid)
-        self.albums = albums(self.songdbid)
-        self.decades = decades(self.songdbid)
-        self.genres = genres(self.songdbid)
-        self.ratings = ratings(self.songdbid)
-        self.topplayedsongs = topplayedsongs(self.songdbid)
-        self.lastplayedsongs = lastplayedsongs(self.songdbid)
-        self.lastaddedsongs = lastaddedsongs(self.songdbid)
-        self.randomsonglist = randomsonglist(self.songdbid, self.maxnr)
-        self.playlists = playlists(self.songdbid)
+            self.virtdirs.append(decades(self.songdbid, self.songdbids, filters=self.filters))
+        for filter in self.filters:
+            if isinstance(filter, genrefilter):
+                break
+        else:
+            self.virtdirs.append(genres(self.songdbid, self.songdbids, filters=self.filters))
+        for filter in self.filters:
+            if isinstance(filter, ratingfilter):
+                break
+        else:
+            self.virtdirs.append(ratings(self.songdbid, self.songdbids, filters=self.filters))
+        self.virtdirs.append(topplayedsongs(self.songdbid, filters=self.filters))
+        self.virtdirs.append(lastplayedsongs(self.songdbid, filters=self.filters))
+        self.virtdirs.append(lastaddedsongs(self.songdbid, filters=self.filters))
+        self.virtdirs.append(randomsonglist(self.songdbid, self.maxnr, filters=self.filters))
+        if not self.filters:
+            self.virtdirs.append(playlists(self.songdbid))
         if len(self.songdbids) > 1:
-            self.subbasedirs = [basedir([songdbid], self.maxnr, self.virtualdirectoriesattop)
-                                for songdbid in self.songdbids]
-        else:
-            self.subbasedirs = []
-
-        self.virtdirs = [self.songs,
-                         self.albums,
-                         self.decades,
-                         self.genres,
-                         self.ratings,
-                         self.topplayedsongs,
-                         self.lastplayedsongs,
-                         self.lastaddedsongs,
-                         self.randomsonglist,
-                         self.playlists]
-        if self.filesystemdir is not None:
-            self.virtdirs[:0] = [self.filesystemdir]
-        self.virtdirs.extend(self.subbasedirs)
+            self.virtdirs.extend([basedir([songdbid], self.filters) for songdbid in self.songdbids])
 
     def getname(self):
-        return "[%s]/" % self.getheader(None)
+        if self.nrsongs is None:
+            self.nrsongs = hub.request(requests.getnumberofsongs(self.songdbid, filters=self.filters))
+        if self.basedir:
+            return  _("[Database: %s (%d)]") % (self.basedir, self.nrsongs)
+        else:
+            return _("%d databases (%d)") % (len(self.songdbids), self.nrsongs)
 
     def _artistwrapper(self, aartist, songdbid):
-        return artist(self.songdbid, aartist.name)
+        return artist(self.songdbid, aartist.name, filters=self.filters)
 
     def getcontents(self):
-        aartists = hub.request(requests.getartists(self.songdbid, wrapperfunc=self._artistwrapper, sort=self.cmpitem))
-        if self.virtualdirectoriesattop:
+        # reset cached value once in a while
+        self.nrsongs = None
+        aartists = hub.request(requests.getartists(self.songdbid, wrapperfunc=self._artistwrapper, sort=self.cmpitem,
+                                                   filters=self.filters))
+        if config.filelistwindow.virtualdirectoriesattop:
             return self.virtdirs + aartists
         else:
             return aartists + self.virtdirs
@@ -1194,25 +1008,57 @@ class basedir(diritem):
     def getcontentsrecursivesorted(self):
         # we cannot rely on the default implementation since we don't want
         # to have the albums and songs included trice
-        artists = hub.request(requests.getartists(self.songdbid, wrapperfunc=self.artistwrapper, sort=self.cmpitem))
+        artists = hub.request(requests.getartists(self.songdbid, wrapperfunc=self._artistwrapper, sort=self.cmpitem,
+                                                  filters=self.filters))
         result = []
         for aartist in artists:
             result.extend(aartist.getcontentsrecursivesorted())
         return result
 
-    def getcontentsrecursive(self):
-        return hub.request(requests.getsongs(self.songdbid))
+    def getheader(self, item):
+        if self.nrsongs is None:
+            self.nrsongs = hub.request(requests.getnumberofsongs(self.songdbid, filters=self.filters))
+        if self.basedir:
+            s = _("Database (%s, %d songs)") % (self.basedir, self.nrsongs)
+        else:
+            s = _("%d databases (%d songs)") % (len(self.songdbids), self.nrsongs)
+        return s + self.filters.getname()
 
-    def getcontentsrecursiverandom(self):
-        return hub.request(requests.getsongs(self.songdbid, random=True))
+    def getinfo(self):
+         if self.basedir:
+             description = _("[Database: %s (%%d)]") % (self.basedir)
+         else:
+             description = _("%d databases (%%d)") % (len(self.songdbids))
+         return _mergefilters([[self.name, description, "", ""]], self.filters)
+
+
+class index(basedir):
+    
+    def __init__(self, songdbids, name, description, filters):
+        self.songdbids = songdbids
+        self.name = name
+        self.description = description
+        self.filters = filters
+        self.maxnr = 100
+        self.type = "index"
+        if len(songdbids) == 1:
+            self.songdbid = songdbids[0]
+        else:
+            self.songdbid = None
+        self.nrsongs = None
+        self._initvirtdirs()
+
+    def getname(self):
+        if self.nrsongs is None:
+            self.nrsongs = hub.request(requests.getnumberofsongs(self.songdbid, filters=self.filters))
+        return "%s (%d)/" % (self.description, self.nrsongs)
 
     def getheader(self, item):
         if self.nrsongs is None:
-            self.nrsongs = hub.request(requests.getnumberofsongs(self.songdbid))
-        if self.basedir:
-            return _("Database (%s, %d songs)") % (self.basedir, self.nrsongs)
-        else:
-            return _("%d databases (%d songs)") % (len(self.songdbids), self.nrsongs)
+            self.nrsongs = hub.request(requests.getnumberofsongs(self.songdbid, filters=self.filters))
+        filtername = filters(self.filters[:-1]).getname()
+        return "%s %s%s (%d)" % (self.name, self.description, filtername, self.nrsongs)
 
     def getinfo(self):
-        return [["%s:" % _("Database"), self.basedir, "", ""]]
+        return _mergefilters([[self.name, self.description, "", ""]], self.filters[:-1])
+

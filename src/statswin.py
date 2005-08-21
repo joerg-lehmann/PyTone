@@ -61,7 +61,7 @@ class statswin(messagewin.messagewin):
         cachestatsstring = _("%d requests, %d / %d objects") % (stats.requestcacherequests, stats.requestcachesize,
                                                                 stats.requestcachemaxsize)
         if stats.requestcachemaxsize != 0:
-            cachestatsstring = cachestatsstring + " (%d)" % (100*stats.requestcachesize//stats.requestcachemaxsize)
+            cachestatsstring = cachestatsstring + " (%d%%)" % (100*stats.requestcachesize//stats.requestcachemaxsize)
         lines.append((_("Request cache size") + ":", cachestatsstring))
         totalrequests = stats.requestcachehits + stats.requestcachemisses
         if totalrequests != 0:

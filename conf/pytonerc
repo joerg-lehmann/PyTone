@@ -118,13 +118,6 @@ requestcachesize = 50000
 
 # type = local: local bsddb database
 #
-# basename:                 Prefix of the files used for the song database. The
-#                           actual files are named "<songdbbase>_songs.db" and
-#                           "<songdbbase>_artists.db",  etc. Set this to an empty
-#                           value, if you want to use the dbfile option.
-# dbfile:                   Name of the database file which contains all databases.
-#                           Set this to an empty value, if you want to use the
-#                           basename option.
 # dbenvdir:                 Name of the directory for the bsddb database
 #                           environment. Note that every database must have
 #                           its own database environment directory!
@@ -163,22 +156,15 @@ requestcachesize = 50000
 [database.main]
 type = local
 
-# store song database in multiple files starting with the prefix given
-basename = ~/.pytone/mp3
-dbfile =
+# directory where db and log files are stored (every database has to have its own)
 dbenvdir = ~/.pytone/mp3
+
+musicbasedir =
 
 tracknrandtitlere = ^\[?(\d+)\]? ?[- ] ?(.*)\.(mp3|ogg)$
 tags_capitalize = true 
 tags_stripleadingarticle = true
 tags_removeaccents = true
-
-
-# Alternatively, you can also store all database in a single file:
-# basename = 
-# dbfile = ~/.pytone/mp3.db
-
-musicbasedir = 
 
 autoregisterer = on
 playingstatslength = 100

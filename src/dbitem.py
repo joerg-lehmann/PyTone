@@ -47,7 +47,7 @@ class dbitem:
 
     """ base class for various items stored in database:
 
-    songs, albums, artists, genres, years, playlists"""
+    songs, albums, artists, genres, decades, playlists"""
 
     def __cmp__(self, other):
         try:
@@ -81,7 +81,8 @@ class song(dbitem):
         self.title = ""
         self.album = ""
         self.artist = ""
-        self.year = ""
+        self.year = None
+        self.decade = None
         self.genre = ""
         self.tracknr = ""
         self.length = 0
@@ -204,6 +205,11 @@ class song(dbitem):
             except:
                 self.year = None
 
+        if self.year is not None:
+            self.decade = 10*(self.year//10)
+        else:
+            self.decade = None
+
         if capitalize:
             # normalize artist, album and title
             self.artist = string.capwords(self.artist)
@@ -299,10 +305,10 @@ class genre(dbindex):
         self.name = name
 
 
-class year(dbindex):
-    def __init__(self, year):
-        dbindex.__init__(self, str(year))
-        self.year = year
+class decade(dbindex):
+    def __init__(self, decade):
+        dbindex.__init__(self, str(decade))
+        self.decade = decade
 
 
 class rating(dbindex):

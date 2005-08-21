@@ -249,7 +249,7 @@ class songdbmanager(service.service):
             if ( oldsong.album == newsong.album and
                  oldsong.artist == newsong.artist and
                  oldsong.genre == newsong.genre and
-                 oldsong.year == newsong.year and
+                 oldsong.decade == newsong.decade and
                  oldsong.rating == newsong.rating ):
                 # only the playing information was changed, so we just
                 # delete the relevant cache results
@@ -382,32 +382,29 @@ class songdbmanager(service.service):
 
     # requests which return number of items of a certain kind
 
-    def _requestnumbers(self, request, listrequest, requestkwargs={}):
+    def getnumberofsongs(self, request):
+        if request.songdbid is not None and request.songdbid not in self.songdbids:
+            log.error("songdbmanager: invalid songdbid '%s' for database request" % request.songdbid)
+        if request.songdbid is not None and request.artist is request.album is None and not request.filters:
+            return self.songdbhub.request(request)
+        else:
+            return len(self.dbrequestsongs(requests.getsongs(songdbid=request.songdbid,
+                                                             artist=request.artist, album=request.album,
+                                                             filters=request.filters)))
+    getnumberofsongs = cacheresult(getnumberofsongs)
+
+    def _requestnumbers(self, request, listrequest):
         """ helper method for a request which queries for the number of items.
-        
+
         If a database is specified, the corresponding database request is
         executed directly. Otherwise, the length of the result of listrequest
         is returned. """
         if request.songdbid is not None and request.songdbid not in self.songdbids:
             log.error("songdbmanager: invalid songdbid '%s' for database request" % request.songdbid)
-        elif request.songdbid is None or requestkwargs:
-            if issubclass(listrequest, requests.dbrequestlist):
-                return len(self.dbrequestlist(listrequest(songdbid=None, **requestkwargs)))
-            else:
-                return len(self.dbrequestsongs(listrequest(songdbid=None, **requestkwargs)))
+        elif request.songdbid is None or request.filters:
+            return len(self.dbrequestlist(listrequest(songdbid=request.songdbid, filters=request.filters)))
         else:
             return self.songdbhub.request(request)
-
-    def getnumberofsongs(self, request):
-        if request.artist is request.album is request.indexname is request.indexid is None:
-            requestkwargs = {}
-        else:
-            requestkwargs = { "artist": request.artist,
-                              "album": request.album,
-                              "indexname": request.indexname,
-                              "indexid": request.indexid }
-        return self._requestnumbers(request, requests.getsongs, requestkwargs)
-    getnumberofsongs = cacheresult(getnumberofsongs)
 
     def getnumberofalbums(self, request):
         return self._requestnumbers(request, requests.getalbums)
@@ -418,7 +415,6 @@ class songdbmanager(service.service):
     getnumberofdecades = cacheresult(getnumberofdecades)
 
     def getnumberofartists(self, request):
-        log.debug("++++++++++")
         return self._requestnumbers(request, requests.getartists)
     getnumberofartists = cacheresult(getnumberofartists)
 

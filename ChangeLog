@@ -1,3 +1,19 @@
+2005-08-19 Jörg Lehmann  <joerg@luga.de>
+
+	* Get rid of multi-file database layout:
+	   - convert old layout automatically
+	   - leave configuration file switches basename and dbfile intact but
+	     warn the user when they are non-empty
+	   - in a next step, we will set the default value of the basename
+	     switch to an empty value (when presumably all databases have been
+	     converted)
+	   - finally as a final step, we remove the switches and require
+	     that the users change their config files
+	* Database version 5: do not longer index by years but by decades
+	which removes many special code paths at various places in the db
+	code.
+
+
 2005-08-11 Jörg Lehmann  <joerg@luga.de>
 
 	* bufferedao.c: New C extension module corresponding to

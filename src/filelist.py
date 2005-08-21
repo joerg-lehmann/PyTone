@@ -27,8 +27,7 @@ class filelist(slist.slist):
     def __init__(self, win, songdbids):
         slist.slist.__init__(self, win, config.filelistwindow.scrollmode == "page")
 
-        self.basedir = item.basedir(songdbids, win.ih,
-                                    config.filelistwindow.virtualdirectoriesattop)
+        self.basedir = item.basedir(songdbids)
         self.dir = [self.basedir]
         self.shistory = []
         self.readdir()

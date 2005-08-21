@@ -19,6 +19,7 @@
 
 import os
 import errno
+import sys
 import time
 import bsddb.dbshelve
 import bsddb.db
@@ -54,7 +55,7 @@ class dbenv:
             os.mkdir(self.dbenvdir, 02775)
         except OSError, e:
             if e.errno != errno.EEXIST: raise
-            
+
         # setup db environment
         self.dbenv = bsddb.db.DBEnv()
 
@@ -97,7 +98,7 @@ class dbenv:
 
         self.dbenv.close()
         self.dbenv = None
-        
+
     def txn_begin(self):
         return self.dbenv.txn_begin()
 
@@ -158,7 +159,7 @@ class songdb(service.service):
         service.service.__init__(self, "%s songdb" % id, hub=songdbhub)
         self.id = id
         self.songdbbase = config.basename
-        self.dbfile = config.dbfile
+        self.dbfile = "db"
         self.basedir = config.musicbasedir
         self.playingstatslength = config.playingstatslength
         self.tracknrandtitlere = config.tracknrandtitlere
@@ -174,9 +175,18 @@ class songdb(service.service):
         if not os.access(self.basedir, os.X_OK | os.R_OK):
             raise errors.configurationerror("you are not allowed to access and read config.general.musicbasedir.")
 
+        if config.dbfile:
+            if config.dbfile == "db":
+                log.warning(_('using dbfile="db" by default, please remove dbfile entry in [database.%s] section of your config file') % self.id)
+            else:
+                raise errors.configurationerror("setting dbfile not possible anymore, please rename your database %s" % self.id)
+
+
         self.dbenv = dbenv(self.dbenvdir, self.cachesize)
 
-        self.indices = ["genre", "year", "rating"]
+        # We keep the year index still around although we do not use it anymore.
+        # otherwise we run into troubles when upgrading from the old mulit-file layout
+        self.indices = ["genre", "decade", "rating"]
 
         # currently active transaction - initially, none
         self.txn = None
@@ -219,7 +229,6 @@ class songdb(service.service):
         self.channel.supply(requests.getnumberofdecades, self.getnumberofdecades)
         self.channel.supply(requests.getnumberofratings, self.getnumberofratings)
         self.channel.supply(requests.getgenres, self.getgenres)
-        self.channel.supply(requests.getyears, self.getyears)
         self.channel.supply(requests.getdecades, self.getdecades)
         self.channel.supply(requests.getratings, self.getratings)
         self.channel.supply(requests.getlastplayedsongs, self.getlastplayedsongs)
@@ -238,27 +247,23 @@ class songdb(service.service):
     def _initdb(self):
         """ initialise database using modern bsddb interface of Python 2.3 and above """
 
-        openflags = bsddb.db.DB_CREATE 
+        openflags = bsddb.db.DB_CREATE
 
-        # setup databases (either in one single or several extra files)
-        if self.dbfile:
-            self.songs = self.dbenv.openshelve(self.dbfile, flags=openflags, dbname="songs")
-            self.artists = self.dbenv.openshelve(self.dbfile, flags=openflags, dbname="artists")
-            self.albums = self.dbenv.openshelve(self.dbfile, flags=openflags, dbname="albums")
-            self.playlists = self.dbenv.openshelve(self.dbfile, flags=openflags, dbname="playlists")
-            for index in self.indices:
-                setattr(self, index+"s", self.dbenv.openshelve(self.dbfile, flags=openflags, dbname=index+"s"))
-            self.stats = self.dbenv.openshelve(self.dbfile, flags=openflags, dbname="stats")
-        else:
-            # songdbprefix = os.path.basename(self.songdbbase)
+        self.songs = self.dbenv.openshelve(self.dbfile, flags=openflags, dbname="songs")
+        self.artists = self.dbenv.openshelve(self.dbfile, flags=openflags, dbname="artists")
+        self.albums = self.dbenv.openshelve(self.dbfile, flags=openflags, dbname="albums")
+        self.playlists = self.dbenv.openshelve(self.dbfile, flags=openflags, dbname="playlists")
+        for index in self.indices:
+            setattr(self, index+"s", self.dbenv.openshelve(self.dbfile, flags=openflags, dbname=index+"s"))
+        self.stats = self.dbenv.openshelve(self.dbfile, flags=openflags, dbname="stats")
+
+        # check whether we have to convert from an old multi-file database layout
+        if self.songdbbase:
             songdbprefix = self.songdbbase
-            self.songs = self.dbenv.openshelve(songdbprefix + "_songs.db", flags=openflags)
-            self.artists = self.dbenv.openshelve(songdbprefix + "_artists.db", flags=openflags)
-            self.albums = self.dbenv.openshelve(songdbprefix + "_albums.db", flags=openflags)
-            self.playlists = self.dbenv.openshelve(songdbprefix + "_playlists.db", flags=openflags)
-            for index in self.indices:
-                setattr(self, index+"s", self.dbenv.openshelve(songdbprefix + "_"+index+"s.db", flags=openflags))
-            self.stats = self.dbenv.openshelve(songdbprefix + "_stats.db", flags=openflags)
+            if os.path.exists(songdbprefix + "_CONVERTED"):
+                log.warning(_('using new database, please set "basename=" in [database.%s] section of your config file') % self.id)
+            else:
+                self._convertfromoldfilelayout()
 
         log.info(_("database %s: basedir %s, %d songs, %d artists, %d albums, %d genres, %d playlists") %
                  (self.id, self.basedir, len(self.songs),  len(self.artists),  len(self.albums),
@@ -268,7 +273,7 @@ class songdb(service.service):
         if not self.stats:
             try:
                 self._txn_begin()
-                # insert lists into statistics db 
+                # insert lists into statistics db
                 if not "topplayed" in self.stats.keys():
                     self.stats.put("topplayed", [], txn=self.txn)
                 if not "lastplayed" in self.stats.keys():
@@ -277,8 +282,8 @@ class songdb(service.service):
                     self.stats.put("lastadded", [], txn=self.txn)
 
                 # set version number for new, empty database
-                self.stats.put("db_version", 4, txn=self.txn)
-                
+                self.stats.put("db_version", 5, txn=self.txn)
+
                 # set database version for older databases
                 if not self.stats.has_key("db_version", txn=self.txn):
                     self.stats.put("db_version", 1, txn=self.txn)
@@ -301,8 +306,11 @@ class songdb(service.service):
 
         if self.stats["db_version"] < 4:
             self._updatefromversion3to4()
-            
-        if self.stats["db_version"] > 4:
+
+        if self.stats["db_version"] < 5:
+            self._updatefromversion4to5()
+
+        if self.stats["db_version"] > 5:
             raise RuntimeError("database version %d not supported" % self.stats["db_version"])
  
     def _updatefromversion1to2(self):
@@ -366,7 +374,6 @@ class songdb(service.service):
             self._checkpoint()
             print "Done"
 
-
     def _updatefromversion2to3(self):
         """ update from database version 2 to version 3 """
 
@@ -386,7 +393,7 @@ class songdb(service.service):
                     self.songs.put(song.id, song, txn=self.txn)
                 else:
                     raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
-                
+
             print "%d artists..." % len(self.artists),
             for artistid, artist in self.artists.items(txn=self.txn):
                 newsongs = []
@@ -488,7 +495,7 @@ class songdb(service.service):
         """ update from database version 3 to version 4 """
 
         log.info(_("updating song database %s from version 3 to version 4") % self.id)
-        print _("Updating song database %s from version 3 to version 4:") % self.id,
+        print _("Updating song database %s from version 3 to version 4:") % self.id
 
         try:
             self._txn_begin()
@@ -515,6 +522,104 @@ class songdb(service.service):
             self._checkpoint()
             print "Done"
 
+    def _updatefromversion4to5(self):
+        """ update from database version 4 to version 5 """
+
+        log.info(_("updating song database %s from version 4 to version 5") % self.id)
+        print _("Updating song database %s from version 4 to version 5:") % self.id
+
+        try:
+            self._txn_begin()
+            print "%d songs..." % len(self.songs)
+
+            nr = 0
+            for songid, song in self.songs.items(txn=self.txn):
+                if song.year is not None:
+                    song.decade = 10*(song.year//10)
+                else:
+                    song.decade = None
+                self.songs.put(songid, song, txn=self.txn)
+                self._indexsong_index(song, "decade")
+                nr += 1
+                if nr % 100 == 0:
+                    print "finished %d/%d songs\r" % (nr, len(self.songs)),
+                    sys.stdout.flush()
+            print
+
+            # emptying years index (but not removing it, how can we do that?)
+            years = self.dbenv.openshelve(self.dbfile, flags=bsddb.db.DB_CREATE, dbname="years")
+            print "%d years..." % len(years.keys())
+            for year in years.keys():
+                years.delete(year, txn=self.txn)
+            years.close()
+
+            self.stats.put("db_version", 5, txn=self.txn)
+        except:
+            self._txn_abort()
+            print "Conversion failed - changes have not been comitted"
+            raise
+        else:
+            self._txn_commit()
+            self._checkpoint()
+            print "Done"
+
+    def _convertfromoldfilelayout(self):
+        """ convert databases from old multifile layout """
+
+        log.info(_("converting song database %s from old multifile layout") % self.id)
+        print _("converting song database %s from old multifile layout:") % self.id
+
+        assert(len(self.songs) == len(self.artists) == len(self.albums) == len(self.playlists) == 0), "new db has to be empty"
+
+        songdbprefix = self.songdbbase
+
+        try:
+            self._txn_begin()
+            songs = bsddb.dbshelve.open(songdbprefix + "_songs.db")
+            print "%d songs..." % len(songs),
+            for songid, song in songs.items():
+                self.songs.put(songid, song, txn=self.txn)
+
+            artists = bsddb.dbshelve.open(songdbprefix + "_artists.db")
+            print "%d artists..." % len(artists),
+            for artistid, artist in artists.items():
+                self.artists.put(artistid, artist, txn=self.txn)
+
+            albums = bsddb.dbshelve.open(songdbprefix + "_albums.db")
+            print "%d albums..." % len(albums),
+            for albumid, album in albums.items():
+                self.albums.put(albumid, album, txn=self.txn)
+
+            playlists = bsddb.dbshelve.open(songdbprefix + "_playlists.db")
+            print "%d playlists..." % len(albums),
+            for playlistid, playlist in playlists.items():
+                self.playlists.put(playlistid, playlist, txn=self.txn)
+
+            print "%d indices..." % len(self.indices),
+            # We have to hard-wire the index names to the ones used in database version 4
+            # except for the year index which does no longer exist in version 5 and thus does
+            # not need to be upgraded.
+            for indexname in ["genre", "rating"]:
+                newindex = getattr(self, indexname+"s")
+                oldindex = bsddb.dbshelve.open(songdbprefix + "_"+indexname+"s.db")
+                for id, item in oldindex.items():
+                    newindex.put(id, item, txn=self.txn)
+
+            print "stats...",
+            stats = bsddb.dbshelve.open(songdbprefix + "_stats.db")
+            for id, item in stats.items():
+                self.stats.put(id, item, txn=self.txn)
+
+            print "marking old db as converted...",
+            marker = open(songdbprefix+"_CONVERTED", "w")
+            marker.close()
+        except:
+            self._txn_abort()
+            raise
+        else:
+            self._txn_commit()
+            self._checkpoint()
+            print "Done"
 
     def run(self):
         service.service.run(self)
@@ -537,7 +642,7 @@ class songdb(service.service):
     def _txn_abort(self):
         self.txn.abort()
         self.txn = None
-            
+
     def _checkpoint(self):
         """flush memory pool, write checkpoint record to log and flush flog"""
         self.dbenv.checkpoint()
@@ -659,8 +764,8 @@ class songdb(service.service):
         else:
             self.artists.delete(song.artist, txn=self.txn)
             hub.notify(events.artistaddedordeleted(self.id, artist))
-            
-    # other indices: genre, year, rating, ...
+
+    # other indices: genre, decade, rating, ...
 
     def _indexsong_index(self, song, indexname):
         """ insert/update index for song """
@@ -698,7 +803,7 @@ class songdb(service.service):
             index.put(indexid, indexentry, txn=self.txn)
 
     def _unindexsong_index(self, song, indexname):
-        """ delete song from a given index (for instance genre, year)"""
+        """ delete song from a given index (for instance genre, decade)"""
 
         index = getattr(self, indexname+"s")
         # indexid always has to be a string 
@@ -787,7 +892,7 @@ class songdb(service.service):
                     break
             else:
                 topplayed.append(song.id)
-                
+
         self.stats.put("topplayed", topplayed[:self.playingstatslength], txn=self.txn)
 
     def _unindexsong_stats(self, song):
@@ -822,11 +927,16 @@ class songdb(service.service):
         self._indexsong_stats(song)
 
     def _reindexsong(self, oldsong, newsong):
-        if (oldsong.album != newsong.album or
-            oldsong.artist != newsong.artist or
-            oldsong.genre != newsong.genre or
-            oldsong.year != newsong.year or
-            oldsong.rating != newsong.rating):
+        reindex = False
+        # check whether we have to update the indices
+        if oldsong.album != newsong.album or oldsong.artist != newsong.artist:
+            reindex = True
+        else:
+            for index in self.indices:
+                if getattr(oldsong, index) != getattr(newsong, index):
+                    reindex = True
+                    break
+        if reindex:
             # The update process of the album and artist information
             # is split into three parts to prevent an intermediate
             # deletion of artist and/or album (together with its rating
@@ -835,11 +945,12 @@ class songdb(service.service):
             self._unindexsong_artist(oldsong)
             for index in self.indices:
                 self._unindexsong_index(oldsong, index)
-                
+
             self._indexsong_album(newsong)
             self._indexsong_artist(newsong)
             for index in self.indices:
                 self._indexsong_index(newsong, index)
+        # update playing statistics if necessary
         if (oldsong.lastplayed != newsong.lastplayed or
             oldsong.nrplayed != newsong.nrplayed):
             self._indexsong_stats(newsong)
@@ -857,7 +968,7 @@ class songdb(service.service):
         """get song info from database or insert new one"""
 
         path = os.path.normpath(path)
-        
+
         # check if we are allowed to store this song in this database
         if not path.startswith(self.basedir):
             return None
@@ -887,14 +998,14 @@ class songdb(service.service):
             else:
                 self._txn_commit()
                 log.debug("new song %s" % path)
-                
+
         return song
 
     def _delsong(self, song):
         """delete song from database"""
         if not self.songs.has_key(song.id):
             raise KeyError
-        
+
         log.debug("delete song: %s" % str(song))
         self._txn_begin()
         try:
@@ -989,7 +1100,7 @@ class songdb(service.service):
         """delete playlist from database"""
         if not self.playlists.has_key(playlist.id):
             raise KeyError
-        
+
         log.debug("delete playlist: %s" % str(playlist))
         self._txn_begin()
         try:
@@ -1036,62 +1147,38 @@ class songdb(service.service):
     ##########################################################################################
 
     def _getsong(self, id):
-        """returns song entry with given id"""
+        """return song entry with given id"""
         song = self.songs.get(id)
         return song
 
     def _getalbum(self, album):
-        """returns given album"""
+        """return given album"""
         return self.albums[album]
 
     def _getartist(self, artist):
-        """returns given artist"""
+        """return given artist"""
         return self.artists.get(artist)
 
-    def _getartists(self, indexname=None, indexid=None):
-        """return all stored artists"""
-        # use cached value if existent
-        if indexname is None:
-            return map(self.artists.get, self.artists.keys())
-        else:
-            index = getattr(self, indexname+"s")
-            # indexid always has to be a string
-            return map(self.artists.get, index[str(indexid)].artists)
+    def _filtersongs(self, songs, filters):
+        """return items matching filters"""
+        for filter in filters:
+            indexname = filter.indexname
+            indexid = filter.indexid
+            songs = [song for song in songs if getattr(song, indexname) == indexid]
+        return songs
 
-    def _getalbums(self, artist=None, indexname=None, indexid=None):
-        """return albums of a given artist and genre
-
-        artist has to be a string. If it is none, all stored
-        albums are returned
-        """
-        if artist is None:
-            if indexname is None:
-                return map(self.albums.get, self.albums.keys())
-            else:
-                index = getattr(self, indexname+"s")
-                # indexid always has to be a string
-                return map(self.albums.get, index[str(indexid)].albums)
-        else:
-            albums = map(self.albums.get, self.artists[artist].albums)
-            if indexname is not None:
-                index = getattr(self, indexname+"s")
-                # indexid always has to be a string
-                albumsindexentry = index[str(indexid)].albums
-                albums = [album for album in albums if album.id in albumsindexentry]
-            return albums
-
-    def _getsongs(self, artist=None, album=None, indexname=None, indexid=None):
+    def _getsongs(self, artist=None, album=None, filters=None):
         """ returns song of given artist, album and with song.indexname==indexid
 
         All values either have to be strings or None, in which case they are ignored.
         """
 
-        if artist is None and album is None and indexname is None:
+        if artist is None and album is None and not filters:
             # return all songs in songdb
             # songs = map(self.songs.get, self.songs.keys())
             return self.songs.values()
 
-        if indexname is None:
+        if not filters:
             if album is None:
                 # return all songs of a given artist
                 keys = self._getartist(artist).songs
@@ -1110,56 +1197,108 @@ class songdb(service.service):
                 songs = map(self.songs.get, keys)
                 return [song for song in songs if song.album==album]
         else:
-            # indexname and indexid specified
-            index = getattr(self, indexname+"s")
-            
+            # filters specified
             if artist is None and album is None:
-                # the indexid in the index always has to be a string!
-                songs = map(self.songs.get, index[str(indexid)].songs)
-                return songs
+                index = getattr(self, filters[0].indexname+"s")
+                songs = map(self.songs.get, index[str(filters[0].indexid)].songs)
+                return self._filtersongs(songs, filters[1:])
             else:
                 songs = self._getsongs(artist=artist, album=album)
-                return [song for song in songs if getattr(song, indexname)==indexid]
+                return self._filtersongs(songs, filters)
 
-    def _getgenres(self):
+    def _filteralbumartists(self, itemname, filters, itemids=None):
+        itemgetter = getattr(self, itemname).get
+        # consider case without filters separately
+        if not filters:
+           if itemids is None:
+               itemids = getattr(self, itemname).keys()
+           return map(itemgetter, itemids)
+
+        if itemids is None:
+            index = getattr(self, filters[0].indexname+"s")
+            itemids = getattr(index[str(filters[0].indexid)], itemname)
+            filters = filters[1:]
+        # we use a hash to construction of the intersection of the results of the various filters
+        items = {}
+        for itemid in itemids:
+            items[itemid] = itemgetter(itemid)
+
+        for filter in filters:
+            newitems = {}
+            index = getattr(self, filter.indexname+"s")
+            for itemid in getattr(index[str(filter.indexid)], itemname):
+                if itemid in items:
+                    newitems[itemid] = items[itemid]
+            items = newitems
+        return items.values()
+
+    def _getartists(self, filters=None):
+        """return all stored artists"""
+        return self._filteralbumartists("artists", filters)
+
+    def _getalbums(self, artist=None, filters=None):
+        """return albums of a given artist and genre
+
+        artist has to be a string. If it is none, all stored
+        albums are returned
+        """
+        if artist is None:
+            return self._filteralbumartists("albums", filters)
+        else:
+            return self._filteralbumartists("albums", filters, self.artists[artist].albums)
+
+    def _filterindex(self, index, filters):
+        """ return all keys in index filtered by filters """
+        items = getattr(self, index).values()
+        if filters:
+            for filter in filters:
+                newitems = []
+                for item in items:
+                    for song in map(self.songs.get, item.songs):
+                        if getattr(song, filter.indexname) == filter.indexid:
+                            newitems.append(item)
+                            break
+                items = newitems
+        return items
+
+    def _getgenres(self, filters):
         """return all stored genres"""
-        keys = self.genres.keys()
-        genres = map(self.genres.get, keys)
-        return genres
+        return self._filterindex("genres", filters)
 
-    def _getyears(self):
-        """return all stored years"""
-        keys = self.years.keys()
-        years = map(self.years.get, keys)
-        return years
+    def _getdecades(self, filters):
+        """return all stored decades"""
+        return self._filterindex("decades", filters)
 
-    def _getratings(self):
+    def _getratings(self, filters):
         """return all stored ratings"""
-        keys = self.ratings.keys()
-        ratings = map(self.ratings.get, keys)
-        return ratings
+        return self._filterindex("ratings", filters)
 
-    def _getlastplayedsongs(self):
+    def _getlastplayedsongs(self, filters):
         """return the last played songs"""
-        return [(self.songs[songid], playingtime) for songid, playingtime in self.stats["lastplayed"]]
+        if not filters:
+            return [(self.songs[songid], playingtime) for songid, playingtime in self.stats["lastplayed"]]
+        else:
+            songs = [self.songs[songid] for songid, playingtime in self.stats["lastplayed"]]
+            filteredsongids = [song.id for song in self._filtersongs(songs, filters)]
+            return [(self.songs[songid], playingtime) for songid, playingtime in self.stats["lastplayed"]
+                    if songid in filteredsongids]
 
-    def _gettopplayedsongs(self):
+    def _gettopplayedsongs(self, filters):
         """return the top played songs"""
         keys = self.stats["topplayed"]
-        return map(self.songs.get, keys)
+        return self._filtersongs(map(self.songs.get, keys), filters)
 
-    def _getlastaddedsongs(self):
+    def _getlastaddedsongs(self, filters):
         """return the last played songs"""
         keys = self.stats["lastadded"]
-        return map(self.songs.get, keys)
+        return self._filtersongs(map(self.songs.get, keys), filters)
 
     def _getplaylist(self, path):
         """returns playlist entry with given path"""
         return self.playlists.get(path)
 
     def _getplaylists(self):
-        keys = self.playlists.keys()
-        return map(self._getplaylist, keys)
+        return self.playlists.values()
 
     def _getsongsinplaylist(self, path):
         playlist = self._getplaylist(path)
@@ -1255,7 +1394,7 @@ class songdb(service.service):
     def clearstats(self, event):
         if event.songdbid == self.id:
             self._clearstats()
-            
+
     # request handlers
 
     def getdatabasestats(self, request):
@@ -1274,13 +1413,7 @@ class songdb(service.service):
     def getnumberofdecades(self, request):
         if self.id != request.songdbid:
             raise hub.DenyRequest
-        decades = []
-        for year in self.years.keys():
-            if year!="None" and year!="0" and int(year)/10*10 not in decades:
-                decades.append(int(year)/10*10)
-            elif year=="None" and year not in decades:
-                decades.append(None)
-        return len(decades)
+        return len(self.decades.keys())
 
     def getnumberofgenres(self, request):
         if self.id != request.songdbid:
@@ -1309,7 +1442,7 @@ class songdb(service.service):
         return len(self.artists.keys())
 
     def queryregistersong(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
         return self._queryregistersong(request.path)
 
@@ -1322,49 +1455,23 @@ class songdb(service.service):
             return None
 
     def getsongs(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
-        if request.indexname!="decade":
-            try:
-                return self._getsongs(request.artist, request.album, request.indexname, request.indexid)
-            except (KeyError, AttributeError, TypeError):
-                return []
-        else:
-            if request.indexid is None:
-                return self._getsongs(request.artist, request.album, indexname="year", indexid=None)
-            songs = []
-            for year in range(request.indexid, request.indexid+10):
-                try:
-                    songs.extend(self._getsongs(request.artist, request.album, indexname="year", indexid=year))
-                except (KeyError, AttributeError, TypeError):
-                    pass
-            return songs
+        try:
+            return self._getsongs(request.artist, request.album, request.filters)
+        except (KeyError, AttributeError, TypeError):
+            return []
 
     def getartists(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
-        if request.indexname != "decade":
-            try:
-                return self._getartists(request.indexname, request.indexid)
-            except KeyError:
-                return []
-        else:
-            if request.indexid is None:
-                return self._getartists(indexname="year", indexid=None)
-            artists = []              
-            for year in range(request.indexid, request.indexid+10):
-                try:
-                    newartists = self._getartists(indexname="year", indexid=year)
-                    oldartistids = map(lambda a:a.id, artists)
-                    for newartist in newartists:
-                        if newartist.id not in oldartistids:
-                            artists.append(newartist)
-                except KeyError:
-                    pass
-            return artists
+        try:
+            return self._getartists(request.filters)
+        except KeyError:
+            return []
 
     def getartist(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
         try:
             return self._getartist(request.artist)
@@ -1372,30 +1479,15 @@ class songdb(service.service):
             return None
 
     def getalbums(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
-        if request.indexname!="decade":
-            try:
-                return self._getalbums(request.artist, request.indexname, request.indexid)
-            except KeyError:
-                return []
-        else:
-            if request.indexid is None:
-                return self._getalbums(request.artist, indexname="year", indexid=None)
-            albums = []
-            for year in range(request.indexid, request.indexid+10):
-                try:
-                    newalbums = self._getalbums(request.artist, indexname="year", indexid=year)
-                    oldalbums = map(lambda a:a.id, albums)
-                    for newalbum in newalbums:
-                        if newalbum.id not in oldalbums:
-                            albums.append(newalbum)
-                except KeyError:
-                    pass
-            return albums
+        try:
+            return self._getalbums(request.artist, request.filters)
+        except KeyError:
+            return []
 
     def getalbum(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
         try:
             return self._getalbum(request.album)
@@ -1403,66 +1495,52 @@ class songdb(service.service):
             return None
 
     def getgenres(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
-        return self._getgenres()
-
-    def getyears(self, request):
-        if self.id!=request.songdbid:
-            raise hub.DenyRequest
-        return self._getyears()
+        return self._getgenres(request.filters)
 
     def getdecades(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
-        years = [year.year for year in self._getyears()]
-        decades = []
-        if years:
-            for year in years:
-                if year and year/10*10 not in decades:
-                    decades.append(year/10*10)
-                elif year is None and year not in decades:
-                    decades.append(None)
-
-        return decades
+        return self._getdecades(request.filters)
 
     def getratings(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
-        return self._getratings()
+        return self._getratings(request.filters)
 
     def getlastplayedsongs(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
-        return self._getlastplayedsongs()
+        return self._getlastplayedsongs(request.filters)
 
     def gettopplayedsongs(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
-        return self._gettopplayedsongs()
+        return self._gettopplayedsongs(request.filters)
 
     def getlastaddedsongs(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
-        return self._getlastaddedsongs()
+        return self._getlastaddedsongs(request.filters)
 
     def getplaylist(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
         return self._getplaylist(request.path)
 
     def getplaylists(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
         return self._getplaylists()
 
     def getsongsinplaylist(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
         return self._getsongsinplaylist(request.path)
 
     def getsongsinplaylists(self, request):
-        if self.id!=request.songdbid:
+        if self.id != request.songdbid:
             raise hub.DenyRequest
         return self._getsongsinplaylists()
 

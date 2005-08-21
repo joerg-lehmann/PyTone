@@ -1,3 +1,5 @@
+- instructions for new module
+
 TOCHECK:
 - what happens to mpg123 when pytone crashes
 - song is not registered as currently being played, when its playback
