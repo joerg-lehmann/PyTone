@@ -216,6 +216,7 @@ class decodedsong:
     def __init__(self, song, outrate):
         self.song = song
         self.outrate = outrate
+        self.default_rate = outrate
 
         try:
             decoder = getdecoder(self.song.type)
@@ -274,3 +275,17 @@ class decodedsong:
         self.buff = self.last_l = self.last_r = None
         self.buffpos = 0
         self.ptime = self.decodedfile.ptime()
+
+    def playslower(self, speed_adj = 441):
+        self.outrate += speed_adj
+        
+    def playfaster(self, speed_adj = 441):
+        # Its absurd that someone would try this
+        # but we better check for it.
+        if (self.outrate - speed_adj) < 1:
+            self.outrate = 1
+        else:
+            self.outrate -= speed_adj
+
+    def resetplayspeed(self):
+        self.outrate = self.default_rate

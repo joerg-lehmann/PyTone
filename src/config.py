@@ -638,6 +638,9 @@ class keybindings(configsection):
         toggleiteminfowindow = configkeys("ctrl-v")
         volumeup = configkeys(")")
         volumedown = configkeys("(")
+        playerplayfaster = configkeys("}")
+        playerplayslower = configkeys("{")
+        playerspeedreset = configkeys("~")
 
     class filelistwindow(configsection):
         selectnext = configkeys("KEY_DOWN j")

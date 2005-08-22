@@ -319,6 +319,26 @@ class playerseekrelative(playerevent):
         return "%s(%f->%s)" % (self.__class__.__name__, self.seconds, self.playerid)
 
 
+class playerplayfaster(playerevent):
+    """ increase play speed of song on player"""
+
+    def __init__(self,playerid):
+        self.playerid = playerid
+        self.speed_adj = 441
+
+class playerplayslower(playerevent):
+    """ decrease play speed of song on player"""
+
+    def __init__(self,playerid):
+        self.playerid = playerid
+        self.speed_adj = 441
+
+class playerspeedreset(playerevent):
+    """ Reset play speed of song on player back to its original rate"""
+
+    def __init__(self,playerid):
+        self.playerid = playerid
+
 class playerstop(playerevent):
     """ stop player """
     pass

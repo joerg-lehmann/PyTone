@@ -499,7 +499,7 @@ autoclosetime = 10
 # color configuration
 ##############################################################################
 
-# specification of colors goes แ la mutt: 
+# specification of colors goes รก la mutt: 
 # use for colors: color fgcolor bgcolor
 # - fgcolor may be prefixed by bright
 # - bgcolor can be left away, resulting in the default background color
@@ -650,6 +650,10 @@ showiteminfolong          = =
 toggleiteminfowindow      = ctrl-v
 volumeup                  = )
 volumedown                = (
+# Play speed controls
+playerplayfaster          = }
+playerplayslower          = {
+playerspeedreset          = ~
 
 [keybindings.filelistwindow]
 # additional keybindings when filelist window is active

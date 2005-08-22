@@ -226,6 +226,10 @@ class genericplayer(service.service):
         self.channel.subscribe(events.playerseekrelative, self.playerseekrelative)
         self.channel.subscribe(events.playerplaysong, self.playerplaysong)
         self.channel.subscribe(events.playerratecurrentsong, self.playerratecurrentsong)
+        self.channel.subscribe(events.playerplayfaster, self.playerplayfaster)
+        self.channel.subscribe(events.playerplayslower, self.playerplayslower)
+        self.channel.subscribe(events.playerspeedreset, self.playerspeedreset)
+
         self.channel.supply(requests.getplaybackinfo, self.getplaybackinfo)
 
     def work(self):
@@ -333,6 +337,21 @@ class genericplayer(service.service):
         this method has to be implemented by specialized classes"""
         pass
 
+    def _playerplayfaster(self):
+        """Speed up the play rate of the current song
+        this method has to be implemented by specialized classes"""
+        pass
+
+    def _playerplayslower(self):
+        """Slow down the play rate of the current song
+        this method has to be implemented by specialized classes"""
+        pass
+
+    def _playerspeedreset(self):
+        """Reset the play rate of the current song back to normal
+        this method has to be implemented by specialized classes"""
+        pass
+
     def _playerreleasedevice(self):
         """temporarily release audio device 
 
@@ -396,6 +415,18 @@ class genericplayer(service.service):
         """seek by event.seconds in file (relative to current position """
         if event.playerid == self.id:
             self._playerseekrelative(event.seconds)
+
+    def playerplayfaster(self, event):
+        if event.playerid == self.id:
+            self._playerplayfaster()
+
+    def playerplayslower(self, event):
+        if event.playerid == self.id:
+            self._playerplayslower()
+
+    def playerspeedreset(self, event):
+        if event.playerid == self.id:
+            self._playerspeedreset()
 
     def playerplaysong(self, event):
         """play event.song next"""

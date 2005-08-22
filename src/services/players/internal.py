@@ -356,6 +356,18 @@ class player(genericplayer):
         song.seekrelative(seconds)
         self.audiodev.flush()
 
+    def _playerplayfaster(self):
+        if self.songs:
+            self.songs[0].playfaster()
+
+    def _playerplayslower(self):
+        if self.songs:
+            self.songs[0].playslower()
+
+    def _playerspeedreset(self):
+        if self.songs:
+            self.songs[0].resetplayspeed()
+
     def _playerreleasedevice(self):
         self.audiodev.closedevice()
 

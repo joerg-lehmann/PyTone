@@ -2,6 +2,9 @@
 
 	* Disabled automatic closing of help window by default.
 
+	* Added changeable play speed support (many thanks to Richard A. Smith
+	<smithbone at gmail dot com> for providing the patch).
+
 
 2005-08-21 Jörg Lehmann  <joerg@luga.de>
 

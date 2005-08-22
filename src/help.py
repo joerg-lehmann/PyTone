@@ -61,6 +61,9 @@ descriptions = {
           "togglelayout":      (_("toggle layout"), _("toggle layout")),
           "volumeup":          (_("volume up"), _("increase output volume")),
           "volumedown":        (_("volume down"), _("decrease output volume")),
+          "playerplayfaster":  (_("play faster"), _("increase the play speed")),
+          "playerplayslower":  (_("play slower"), _("decrease the play speed")),
+          "playerspeedreset":  (_("default play speed"), _("reset the play speed to normal")),
     },
     "filelistwindow": {
           "selectnext":        (_("down"), _("move to the next entry")),
