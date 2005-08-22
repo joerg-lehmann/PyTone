@@ -1,3 +1,14 @@
+2005-08-21 Jörg Lehmann  <joerg@luga.de>
+
+	* Merged item-rework branch, which contains a new filter code.
+	The new code makes the unfiltered case a special case of the filtered
+	one. As a result, more than one filter can be applied, e.g., filtering
+	for all songs in a certain genre of a given decade and with a given
+	rating is now possible. Furthermore, every index now contains a
+	(nearly) full directory hierarchy, thus allowing things like showing
+	the top-played songs of a certain genre.
+
+
 2005-08-19 Jörg Lehmann  <joerg@luga.de>
 
 	* Get rid of multi-file database layout:
@@ -9,6 +20,7 @@
 	     converted)
 	   - finally as a final step, we remove the switches and require
 	     that the users change their config files
+
 	* Database version 5: do not longer index by years but by decades
 	which removes many special code paths at various places in the db
 	code.
