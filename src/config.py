@@ -484,7 +484,7 @@ class mixerwindow(configsection):
 
 
 class helpwindow(configsection):
-    autoclosetime = configfloat("10")
+    autoclosetime = configfloat("0")
 
 
 class logwindow(configsection):

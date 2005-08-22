@@ -478,7 +478,7 @@ autoclosetime = 5
 
 # times in seconds after which the help window disappears
 # automatically.  Use 0 to disable the automatic closing.
-autoclosetime = 10
+autoclosetime = 0
 
 [logwindow]
 # popup window for message log

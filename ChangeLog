@@ -1,3 +1,8 @@
+2005-08-22 Jörg Lehmann  <joerg@luga.de>
+
+	* Disabled automatic closing of help window by default.
+
+
 2005-08-21 Jörg Lehmann  <joerg@luga.de>
 
 	* Merged item-rework branch, which contains a new filter code.
