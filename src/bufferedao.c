@@ -16,14 +16,21 @@
  *  USA.
  */
 
+/* written using the pyao wrapper by Andrew Chatham <andrew.chatham@duke.edu> */
+
 #include <Python.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
 #include <ao/ao.h>
+#include <errno.h>
 #include <assert.h>
 
 #define NRITEMS() ((self->in >= self->out) ? self->in-self->out : self->in+self->buffersize-self->out)
+
+/* debug and error log functions */
+PyObject *log_debug; /* currently not used */
+PyObject *log_error;
 
 static PyObject *bufferedaoerror;
 
@@ -209,6 +216,7 @@ bufferedao_start(bufferedao *self)
 {
     char *buff;
     int bytes;
+    int errorlogged;
 
     Py_BEGIN_ALLOW_THREADS
     while ( !self->done ) {
@@ -234,12 +242,32 @@ bufferedao_start(bufferedao *self)
              * This corresponds to the opendevice method in Python code. However, we have to be more careful here
              * since we have to guarantee, that the pointer we get has not been modified (i.e. set to NULL) by 
              * the closedevice method */
+            errorlogged = 0;
             while (self->dev == NULL )  {
                 self->dev = ao_open_live(self->driver_id, &self->format, self->options);
                 if ( self->dev == NULL ) {
-                     pthread_mutex_unlock(&self->devmutex);
-                     sleep(1);
-                     pthread_mutex_lock(&self->devmutex);
+                    int errsv = errno;
+                    char *ao_errorstring;
+                    char errorstring[128];
+                    pthread_mutex_unlock(&self->devmutex);
+                    if (!errorlogged) {
+                        Py_BLOCK_THREADS
+                        /* XXX report details of error */
+                        switch (errsv) {
+                        case AO_ENODRIVER: ao_errorstring = "No driver corresponds to driver_id."; break;
+                        case AO_ENOTLIVE: ao_errorstring = "This driver is not a live output device."; break;
+                        case AO_EBADOPTION: ao_errorstring = "A valid option key has an invalid value."; break;
+                        case AO_EOPENDEVICE: ao_errorstring ="Cannot open the device."; break;
+                        case AO_EFAIL: ao_errorstring = "Unknown failure"; break;
+                        }
+                        snprintf(errorstring, 128, "cannot open audio device: %s", ao_errorstring);
+                        PyObject *result = PyObject_CallFunction(log_error, "s", errorstring);
+                        Py_XDECREF(result);
+                        Py_UNBLOCK_THREADS
+                        errorlogged = 1;
+                    }
+                    sleep(1);
+                    pthread_mutex_lock(&self->devmutex);
                 }
             }
             ao_play(self->dev, buff, bytes);
@@ -475,11 +503,28 @@ static PyMethodDef module_methods[] = {
 PyMODINIT_FUNC
 initbufferedao(void) 
 {
+    PyObject* log_module;
     PyObject *m;
     PyObject *d;
 
+    /* import log module and fetch debug and error functions */
+    if ( !(log_module = PyImport_ImportModule("log")) )
+      return;
+    d = PyModule_GetDict(log_module);
+    if ( !(log_debug = PyDict_GetItemString(d, "debug")) ) {
+      Py_DECREF(log_module);
+      return;
+    }
+    if ( !(log_error = PyDict_GetItemString(d, "error")) ) {
+      Py_DECREF(log_module);
+      return;
+    }
+    Py_DECREF(log_module);
+    
+    /* initialize the ao library */
     ao_initialize();
 
+    /* finalize and add extension type to module */
     if (PyType_Ready(&bufferedaoType) < 0)
         return;
 
