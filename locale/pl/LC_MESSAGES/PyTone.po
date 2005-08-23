@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PyTone 2.0.13\n"
-"POT-Creation-Date: 2005-08-03 15:21+CEST\n"
+"POT-Creation-Date: 2005-08-23 22:07+CEST\n"
 "PO-Revision-Date: 2005-01-16 16:19+0100\n"
 "Last-Translator: Krzysztof Zych <kzych@manta.univ.gda.pl>\n"
 "MIME-Version: 1.0\n"
@@ -196,248 +196,284 @@ msgstr "zmniejsz g³o¶no¶æ"
 msgid "volume down"
 msgstr "g³o¶no¶æ -"
 
-#: src/help.py:66 src/help.py:85
+#: src/help.py:64
+#, fuzzy
+msgid "increase the play speed"
+msgstr "usuñ odegrane"
+
+#: src/help.py:64
+msgid "play faster"
+msgstr ""
+
+#: src/help.py:65
+#, fuzzy
+msgid "decrease the play speed"
+msgstr "usuñ odegrane"
+
+#: src/help.py:65
+#, fuzzy
+msgid "play slower"
+msgstr "odtwórz ponownie"
+
+#: src/help.py:66
+#, fuzzy
+msgid "default play speed"
+msgstr "usuñ odegrane"
+
+#: src/help.py:66
+msgid "reset the play speed to normal"
+msgstr ""
+
+#: src/help.py:69 src/help.py:88
 msgid "down"
 msgstr ""
 
-#: src/help.py:66 src/help.py:85
+#: src/help.py:69 src/help.py:88
 msgid "move to the next entry"
 msgstr "przejd¼ do nastêpnego elementu"
 
-#: src/help.py:67 src/help.py:86
+#: src/help.py:70 src/help.py:89
 msgid "move to the previous entry"
 msgstr "przejd¼ do poprzedniego elementu"
 
-#: src/help.py:67 src/help.py:86
+#: src/help.py:70 src/help.py:89
 msgid "up"
 msgstr ""
 
-#: src/help.py:68 src/help.py:87
+#: src/help.py:71 src/help.py:90
 msgid "move to the next page"
 msgstr "nastêpna strona"
 
-#: src/help.py:68 src/help.py:87
+#: src/help.py:71 src/help.py:90
 msgid "page down"
 msgstr ""
 
-#: src/help.py:69 src/help.py:88
+#: src/help.py:72 src/help.py:91
 msgid "move to previous page"
 msgstr "poprzednia strona"
 
-#: src/help.py:69 src/help.py:88
+#: src/help.py:72 src/help.py:91
 msgid "page up"
 msgstr ""
 
-#: src/help.py:70 src/help.py:89
+#: src/help.py:73 src/help.py:92
 msgid "first"
 msgstr "na pocz±tek"
 
-#: src/help.py:70 src/help.py:89
+#: src/help.py:73 src/help.py:92
 msgid "move to the first entry"
 msgstr "przejd¼ do pierwszego elementu"
 
-#: src/help.py:71 src/help.py:90
+#: src/help.py:74 src/help.py:93
 msgid "last"
 msgstr "na koniec"
 
-#: src/help.py:71 src/help.py:90
+#: src/help.py:74 src/help.py:93
 msgid "move to the last entry"
 msgstr "przejd¼ do ostatniego elementu"
 
-#: src/help.py:72
+#: src/help.py:75
 msgid "enter dir"
 msgstr "wejd¼"
 
-#: src/help.py:72
+#: src/help.py:75
 msgid "enter selected directory"
 msgstr "wejd¼ do podkatalogu"
 
-#: src/help.py:73
+#: src/help.py:76
 msgid "exit dir"
 msgstr "wróæ"
 
-#: src/help.py:73
+#: src/help.py:76
 msgid "go directory up"
 msgstr "przejd¼ do katalogu nadrzêdnego"
 
-#: src/help.py:74
+#: src/help.py:77
 msgid "add song"
 msgstr "dodaj"
 
-#: src/help.py:74
+#: src/help.py:77
 msgid "add song to playlist"
 msgstr "dodaj utwór do listy"
 
-#: src/help.py:75
+#: src/help.py:78
 msgid "add dir"
 msgstr "dodaj katalog"
 
-#: src/help.py:75
+#: src/help.py:78
 msgid "add directory recursively to playlist"
 msgstr "dodaj rekursywnie katalog do listy"
 
-#: src/help.py:76 src/help.py:95
+#: src/help.py:79 src/help.py:98
 msgid "immediate play"
 msgstr "odtwarzaj natychmiast"
 
-#: src/help.py:76 src/help.py:95
+#: src/help.py:79 src/help.py:98
 msgid "play selected song immediately"
 msgstr "natychmiast odtwarza wybrany utwór"
 
-#: src/help.py:77
+#: src/help.py:80
 msgid "switch to playlist"
 msgstr "przejd¼ do listy"
 
-#: src/help.py:77
+#: src/help.py:80
 msgid "switch to playlist window"
 msgstr "przejd¼ do okna z list±"
 
-#: src/help.py:79
+#: src/help.py:82
 msgid "add random contents of dir to playlist"
 msgstr "dodaj do listy losowy fragment katalogu"
 
-#: src/help.py:79
+#: src/help.py:82
 msgid "random add dir"
 msgstr "dodaj losowo"
 
-#: src/help.py:80
+#: src/help.py:83
 msgid "search"
 msgstr "znajd¼"
 
-#: src/help.py:80
+#: src/help.py:83
 msgid "search entry"
 msgstr "znajd¼ element"
 
-#: src/help.py:81
+#: src/help.py:84
 msgid "repeat last search"
 msgstr ""
 
-#: src/help.py:81
+#: src/help.py:84
 #, fuzzy
 msgid "repeat search"
 msgstr "znajd¼"
 
-#: src/help.py:82 src/help.py:97
+#: src/help.py:85 src/help.py:100
 msgid "rescan"
 msgstr "uaktualnij"
 
-#: src/help.py:82 src/help.py:97
+#: src/help.py:85 src/help.py:100
 msgid "rescan/update id3 info for selection"
 msgstr "odczytaj i uaktualnij info ID3 wybranej pozycji"
 
-#: src/help.py:91
+#: src/help.py:94
 msgid "move song up"
 msgstr "przenie¶ w górê"
 
-#: src/help.py:92
+#: src/help.py:95
 msgid "move song down"
 msgstr "przenie¶ w dó³"
 
-#: src/help.py:93
+#: src/help.py:96
 msgid "shuffle"
 msgstr "przemieszaj"
 
-#: src/help.py:93
+#: src/help.py:96
 msgid "shuffle playlist"
 msgstr "losowo przemieszaj listê"
 
-#: src/help.py:94
+#: src/help.py:97
 msgid "delete"
 msgstr "usuñ"
 
-#: src/help.py:94
+#: src/help.py:97
 msgid "delete entry"
 msgstr "usuñ element"
 
-#: src/help.py:96
+#: src/help.py:99
 msgid "switch to database"
 msgstr "przejd¼ do bazy"
 
-#: src/help.py:96
+#: src/help.py:99
 msgid "switch to database window"
 msgstr "przejd¼ do okna bazy danych"
 
-#: src/help.py:99
+#: src/help.py:102
 msgid "jump to selected"
 msgstr ""
 
-#: src/help.py:99
+#: src/help.py:102
 msgid "jump to selected song in filelist window"
 msgstr ""
 
-#: src/help.py:106
+#: src/help.py:109
 msgid "CTRL"
 msgstr ""
 
-#: src/help.py:112
+#: src/help.py:115
 msgid "<TAB>"
 msgstr ""
 
-#: src/help.py:113
+#: src/help.py:116
 msgid "<Return>"
 msgstr ""
 
-#: src/help.py:114
+#: src/help.py:117
 msgid "<ESC>"
 msgstr ""
 
-#: src/help.py:115
+#: src/help.py:118
 msgid "<Space>"
 msgstr ""
 
-#: src/help.py:116
+#: src/help.py:119
 msgid "<Backspace>"
 msgstr ""
 
-#: src/help.py:117
+#: src/help.py:120
 msgid "<Del>"
 msgstr ""
 
-#: src/help.py:118
+#: src/help.py:121
 msgid "<Down>"
 msgstr ""
 
-#: src/help.py:119
+#: src/help.py:122
 msgid "<End>"
 msgstr ""
 
-#: src/help.py:120
+#: src/help.py:123
 msgid "<Enter>"
 msgstr ""
 
-#: src/help.py:121
+#: src/help.py:124
 msgid "<Home>"
 msgstr ""
 
-#: src/help.py:122
+#: src/help.py:125
 msgid "<Insert>"
 msgstr ""
 
-#: src/help.py:123
+#: src/help.py:126
 msgid "<Left>"
 msgstr ""
 
-#: src/help.py:124
+#: src/help.py:127
+msgid "<Shift-Left>"
+msgstr ""
+
+#: src/help.py:128
 msgid "<PageDown>"
 msgstr ""
 
-#: src/help.py:125
+#: src/help.py:129
 msgid "<PageUp>"
 msgstr ""
 
-#: src/help.py:126
+#: src/help.py:130
 msgid "<Right>"
 msgstr ""
 
-#: src/help.py:127
+#: src/help.py:131
+msgid "<Shift-Right>"
+msgstr ""
+
+#: src/help.py:132
 msgid "<Up>"
 msgstr ""
 
-#: src/help.py:136
-msgid "ALT"
+#: src/help.py:140
+msgid "Alt"
 msgstr ""
 
-#: src/helpwin.py:46
+#: src/helpwin.py:44
 msgid "PyTone Help"
 msgstr "Pomoc PyTone"
 
@@ -449,157 +485,173 @@ msgstr ""
 msgid "cancel"
 msgstr "anuluj"
 
-#: src/item.py:162 src/item.py:202
+#: src/item.py:35 src/item.py:37
+msgid "Filter:"
+msgstr "Filtr:"
+
+#: src/item.py:155 src/item.py:743
+msgid "Unknown"
+msgstr "Nieznany"
+
+#: src/item.py:155 src/item.py:744
+msgid "Decade"
+msgstr "Dekada"
+
+#: src/item.py:164 src/item.py:705
+msgid "Genre"
+msgstr "Gatunek"
+
+#: src/item.py:174 src/item.py:176 src/item.py:785
+msgid "Rating"
+msgstr "Ocena"
+
+#: src/item.py:176 src/item.py:784
+msgid "Not rated"
+msgstr ""
+
+#: src/item.py:229 src/item.py:269
 msgid "Title:"
 msgstr "Tytu³:"
 
-#: src/item.py:164
+#: src/item.py:231
 msgid "Nr:"
 msgstr ""
 
-#: src/item.py:167 src/item.py:203 src/item.py:391
+#: src/item.py:234 src/item.py:270 src/item.py:466
 msgid "Album:"
 msgstr ""
 
-#: src/item.py:169 src/item.py:206 src/item.py:208
+#: src/item.py:236 src/item.py:273 src/item.py:275
 msgid "Year:"
 msgstr "Rok:"
 
-#: src/item.py:172 src/item.py:204 src/item.py:331 src/item.py:390
-#: src/item.py:1032
+#: src/item.py:239 src/item.py:271 src/item.py:401 src/item.py:465
+#: src/item.py:845
 msgid "Artist:"
 msgstr "Artysta:"
 
-#: src/item.py:173 src/item.py:216 src/playerwin.py:75
+#: src/item.py:240 src/item.py:283 src/playerwin.py:75
 msgid "Time:"
 msgstr "Czas:"
 
-#: src/item.py:174 src/item.py:215
+#: src/item.py:241 src/item.py:282
 msgid "Genre:"
 msgstr "Gatunek:"
 
-#: src/item.py:190 src/item.py:237
+#: src/item.py:257 src/item.py:304
 msgid "Played:"
 msgstr "Grane:"
 
-#: src/item.py:191
+#: src/item.py:258
 msgid "#%d, %s ago"
 msgstr "%d raz, %s temu"
 
-#: src/item.py:195 src/item.py:220 src/item.py:222
+#: src/item.py:262 src/item.py:287 src/item.py:289
 msgid "Rating:"
 msgstr "Ocena:"
 
-#: src/item.py:211 src/item.py:213
+#: src/item.py:278 src/item.py:280
 msgid "Track No:"
 msgstr ""
 
-#: src/item.py:217
+#: src/item.py:284
 msgid "Path:"
 msgstr ""
 
-#: src/item.py:224
+#: src/item.py:291
 #, fuzzy
 msgid "Times played:"
 msgstr "usuñ odegrane"
 
-#: src/item.py:237
+#: src/item.py:304
 #, fuzzy
 msgid "%s ago"
 msgstr "%d raz, %s temu"
 
-#: src/item.py:390
+#: src/item.py:465
 msgid "various"
 msgstr "ró¿ni"
 
-#: src/item.py:437 src/playlistwin.py:39 src/playlistwin.py:171
+#: src/item.py:512 src/playlistwin.py:39 src/playlistwin.py:171
 msgid "Playlist"
 msgstr "Lista"
 
-#: src/item.py:555
-msgid "Filter:"
-msgstr "Filtr:"
-
-#: src/item.py:572 src/item.py:678
-msgid "Decade"
-msgstr "Dekada"
-
-#: src/item.py:573 src/item.py:672
-msgid "Unknown"
-msgstr "Nieznany"
-
-#: src/item.py:583 src/item.py:658
-msgid "Genre"
-msgstr "Gatunek"
-
-#: src/item.py:594 src/item.py:596 src/item.py:702 src/item.py:704
-msgid "Rating"
-msgstr "Ocena"
-
-#: src/item.py:596 src/item.py:692 src/item.py:698 src/item.py:704
-msgid "Not rated"
-msgstr ""
-
-#: src/item.py:713 src/item.py:736 src/item.py:739
+#: src/item.py:532 src/item.py:550 src/item.py:553
 msgid "Random song list"
 msgstr "Losowa lista utworów"
 
-#: src/item.py:748 src/item.py:767 src/item.py:770
+#: src/item.py:563 src/item.py:582 src/item.py:585
 msgid "Last played songs"
 msgstr "Ostatnio odtwarzane"
 
-#: src/item.py:779 src/item.py:798 src/item.py:801
+#: src/item.py:595 src/item.py:614 src/item.py:617
 msgid "Top played songs"
 msgstr "Najczê¶ciej odtwarzane"
 
-#: src/item.py:811 src/item.py:829 src/item.py:832
+#: src/item.py:627 src/item.py:645 src/item.py:648
 msgid "Last added songs"
 msgstr "Ostatnio dodane"
 
-#: src/item.py:841 src/item.py:869
+#: src/item.py:658 src/item.py:681
 msgid "Albums"
 msgstr "Albumy"
 
-#: src/item.py:878 src/item.py:884 src/item.py:901 src/item.py:904
+#: src/item.py:692 src/item.py:702 src/item.py:716 src/item.py:719
 msgid "Genres"
 msgstr "Gatunki"
 
-#: src/item.py:913 src/item.py:919 src/item.py:936 src/item.py:939
+#: src/item.py:730 src/item.py:740 src/item.py:754 src/item.py:757
 msgid "Decades"
 msgstr "Dekady"
 
-#: src/item.py:947 src/item.py:953 src/item.py:979 src/item.py:982
+#: src/item.py:768 src/item.py:774 src/item.py:797 src/item.py:800
 #, fuzzy
 msgid "Ratings"
 msgstr "Ocena:"
 
-#: src/item.py:991 src/item.py:1003 src/item.py:1033 src/item.py:1035
+#: src/item.py:809 src/item.py:846 src/item.py:848
 msgid "Songs"
 msgstr "Utwory"
 
-#: src/item.py:1044 src/item.py:1050 src/item.py:1067 src/item.py:1070
+#: src/item.py:858 src/item.py:864 src/item.py:884 src/item.py:887
 msgid "Playlists"
 msgstr "Listy"
 
-#: src/item.py:1083 src/item.py:1115 src/item.py:1120
+#: src/item.py:900 src/item.py:929 src/item.py:934
 msgid "Filesystem"
 msgstr "System plików"
 
-#: src/item.py:1132
+#: src/item.py:955
 msgid "Song Database"
 msgstr "Baza utworów"
 
-#: src/item.py:1213
+#: src/item.py:1004
+#, fuzzy
+msgid "[Database: %s (%d)]"
+msgstr "Baza"
+
+#: src/item.py:1006
+#, fuzzy
+msgid "%d databases (%d)"
+msgstr "%d Baza (%d utworów)"
+
+#: src/item.py:1035
 msgid "Database (%s, %d songs)"
 msgstr "Baza (%s, %d utworów)"
 
-#: src/item.py:1215
+#: src/item.py:1037
 msgid "%d databases (%d songs)"
 msgstr "%d Baza (%d utworów)"
 
-#: src/item.py:1218
-msgid "Database"
+#: src/item.py:1042
+#, fuzzy
+msgid "[Database: %s (%%d)]"
 msgstr "Baza"
+
+#: src/item.py:1044
+#, fuzzy
+msgid "%d databases (%%d)"
+msgstr "%d Baza (%d utworów)"
 
 #: src/iteminfowin.py:52 src/iteminfowin.py:73
 msgid "MP3 Info"
@@ -627,7 +679,7 @@ msgstr "Katalog"
 msgid "[Player: %s]"
 msgstr "Grane:"
 
-#: src/iteminfowin.py:177
+#: src/iteminfowin.py:178
 msgid "Item info"
 msgstr ""
 
@@ -680,11 +732,11 @@ msgstr ""
 msgid "Cannot load plugin '%s': %s"
 msgstr ""
 
-#: src/services/players/internal.py:99
+#: src/services/players/internal.py:115
 msgid "cannot open audio device: error \"%s\""
 msgstr ""
 
-#: src/services/players/internal.py:312
+#: src/services/players/internal.py:337
 msgid "failed to open song \"%s\""
 msgstr ""
 
@@ -700,49 +752,77 @@ msgstr "Nazwa:"
 msgid "Load playlist"
 msgstr "Wczytaj listê"
 
-#: src/services/songdbs/local.py:263
+#: src/services/songdbs/local.py:180
+msgid ""
+"using dbfile=\"db\" by default, please remove dbfile entry in [database.%s] "
+"section of your config file"
+msgstr ""
+
+#: src/services/songdbs/local.py:264
+msgid ""
+"using new database, please set \"basename=\" in [database.%s] section of "
+"your config file"
+msgstr ""
+
+#: src/services/songdbs/local.py:268
 msgid ""
 "database %s: basedir %s, %d songs, %d artists, %d albums, %d genres, %d "
 "playlists"
 msgstr ""
 
-#: src/services/songdbs/local.py:311
+#: src/services/songdbs/local.py:319
 msgid "updating song database %s from version 1 to version 2"
 msgstr ""
 
-#: src/services/songdbs/local.py:313
+#: src/services/songdbs/local.py:321
 msgid "Updating song database %s from version 1 to version 2:"
 msgstr ""
 
-#: src/services/songdbs/local.py:373
+#: src/services/songdbs/local.py:380
 msgid "updating song database %s from version 2 to version 3"
 msgstr ""
 
-#: src/services/songdbs/local.py:374
+#: src/services/songdbs/local.py:381
 msgid "Updating song database %s from version 2 to version 3:"
 msgstr ""
 
-#: src/services/songdbs/local.py:490
+#: src/services/songdbs/local.py:497
 msgid "updating song database %s from version 3 to version 4"
 msgstr ""
 
-#: src/services/songdbs/local.py:491
+#: src/services/songdbs/local.py:498
 msgid "Updating song database %s from version 3 to version 4:"
 msgstr ""
 
-#: src/services/songdbs/local.py:1572
+#: src/services/songdbs/local.py:528
+msgid "updating song database %s from version 4 to version 5"
+msgstr ""
+
+#: src/services/songdbs/local.py:529
+msgid "Updating song database %s from version 4 to version 5:"
+msgstr ""
+
+#: src/services/songdbs/local.py:569
+msgid "converting song database %s from old multifile layout"
+msgstr ""
+
+#: src/services/songdbs/local.py:570
+msgid "converting song database %s from old multifile layout:"
+msgstr ""
+
+#: src/services/songdbs/local.py:1668
 msgid "database %s: scanning for songs in %s"
 msgstr ""
 
-#: src/services/songdbs/local.py:1594
+#: src/services/songdbs/local.py:1691
 msgid "database %s: finished scanning for songs in %s"
 msgstr ""
 
-#: src/services/songdbs/local.py:1598
+#: src/services/songdbs/local.py:1695
 msgid "database %s: rescanning %d songs"
 msgstr ""
 
-#: src/services/songdbs/local.py:1604
+#: src/services/songdbs/local.py:1698
 msgid "database %s: finished rescanning %d songs"
 msgstr ""
 
@@ -799,6 +879,9 @@ msgstr ""
 #: src/statswin.py:72
 msgid "%d hits / %d requests"
 msgstr ""
+
+#~ msgid "Database"
+#~ msgstr "Baza"
 
 #, fuzzy
 #~ msgid "Virtual database:"
