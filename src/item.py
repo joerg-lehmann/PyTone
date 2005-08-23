@@ -1048,29 +1048,15 @@ class basedir(totaldiritem):
 class index(basedir):
 
     def __init__(self, songdbids, name, description, filters):
-        self.songdbids = songdbids
+        basedir.__init__(self, songdbids, filters)
         self.name = name
         self.description = description
-        self.filters = filters
-        self.maxnr = 100
         self.type = "index"
-        if len(songdbids) == 1:
-            self.songdbid = songdbids[0]
-        else:
-            self.songdbid = None
-        self.nrsongs = None
-        self._initvirtdirs()
 
     def getname(self):
         if self.nrsongs is None:
             self.nrsongs = hub.request(requests.getnumberofsongs(self.songdbid, filters=self.filters))
         return "%s (%d)/" % (self.description, self.nrsongs)
-
-    def getheader(self, item):
-        if self.nrsongs is None:
-            self.nrsongs = hub.request(requests.getnumberofsongs(self.songdbid, filters=self.filters))
-        filtername = filters(self.filters[:-1]).getname()
-        return "%s %s%s (%d)" % (self.name, self.description, filtername, self.nrsongs)
 
     def getinfo(self):
         return _mergefilters([[self.name, self.description, "", ""]], self.filters[:-1])
