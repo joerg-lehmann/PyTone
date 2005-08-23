@@ -667,6 +667,7 @@ class albums(totaldiritem):
         def albumwrapper(aalbum, songdbid):
             return album(self.songdbid, aalbum.id, None, aalbum.name, filters=self.filters)
         albums = hub.request(requests.getalbums(self.songdbid, wrapperfunc=albumwrapper, sort=self.cmpitem, filters=self.filters))
+        self.nralbums = len(albums)
         return albums
 
     def getheader(self, item):
@@ -704,8 +705,11 @@ class genres(totaldiritem):
         return index(self.songdbids, "%s:" % _("Genre"), agenre.name, self.filters.filtered(genrefilter(agenre.name)))
 
     def getcontents(self):
-        return hub.request(requests.getgenres(self.songdbid, wrapperfunc=self._genrewrapper, sort=self.cmpitem,
-                                              filters=self.filters))
+        genres = hub.request(requests.getgenres(self.songdbid, wrapperfunc=self._genrewrapper, sort=self.cmpitem,
+                                                filters=self.filters))
+        self.nrgenres = len(genres)
+        return genres
+
     def getheader(self, item):
         if self.nrgenres is None:
             self.nrgenres = hub.request(requests.getnumberofgenres(self.songdbid, filters=self.filters))
@@ -740,7 +744,9 @@ class decades(totaldiritem):
         return index(self.songdbids, "%s:" % _("Decade"), description, self.filters.filtered(decadefilter(adecade.decade)))
 
     def getcontents(self):
-        return hub.request(requests.getdecades(self.songdbid, self._decadewrapper, sort=self.cmpitem, filters=self.filters))
+        decades = hub.request(requests.getdecades(self.songdbid, self._decadewrapper, sort=self.cmpitem, filters=self.filters))
+        self.nrdecades = len(decades)
+        return decades
 
     def getheader(self, item):
         if self.nrdecades is None:
@@ -780,8 +786,10 @@ class ratings(totaldiritem):
                        self.filters.filtered(ratingfilter(arating.rating)))
 
     def getcontents(self):
-        return hub.request(requests.getratings(self.songdbid, wrapperfunc=self._ratingwrapper, sort=self.cmpitem,
-                                               filters=self.filters))
+        ratings = hub.request(requests.getratings(self.songdbid, wrapperfunc=self._ratingwrapper, sort=self.cmpitem,
+                                                  filters=self.filters))
+        self.nrratings = len(ratings)
+        return ratings
 
     def getheader(self, item):
         if self.nrratings is None:
@@ -816,7 +824,9 @@ class songs(diritem):
     cmpitem = staticmethod(cmpitem)
 
     def getcontents(self):
-        return hub.request(requests.getsongs(self.songdbid, artist=self.artist, filters=self.filters, sort=self.cmpitem))
+        songs = hub.request(requests.getsongs(self.songdbid, artist=self.artist, filters=self.filters, sort=self.cmpitem))
+        self.nrsongs = len(songs)
+        return songs
 
     getcontentsrecursivesorted = getcontentsrecursive = getcontents
 
@@ -859,6 +869,7 @@ class playlists(diritem):
             # Thus, we have to use its songdbid here.
             return playlist(songdbid, aplaylist.path, aplaylist.name, aplaylist.songs)
         playlists = hub.request(requests.getplaylists(self.songdbid, wrapperfunc=playlistwrapper, sort=self.cmpitem))
+        self.nrplaylists = len(playlists)
         return playlists
 
     def getcontentsrecursive(self):
@@ -868,7 +879,9 @@ class playlists(diritem):
         return hub.request(requests.getsongsinplaylists(self.songdbid, random=True))
 
     def getheader(self, item):
-        return "%s (%d)" % (_("Playlists"), len(self.getcontents()))
+        if self.nrplaylists is None:
+            self.nrplaylists = len(self.getcontents())
+        return "%s (%d)" % (_("Playlists"), self.nrplaylists)
 
     def getinfo(self):
         return [[_("Playlists"), "", "", ""]]
@@ -1033,7 +1046,7 @@ class basedir(totaldiritem):
 
 
 class index(basedir):
-    
+
     def __init__(self, songdbids, name, description, filters):
         self.songdbids = songdbids
         self.name = name
