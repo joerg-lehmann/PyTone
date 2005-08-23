@@ -247,7 +247,7 @@ bufferedao_start(bufferedao *self)
                 self->dev = ao_open_live(self->driver_id, &self->format, self->options);
                 if ( self->dev == NULL ) {
                     int errsv = errno;
-                    char *ao_errorstring;
+                    char *ao_errorstring="";
                     char errorstring[128];
                     pthread_mutex_unlock(&self->devmutex);
                     if (!errorlogged) {
