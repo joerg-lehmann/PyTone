@@ -150,7 +150,6 @@ class flacdecoder(decoder):
         self.filedecoder.process_single()
 
     def _metadata_callback(self, dec, block):
-        import log
         if block.type == flac.metadata.STREAMINFO:
             streaminfo = block.data.stream_info
             self._samplerate = streaminfo.sample_rate
@@ -177,14 +176,6 @@ class flacdecoder(decoder):
             self.filedecoder.process_single()
         if self.buff is not None:
             result = self.buff[:]
-            # ok, here it becomes very weird. There seems to be a problem with 
-            # the pyflac module, which does not occur (for me!) when
-            # I insert the following code
-            try:
-                for x in range(100):
-                    pass
-            except:
-                pass
             self.buff = None
             return result
 
