@@ -4,9 +4,6 @@
 
 	* item.py: Fix filters handling in songs class.
 
-	* decoder.py: Remove workaround in FLAC decoder, since new pyflac
-	module seems to work properly.
-
 
 2005-08-23 Jörg Lehmann  <joerg@luga.de>
 

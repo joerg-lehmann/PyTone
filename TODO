@@ -1,5 +1,7 @@
 - instructions for new module
 
+- FLAC: finish decoder when not using it any more, seeking, playback
+
 TOCHECK:
 - what happens to mpg123 when pytone crashes
 - song is not registered as currently being played, when its playback

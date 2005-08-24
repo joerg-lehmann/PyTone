@@ -72,10 +72,10 @@ class mp3decoder(decoder):
         return self.file.samplerate()
 
     def ttime(self):
-        return self.file.total_time()/1000
+        return self.file.total_time()//1000
 
     def ptime(self):
-        return self.file.current_time()/1000
+        return self.file.current_time()//1000
 
     def read(self):
         return self.file.read()
@@ -121,7 +121,7 @@ class oggvorbisdecoder(decoder):
         time = min(max(self.file.time_tell() + seconds, 0), self.file.time_total(0))
         self.file.time_seek(time)
 
-            
+
 try:
     import ogg.vorbis
     registerdecoder("ogg", oggvorbisdecoder)
@@ -144,6 +144,8 @@ class flacdecoder(decoder):
         self.filedecoder.init()
         self.filedecoder.process_until_end_of_metadata()
 
+        self._ptime = 0  # position in file in seconds
+
         # to be able to return the sample rate, we have to decode
         # some data
         self.buff = None
@@ -153,7 +155,9 @@ class flacdecoder(decoder):
         if block.type == flac.metadata.STREAMINFO:
             streaminfo = block.data.stream_info
             self._samplerate = streaminfo.sample_rate
-            self._ttime = streaminfo.total_samples / self._samplerate
+            self._channels = streaminfo.channels
+            self._bits_per_sample = streaminfo.bits_per_sample
+            self._ttime = streaminfo.total_samples // self._samplerate
 
     def _error_callback(self, dec, block):
         pass
@@ -168,14 +172,18 @@ class flacdecoder(decoder):
         return self._ttime
 
     def ptime(self):
-        return 0
-        log.warning("current time for FLAC files not yet implemented")
+        return int(self._ptime)
 
     def read(self):
         if self.buff is None:
             self.filedecoder.process_single()
         if self.buff is not None:
             result = self.buff[:]
+            self._ptime += 1.0*len(result)/self._channels/self._bits_per_sample*8/self._samplerate
+            try:
+                for i in range(100):pass
+            except:
+                pass
             self.buff = None
             return result
 
@@ -203,7 +211,7 @@ class decodedsong:
     returns a pcm frame of or less than a given arbitrary size.
 
     """
-    
+
     def __init__(self, song, outrate):
         self.song = song
         self.outrate = outrate
@@ -226,7 +234,7 @@ class decodedsong:
         self.buff = self.last_l = self.last_r = None
         self.buffpos = 0
         self.ptime = 0
-        
+
     def read(self, size):
         if self.buff is not None:
             bytesleft = len(self.buff) - self.buffpos
@@ -269,7 +277,7 @@ class decodedsong:
 
     def playslower(self, speed_adj = 441):
         self.outrate += speed_adj
-        
+
     def playfaster(self, speed_adj = 441):
         # Its absurd that someone would try this
         # but we better check for it.

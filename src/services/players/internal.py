@@ -230,7 +230,7 @@ class player(genericplayer):
             else:
                 log.debug("internal player: song ends: %s (0 songs in queue)" % self.songs[0])
                 del self.songs[0]
-        
+
             # reset songtransition mode, but before possibly requesting a new song
             self.songtransitionmode = None
 
