@@ -2,6 +2,8 @@
 
 	* Check earlier for dbfile != "db".
 
+	* item.py: Fix filters handling in songs class.
+
 
 2005-08-23 Jörg Lehmann  <joerg@luga.de>
 

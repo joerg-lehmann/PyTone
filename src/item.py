@@ -30,11 +30,12 @@ from services.songdb import _genrandomchoice
 # helper function for usage in getinfo methods, which merges information about
 # filters in third and forth columns of lines
 def _mergefilters(lines, filters):
-    for nr, filter in enumerate(filters[:4]):
-        if len(lines) > nr:
-            lines[nr][2:3] = [_("Filter:"), filter.name]
-        else:
-            lines.append(["", "", _("Filter:"), filter.name])
+    if filters:
+        for nr, filter in enumerate(filters[:4]):
+            if len(lines) > nr:
+                lines[nr][2:3] = [_("Filter:"), filter.name]
+            else:
+                lines.append(["", "", _("Filter:"), filter.name])
     return lines
 
 
@@ -838,7 +839,10 @@ class songs(diritem):
             s = item.artist + " - " + item.album
         else:
             s = self.getname()[1:-2]
-        return s + self.filters.getname()
+        if self.filters:
+            return s + self.filters.getname()
+        else:
+            return s
 
     def getinfo(self):
         if self.artist is not None:
