@@ -180,8 +180,11 @@ class flacdecoder(decoder):
         if self.buff is not None:
             result = self.buff[:]
             self._ptime += 1.0*len(result)/self._channels/self._bits_per_sample*8/self._samplerate
+            # ok, here it becomes very weird. There seems to be a problem with
+            # the pyflac module, which does not occur (for me!) when
+            # I insert the following code
             try:
-                for i in range(100): i+= 1
+                for i in range(100): pass
             except:
                 pass
             self.buff = None
