@@ -1,3 +1,8 @@
+2005-08-24 Jörg Lehmann  <joerg@luga.de>a
+
+	* Check earlier for dbfile != "db".
+
+
 2005-08-23 Jörg Lehmann  <joerg@luga.de>
 
 	* Add error reporting to bufferedao extension module.

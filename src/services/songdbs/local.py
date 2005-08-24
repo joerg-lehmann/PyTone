@@ -175,13 +175,6 @@ class songdb(service.service):
         if not os.access(self.basedir, os.X_OK | os.R_OK):
             raise errors.configurationerror("you are not allowed to access and read config.general.musicbasedir.")
 
-        if config.dbfile:
-            if config.dbfile == "db":
-                log.warning(_('using dbfile="db" by default, please remove dbfile entry in [database.%s] section of your config file') % self.id)
-            else:
-                raise errors.configurationerror("setting dbfile not possible anymore, please rename your database %s" % self.id)
-
-
         self.dbenv = dbenv(self.dbenvdir, self.cachesize)
 
         # We keep the year index still around although we do not use it anymore.
