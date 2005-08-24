@@ -181,14 +181,15 @@ class flacdecoder(decoder):
             result = self.buff[:]
             self._ptime += 1.0*len(result)/self._channels/self._bits_per_sample*8/self._samplerate
             try:
-                for i in range(100):pass
+                for i in range(100): i+= 1
             except:
                 pass
             self.buff = None
             return result
 
     def seekrelative(self, seconds):
-        log.warning("seeking for FLAC files not yet implemented")
+        self._ptime += seconds
+        self.filedecoder.seek_absolute(self._ptime * self._samplerate)
 
 try:
     import flac.decoder
