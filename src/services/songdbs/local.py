@@ -1246,9 +1246,11 @@ class songdb(service.service):
         if filters:
             for filter in filters:
                 newitems = []
+                indexname = filter.indexname
+                indexid = filter.indexid
                 for item in items:
                     for song in map(self.songs.get, item.songs):
-                        if getattr(song, filter.indexname) == filter.indexid:
+                        if getattr(song, indexname) == indexid:
                             newitems.append(item)
                             break
                 items = newitems
