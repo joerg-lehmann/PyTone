@@ -901,7 +901,7 @@ def checkoptions():
 
         if songdb.dbfile:
             if songdb.dbfile == "db":
-                log.warning(_('using dbfile="db" by default, please remove dbfile entry in [database.%s] section of your config file') % self.id)
+                log.warning(_('using dbfile="db" by default, please remove dbfile entry in [database.%s] section of your config file') % databasename)
             else:
                 print "setting dbfile not possible anymore, please move dbfile of database '%s'" % databasename
                 sys.exit(2)
