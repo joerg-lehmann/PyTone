@@ -262,6 +262,9 @@ class songdb(service.service):
                  (self.id, self.basedir, len(self.songs),  len(self.artists),  len(self.albums),
                   len(self.genres), len(self.playlists)))
 
+        # version information for database
+        currentdbversion = 5
+
         # check whether we have to deal with a newly created database
         if not self.stats:
             try:
@@ -291,270 +294,267 @@ class songdb(service.service):
                 self._txn_commit()
 
         # upgrade database
+
         if not self.stats.has_key("db_version") or self.stats["db_version"] < 2:
-            self._updatefromversion1to2()
+            ondiskdbversion = 1
+        else:
+            ondiskdbversion = self.stats["db_version"]
+        self._upgradedatabase(ondiskdbversion, currentdbversion)
 
-        if self.stats["db_version"] < 3:
-            self._updatefromversion2to3()
-
-        if self.stats["db_version"] < 4:
-            self._updatefromversion3to4()
-
-        if self.stats["db_version"] < 5:
-            self._updatefromversion4to5()
-
-        if self.stats["db_version"] > 5:
+        if self.stats["db_version"] > currentdbversion:
             raise RuntimeError("database version %d not supported" % self.stats["db_version"])
+
+    def _upgradedatabase(self, ondiskdbversion, currentdbversion):
+        for version in range(ondiskdbversion, currentdbversion):
+            updatemethod = getattr(self, "_upgradefromversion%dto%d" % (version, version+1))
+            print _("Song database %s has to be updated from version %d to version %d:") % (self.id, version, version+1)
+            print _("PyTone can do this automatically, but you have to decide whether")
+            print _(" (1) the upgrade has to be protected by a transaction")
+            print _("     (safe but may require large amounts of disk space) or")
+            print _(" (2) the upgrade has to be done unprotected")
+            print _("     (need less disk space during the upgrade but you should backup your database before")
+            print _("Note that you can first try alternative (1) and if it fails, use method (2)")
+            print
+            print _("What upgrade method (1 or 2, any other input cancels the upgrade) should be used? "),
+            method = raw_input()
+            if method not in ("1", "2"):
+                print _("Upgrade canceled, terminating PyTone")
+                sys.exit(2)
+
+            atomic = method == "1"
+
+            s = _("updating song database %s from version 1 to version 2 ")
+            if atomic:
+                s = s + _("(with transaction protection")
+            else:
+                s = s + _("(without transaction protection")
+            print s
+            log.info(s)
+
+            try:
+                self._txn_begin()
+                updatemethod(atomic)
+            except:
+                self._txn_abort()
+                if method == "1":
+                    print _("Upgrade failed (and safely rolled back)")
+                else:
+                    print _("Upgrade failed (please restore old database from backup!)")
+                raise
+            else:
+                self._txn_commit()
+                self._checkpoint()
+                print _("Upgrade successful")
+                time.sleep(2)
  
-    def _updatefromversion1to2(self):
+    def _upgradefromversion1to2(self, atomic):
         """ update from database version 1 to version 2 """
 
-        log.info(_("updating song database %s from version 1 to version 2") % self.id)
+        print "%d artists..." % len(self.artists),
+        for artistid, artist in self.artists.items(txn=self.txn):
+            newalbums = []
+            for album in artist.albums:
+                newalbum  = self.albums[album].name
+                newalbums.append(newalbum)
+            artist.albums = newalbums
+            self.artists.put(artistid, artist, txn=self.txn)
 
-        print _("Updating song database %s from version 1 to version 2:") % self.id,
-        try:
-            self._txn_begin()
-            print "%d artists..." % len(self.artists),
-            for artistid, artist in self.artists.items(txn=self.txn):
-                newalbums = []
-                for album in artist.albums:
-                    newalbum  = self.albums[album].name
-                    newalbums.append(newalbum)
-                artist.albums = newalbums
-                self.artists.put(artistid, artist, txn=self.txn)
+        print "%d genres..." % len(self.genres),
+        for genreid, genre in self.genres.items(txn=self.txn):
+            newalbums = []
+            for album in genre.albums:
+                newalbum = self.albums[album].name
+                newalbums.append(newalbum)
+            genre.albums = newalbums
+            self.genres.put(genreid, genre, self.txn)
 
-            print "%d genres..." % len(self.genres),
-            for genreid, genre in self.genres.items(txn=self.txn):
-                newalbums = []
-                for album in genre.albums:
-                    newalbum = self.albums[album].name
-                    newalbums.append(newalbum)
-                genre.albums = newalbums
-                self.genres.put(genreid, genre, self.txn)
+        print "%d years..." % len(self.years),
+        for yearid, year in self.years.items(txn=self.txn):
+            newalbums = []
+            for album in year.albums:
+                newalbum  = self.albums[album].name
+                newalbums.append(newalbum)
+            year.albums = newalbums
+            self.years.put(yearid, year, txn=self.txn)
 
-            print "%d years..." % len(self.years),
-            for yearid, year in self.years.items(txn=self.txn):
-                newalbums = []
-                for album in year.albums:
-                    newalbum  = self.albums[album].name
-                    newalbums.append(newalbum)
-                year.albums = newalbums
-                self.years.put(yearid, year, txn=self.txn)
+        print "%d albums..." % len(self.albums),
+        for albumid, album in self.albums.items(txn=self.txn):
+            if album.name in self.albums:
+                newalbum = self.albums[album.name]
+                newalbum.artists.append(album.artist)
+                newalbum.songs.extend(album.songs)
+                newalbum.genres.extend(album.genres)
+                newalbum.years.extend(album.years)
+            else:
+                newalbum = album
+                newalbum.id = album.name
+                newalbum.artists = [album.artist]
+                del newalbum.artist
 
-            print "%d albums..." % len(self.albums),
-            for albumid, album in self.albums.items(txn=self.txn):
-                if album.name in self.albums:
-                    newalbum = self.albums[album.name]
-                    newalbum.artists.append(album.artist)
-                    newalbum.songs.extend(album.songs)
-                    newalbum.genres.extend(album.genres)
-                    newalbum.years.extend(album.years)
-                else:
-                    newalbum = album
-                    newalbum.id = album.name
-                    newalbum.artists = [album.artist]
-                    del newalbum.artist
+            self.albums.put(newalbum.id, newalbum, txn=self.txn)
+            self.albums.delete(albumid, txn=self.txn)
+        print
+        self.stats.put("db_version", 2, txn=self.txn)
 
-                self.albums.put(newalbum.id, newalbum, txn=self.txn)
-                self.albums.delete(albumid, txn=self.txn)
-            print
-            self.stats.put("db_version", 2, txn=self.txn)
-        except:
-            self._txn_abort()
-            raise
-        else:
-            self._txn_commit()
-            self._checkpoint()
-            print "Done"
-
-    def _updatefromversion2to3(self):
+    def _upgradefromversion2to3(self, atomic):
         """ update from database version 2 to version 3 """
 
-        log.info(_("updating song database %s from version 2 to version 3") % self.id)
-        print _("Updating song database %s from version 2 to version 3:") % self.id,
         if self.basedir.endswith("/"):
            lb = len(self.basedir)
         else:
            lb = len(self.basedir)+1
-        try:
-            self._txn_begin()
-            print "%d songs..." % len(self.songs),
-            for songid, song in self.songs.items(txn=self.txn):
-                if songid.startswith(self.basedir):
-                    song.id = song.id[lb:]
-                    self.songs.delete(songid, txn=self.txn)
-                    self.songs.put(song.id, song, txn=self.txn)
-                else:
-                    raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
 
-            print "%d artists..." % len(self.artists),
-            for artistid, artist in self.artists.items(txn=self.txn):
-                newsongs = []
-                for songid in artist.songs:
-                    if songid.startswith(self.basedir):
-                        newsongs.append(songid[lb:])
-                    else:
-                        raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
-                artist.songs = newsongs
-                self.artists.put(artistid, artist, txn=self.txn)
+        print "%d songs..." % len(self.songs),
+        for songid, song in self.songs.items(txn=self.txn):
+            if songid.startswith(self.basedir):
+                song.id = song.id[lb:]
+                self.songs.delete(songid, txn=self.txn)
+                self.songs.put(song.id, song, txn=self.txn)
+            else:
+                raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
 
-            print "%d albums..." % len(self.albums),
-            for albumid, album in self.albums.items(txn=self.txn):
-                newsongs = []
-                for songid in album.songs:
-                    if songid.startswith(self.basedir):
-                        newsongs.append(songid[lb:])
-                    else:
-                        raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
-                album.songs = newsongs
-                self.albums.put(albumid, album, txn=self.txn)
-
-            print "%d genres..." % len(self.genres),
-            for genreid, genre in self.genres.items(txn=self.txn):
-                newsongs = []
-                for songid in genre.songs:
-                    if songid.startswith(self.basedir):
-                        newsongs.append(songid[lb:])
-                    else:
-                        raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
-                genre.songs = newsongs
-                self.genres.put(genreid, genre, self.txn)
-
-            print "%d years..." % len(self.years),
-            for yearid, year in self.years.items(txn=self.txn):
-                newsongs = []
-                for songid in year.songs:
-                    if songid.startswith(self.basedir):
-                        newsongs.append(songid[lb:])
-                    else:
-                        raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
-                year.songs = newsongs
-                self.years.put(yearid, year, txn=self.txn)
-
-            print "lastadded...",
-            newlastadded = []
-            for songid in self.stats.get("lastadded", txn=self.txn):
-                if songid.startswith(self.basedir):
-                    newlastadded.append(songid[lb:])
-                else:
-                    raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
-            self.stats.put("lastadded", newlastadded, txn=self.txn)
-
-            print "lastplayed...",
-            newlastplayed = []
-            try:
-                for songid, playingtime in self.stats.get("lastplayed", txn=self.txn):
-                    if songid.startswith(self.basedir):
-                        newlastplayed.append((songid[lb:], playingtime))
-                    else:
-                        raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
-            except ValueError:
-                # we're dealing with a very old song database from which we cannot use
-                # the lastplayed information
-                pass
-            self.stats.put("lastplayed", newlastplayed, txn=self.txn)
-
-            print "topplayed...",
+        print "%d artists..." % len(self.artists),
+        for artistid, artist in self.artists.items(txn=self.txn):
             newsongs = []
-            for songid in self.stats.get("topplayed", txn=self.txn):
+            for songid in artist.songs:
                 if songid.startswith(self.basedir):
                     newsongs.append(songid[lb:])
                 else:
                     raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
-            self.stats.put("topplayed", newsongs, txn=self.txn)
+            artist.songs = newsongs
+            self.artists.put(artistid, artist, txn=self.txn)
 
-            print "%d playlists..." % len(self.playlists)
-            for path, playlist in self.playlists.items(txn=self.txn):
-                newsongs = []
-                for songid in playlist.songs:
-                    if songid.startswith(self.basedir):
-                        newsongs.append(songid[lb:])
-                    else:
-                        raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
-                playlist.songs = newsongs
-                self.playlists.put(path, playlist, txn=self.txn)
+        print "%d albums..." % len(self.albums),
+        for albumid, album in self.albums.items(txn=self.txn):
+            newsongs = []
+            for songid in album.songs:
+                if songid.startswith(self.basedir):
+                    newsongs.append(songid[lb:])
+                else:
+                    raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
+            album.songs = newsongs
+            self.albums.put(albumid, album, txn=self.txn)
 
-            print
-            self.stats.put("db_version", 3, txn=self.txn)
-        except:
-            self._txn_abort()
-            raise
-        else:
-            self._txn_commit()
-            self._checkpoint()
-            print "Done"
+        print "%d genres..." % len(self.genres),
+        for genreid, genre in self.genres.items(txn=self.txn):
+            newsongs = []
+            for songid in genre.songs:
+                if songid.startswith(self.basedir):
+                    newsongs.append(songid[lb:])
+                else:
+                    raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
+            genre.songs = newsongs
+            self.genres.put(genreid, genre, self.txn)
 
-    def _updatefromversion3to4(self):
+        print "%d years..." % len(self.years),
+        for yearid, year in self.years.items(txn=self.txn):
+            newsongs = []
+            for songid in year.songs:
+                if songid.startswith(self.basedir):
+                    newsongs.append(songid[lb:])
+                else:
+                    raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
+            year.songs = newsongs
+            self.years.put(yearid, year, txn=self.txn)
+
+        print "lastadded...",
+        newlastadded = []
+        for songid in self.stats.get("lastadded", txn=self.txn):
+            if songid.startswith(self.basedir):
+                newlastadded.append(songid[lb:])
+            else:
+                raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
+        self.stats.put("lastadded", newlastadded, txn=self.txn)
+
+        print "lastplayed...",
+        newlastplayed = []
+        try:
+            for songid, playingtime in self.stats.get("lastplayed", txn=self.txn):
+                if songid.startswith(self.basedir):
+                    newlastplayed.append((songid[lb:], playingtime))
+                else:
+                    raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
+        except ValueError:
+            # we're dealing with a very old song database from which we cannot use
+            # the lastplayed information
+            pass
+        self.stats.put("lastplayed", newlastplayed, txn=self.txn)
+
+        print "topplayed...",
+        newsongs = []
+        for songid in self.stats.get("topplayed", txn=self.txn):
+            if songid.startswith(self.basedir):
+                newsongs.append(songid[lb:])
+            else:
+                raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
+        self.stats.put("topplayed", newsongs, txn=self.txn)
+
+        print "%d playlists..." % len(self.playlists)
+        for path, playlist in self.playlists.items(txn=self.txn):
+            newsongs = []
+            for songid in playlist.songs:
+                if songid.startswith(self.basedir):
+                    newsongs.append(songid[lb:])
+                else:
+                    raise RuntimeError("insconsistency in database: wrong basedir of song '%s'" % songid)
+            playlist.songs = newsongs
+            self.playlists.put(path, playlist, txn=self.txn)
+
+        print
+        self.stats.put("db_version", 3, txn=self.txn)
+
+    def _upgradefromversion3to4(self, atomic):
         """ update from database version 3 to version 4 """
 
-        log.info(_("updating song database %s from version 3 to version 4") % self.id)
-        print _("Updating song database %s from version 3 to version 4:") % self.id
+        print "%d songs..." % len(self.songs),
 
-        try:
-            self._txn_begin()
-            print "%d songs..." % len(self.songs),
+        for songid, song in self.songs.items(txn=self.txn):
+            if song.rating is not None:
+                song.ratingsource = 0
+            else:
+                song.ratingsource = None
+            if song.lastplayed:
+                song.lastplayed = [song.lastplayed]
+            else:
+                song.lastplayed = []
+            self.songs.put(songid, song, txn=self.txn)
+            self._indexsong_index(song, "rating")
+        print
+        self.stats.put("db_version", 4, txn=self.txn)
 
-            for songid, song in self.songs.items(txn=self.txn):
-                if song.rating is not None:
-                    song.ratingsource = 0
-                else:
-                    song.ratingsource = None
-                if song.lastplayed:
-                    song.lastplayed = [song.lastplayed]
-                else:
-                    song.lastplayed = []
-                self.songs.put(songid, song, txn=self.txn)
-                self._indexsong_index(song, "rating")
-            print
-            self.stats.put("db_version", 4, txn=self.txn)
-        except:
-            self._txn_abort()
-            raise
-        else:
-            self._txn_commit()
-            self._checkpoint()
-            print "Done"
-
-    def _updatefromversion4to5(self):
+    def _upgradefromversion4to5(self, atomic):
         """ update from database version 4 to version 5 """
 
-        log.info(_("updating song database %s from version 4 to version 5") % self.id)
-        print _("Updating song database %s from version 4 to version 5:") % self.id
+        print "%d songs..." % len(self.songs)
 
-        try:
-            self._txn_begin()
-            print "%d songs..." % len(self.songs)
+        nr = 0
 
-            nr = 0
-            for songid, song in self.songs.items(txn=self.txn):
-                if song.year is not None:
-                    song.decade = 10*(song.year//10)
-                else:
-                    song.decade = None
-                self.songs.put(songid, song, txn=self.txn)
-                self._indexsong_index(song, "decade")
-                nr += 1
-                if nr % 100 == 0:
-                    print "finished %d/%d songs\r" % (nr, len(self.songs)),
-                    sys.stdout.flush()
-            print
+        for songid, song in self.songs.items(txn=self.txn):
+            if song.year is not None:
+                song.decade = 10*(song.year//10)
+            else:
+                song.decade = None
+            self.songs.put(songid, song, txn=self.txn)
+            self._indexsong_index(song, "decade")
+            nr += 1
+            if nr % 100 == 0:
+                print "finished %d/%d songs\r" % (nr, len(self.songs)),
+                # commit regularly if we do not require atomiticity
+                if not atomic:
+                    self._txn_commit()
+                    self._checkpoint()
+                    self._txn_begin()
+                sys.stdout.flush()
+        print
 
-            # emptying years index (but not removing it, how can we do that?)
-            years = self.dbenv.openshelve(self.dbfile, flags=bsddb.db.DB_CREATE, dbname="years")
-            print "%d years..." % len(years.keys())
-            for year in years.keys():
-                years.delete(year, txn=self.txn)
-            years.close()
+        # emptying years index (but not removing it, how can we do that?)
+        years = self.dbenv.openshelve(self.dbfile, flags=bsddb.db.DB_CREATE, dbname="years")
+        print "%d years..." % len(years.keys(txn=self.txn))
+        for year in years.keys(txn=self.txn):
+            years.delete(year, txn=self.txn)
+        years.close()
 
-            self.stats.put("db_version", 5, txn=self.txn)
-        except:
-            self._txn_abort()
-            print "Conversion failed - changes have not been comitted"
-            raise
-        else:
-            self._txn_commit()
-            self._checkpoint()
-            print "Done"
+        self.stats.put("db_version", 5, txn=self.txn)
 
     def _convertfromoldfilelayout(self):
         """ convert databases from old multifile layout """

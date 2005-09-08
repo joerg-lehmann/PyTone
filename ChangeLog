@@ -1,3 +1,10 @@
+2005-09-08 Jörg Lehmann  <joerg@luga.de>a
+
+	* services/songdbs/local.py: Rewrite db upgrade code to allow
+	non-atomic upgrade, as well. Prompt the user before an upgrade to
+	ask whether a non-atomic or atomic upgrade has to be performed.
+
+
 2005-08-24 Jörg Lehmann  <joerg@luga.de>a
 
 	* Check earlier for dbfile != "db".
