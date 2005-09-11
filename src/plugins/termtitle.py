@@ -40,7 +40,7 @@ class plugin(plugin.plugin):
             raise RuntimeError("Terminal type not supported")
 
     def playbackinfochanged(self, event):
-        if event.playbackinfo.song != self.previoussong or event.playbackinfo.iscrossfading() != self.previouscross:
+        if event.playbackinfo.song and event.playbackinfo.song != self.previoussong or event.playbackinfo.iscrossfading() != self.previouscross:
             self.changetermtitle(event)
             self.previoussong = event.playbackinfo.song
             self.previouscross = event.playbackinfo.iscrossfading()

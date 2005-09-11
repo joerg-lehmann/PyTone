@@ -1,11 +1,18 @@
-2005-09-08 Jörg Lehmann  <joerg@luga.de>a
+2005-09-11 Jörg Lehmann  <joerg@luga.de>
+
+	* plugings/osdtitle.py, plugins/termtitle.py: Apply
+	patch by Dag Wieers <dag at wieers dot com> which adds
+	checking for no song being played.
+
+
+2005-09-08 Jörg Lehmann  <joerg@luga.de>
 
 	* services/songdbs/local.py: Rewrite db upgrade code to allow
 	non-atomic upgrade, as well. Prompt the user before an upgrade to
 	ask whether a non-atomic or atomic upgrade has to be performed.
 
 
-2005-08-24 Jörg Lehmann  <joerg@luga.de>a
+2005-08-24 Jörg Lehmann  <joerg@luga.de>
 
 	* Check earlier for dbfile != "db".
 

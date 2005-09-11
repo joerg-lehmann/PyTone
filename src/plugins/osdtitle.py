@@ -52,10 +52,9 @@ class plugin(plugin.plugin):
         self.previoussong = ''
 
     def playbackinfochanged(self, event):
-        if event.playbackinfo.song != self.previoussong:
-            if event.playbackinfo.song:
-                song = event.playbackinfo.song.format(self.config.songformat, safe=True)
-                os.system('echo "%s" | %s &' % (song, self.command))
+        if event.playbackinfo.song and event.playbackinfo.song != self.previoussong:
+            song = event.playbackinfo.song.format(self.config.songformat, safe=True)
+            os.system('echo "%s" | %s &' % (song, self.command))
             self.previoussong = event.playbackinfo.song
 
 # vim:ts=4:sw=4
