@@ -189,6 +189,9 @@ Key bindings
    CTRL-R                       load playlist from file
    (                            decrease output volume
    )                            increase output volume
+   {                            decrease playback speed
+   }                            increase playback speed
+   ~                            reset playback speed to normal
    1 - 5                        change rating of selected item
    ALT-1 - ALT-5                change rating of currently playing song
    ?                            show help
