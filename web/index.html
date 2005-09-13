@@ -472,6 +472,10 @@ bindings, automatic start of playing and of course bug fixes.
      <li>pyao (available from <a href="http://www.andrewchatham.com/pyogg/">here</a>, please use version 0.82 or above)
          or the new Python OSS module in Python 2.3.
      </li>
+     <li>libao header files (available from <a href="http://www.xiph.org/ao/">here</a>, if you want to compile the 
+         C version of the output ring-buffer.
+     </li>
+     </li>
    </ul>
  </li>
  <li>for the xmms based external player (optional):
@@ -510,9 +514,15 @@ done simply via</p>
 $ python setup.py build_ext -i
 </pre>
 
-<p>To enable support for transparent terminals set <tt>buildcursext
-= 1</tt> at the top of the <tt>setup.py</tt> file before running the
-above command.</p>
+<p>Note that by default this builds also a C extension module for the output
+ring-buffer, which requires the libao header files (see above). If you are
+happy with the Python version of the output buffer, you can disable building
+the C module by setting <tt>buildbufferedaoext = False</tt> at the top of the
+<tt>setup.py<tt> file before running the above command.</p>
+
+<p>To enable support for transparent terminals (only needed for Python 2.3.x)
+set <tt>buildcursext = True</tt> at the top of the <tt>setup.py</tt> file
+before running the above command.</p>
 
 <h2><a name="configuration"></a>Configuration</h2>
 
