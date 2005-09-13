@@ -111,7 +111,8 @@ Configuration
      # minimal ~/.pytone/pytonerc defining the root of your music collection
      [database.main]
      musicbasedir=/root/of/your/music/collection
-
+     # use new database layout
+     basename=
 
 Usage
 
