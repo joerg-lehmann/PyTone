@@ -1,3 +1,8 @@
+2005-09-13 Jörg Lehmann  <joerg@luga.de>
+
+	* Version 2.3.0 released.
+
+
 2005-09-11 Jörg Lehmann  <joerg@luga.de>
 
 	* plugings/osdtitle.py, plugins/termtitle.py: Apply

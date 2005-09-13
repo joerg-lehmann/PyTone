@@ -1,6 +1,6 @@
 # -*- coding: ISO-8859-1 -*-
 
-# Copyright (C) 2003 Jörg Lehmann <joerg@luga.de>
+# Copyright (C) 2003, 2004, 2005 Jörg Lehmann <joerg@luga.de>
 #
 # This file is part of PyTone (http://www.luga.de/pytone/)
 #
@@ -17,5 +17,5 @@
 # along with PyTone; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-version = "2.3.0-pre2"
+version = "2.3.0"
 copyright = "(c) 2002, 2003, 2004, 2005 Jörg Lehmann <joerg@luga.de>"
