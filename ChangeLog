@@ -4,6 +4,10 @@
 	small terminals during startup (thanks to Dag Wieers
 	<dag at wieers dot com> for reporting this problem).
 
+	* services/player.py: Move closing of audiodevice right before
+	blocking process() call (hopefully fixing a problem reported
+	by Dag Wieers <dag at wieers dot com>).
+
 
 2005-09-13 Jörg Lehmann  <joerg@luga.de>
 

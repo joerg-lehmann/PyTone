@@ -236,14 +236,9 @@ class genericplayer(service.service):
         if self.isplaying():
             self.play()
 
-
         # request a new song, if none is playing and the player wants to play
         if self.isstopped() and self.wantplay:
             self.requestnextsong()
-
-        # release player device if there is nothing to play
-        if not self.isplaying():
-            self._playerreleasedevice()
 
         # process incoming events
         self.channel.process()
@@ -260,7 +255,9 @@ class genericplayer(service.service):
             # In this case, we can safely block since we will be waked
             # up by any message on the event channel. Thus, event if
             # we want to request a new song, we can rely on an event
-            # signaling the addition of a new song to the playlist
+            # signaling the addition of a new song to the playlist.
+            # Before doing so, we release the player device
+            self._playerreleasedevice()
             self.channel.process(block=True)
 
     def play(self):

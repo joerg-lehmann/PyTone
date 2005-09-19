@@ -1,4 +1,5 @@
 - FLAC: finish decoder when not using it any more
+- release device at end of playback (Dag Wiers)
 
 TOCHECK:
 - what happens to mpg123 when pytone crashes
