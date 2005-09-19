@@ -1,3 +1,10 @@
+2005-09-19 Jörg Lehmann  <joerg@luga.de>
+
+	* mainscreen.py: Call correct getmaxyx method fixing problem with
+	small terminals during startup (thanks to Dag Wieers
+	<dag at wieers dot com> for reporting this problem).
+
+
 2005-09-13 Jörg Lehmann  <joerg@luga.de>
 
 	* Version 2.3.0 released.

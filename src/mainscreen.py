@@ -39,10 +39,11 @@ import config
 class mainscreen:
     def __init__(self, screen, songdbids, playerids, plugins):
         self.screen = screen
-        self.h, self.w = screen.getmaxyx()
+        self.layout = config.general.layout
+        self.h, self.w = self.getmaxyx()
+        log.debug("h=%d, w=%d" % (self.h, self.w))
         self.channel = hub.newchannel()
         self.keybindings = config.keybindings.general
-        self.layout = config.general.layout
         self.done = False
         
         self.statusbar = statusbar.statusbar(screen, self.h-1, self.w, self.channel)

@@ -18,6 +18,8 @@ USER WISHLIST:
   o handle collections better
 - start not at beginning but a few seconds later when prehearing song
 - fade out at exit (Dag Wieers <dag@wieers.com>)
+- enhance crossfading such that pauses between songs can be inserted 
+  (Rene Maurer <rm@cumparsita.ch>)
 
 - General:
   o timer interface
