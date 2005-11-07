@@ -1,3 +1,10 @@
+2005-11-07 Jörg Lehmann  <joerg@luga.de>
+
+	* filelist.py: Update top after changing back into a directory as the 
+	window size may have changed in the meantime (thanks to Martin Fenelon
+	<fenm at freeuk dot com> for reporting this problem).
+
+
 2005-09-19 Jörg Lehmann  <joerg@luga.de>
 
 	* mainscreen.py: Call correct getmaxyx method fixing problem with

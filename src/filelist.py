@@ -71,6 +71,8 @@ class filelist(slist.slist):
             self.readdir()
             self.selected = selected
             self.top = top
+            # the window size could have changed in the meantime, so we have to update top
+            self._updatetop()
             self._notifyselectionchanged()
 
     def selectionpath(self):
