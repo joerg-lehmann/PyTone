@@ -1,3 +1,11 @@
+2005-12-05 Jörg Lehmann  <joerg@luga.de>
+
+	* services/player.py: Start player only after the playlist service has
+	been started since playlist requests may already be issued during the
+	player startup. This fixes an long-standing problem reprted by several
+	people on the mailing list.
+
+
 2005-11-07 Jörg Lehmann  <joerg@luga.de>
 
 	* filelist.py: Update top after changing back into a directory as the 

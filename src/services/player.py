@@ -92,12 +92,15 @@ def initplayer(id, config):
         except:
             raise
             raise RuntimeError("Cannot initialize %s player: type=remote, location=%s" % (id, config.networklocation))
-        
+
     p.setName("player thread (id=%s)" % id)
-    p.start()
 
     if type != "remote" and id == "main":
         services.playlist.initplaylist(id, id, id)
+
+    # start player only after the playlist service has been started since
+    # playlist requests may already be issued during the player startup
+    p.start()
 
     return id
 
