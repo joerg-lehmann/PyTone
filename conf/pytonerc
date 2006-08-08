@@ -654,6 +654,12 @@ volumedown                = (
 playerplayfaster          = }
 playerplayslower          = {
 playerspeedreset          = ~
+# rating of currently playing song
+playerratecurrentsong1    = alt-1
+playerratecurrentsong2    = alt-2
+playerratecurrentsong3    = alt-3
+playerratecurrentsong4    = alt-4
+playerratecurrentsong5    = alt-5
 
 [keybindings.filelistwindow]
 # additional keybindings when filelist window is active

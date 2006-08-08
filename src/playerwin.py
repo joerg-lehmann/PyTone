@@ -144,8 +144,16 @@ class playerwin(window.window):
             hub.notify(events.playerplayslower(self.playerid))
         elif key in self.keybindings["playerspeedreset"]:
             hub.notify(events.playerspeedreset(self.playerid))
-        elif ord("1") <= key-1024 <= ord("5") and self.song:
-            self.song.rate(key-1024-ord("1")+1)
+        elif key in self.keybindings["playerratecurrentsong1"]:
+            self.song.rate(1)
+        elif key in self.keybindings["playerratecurrentsong2"]:
+            self.song.rate(2)
+        elif key in self.keybindings["playerratecurrentsong3"]:
+            self.song.rate(3)
+        elif key in self.keybindings["playerratecurrentsong4"]:
+            self.song.rate(4)
+        elif key in self.keybindings["playerratecurrentsong5"]:
+            self.song.rate(5)
         else:
             return
         raise hub.TerminateEventProcessing

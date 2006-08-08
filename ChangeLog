@@ -1,8 +1,16 @@
+2006-08-08 Jörg Lehmann  <joerg@luga.de>
+
+	* Make keybindings for rating of currently playing songs configurable
+	via playerratecurrentsong1, ... playerratecurrentsong5 in the
+	keybindings.general section of the pytonerc file (thanks to Alexander
+	Wirt <formorer at formorer dot de> for suggesting this).
+
+
 2005-12-05 Jörg Lehmann  <joerg@luga.de>
 
 	* services/player.py: Start player only after the playlist service has
 	been started since playlist requests may already be issued during the
-	player startup. This fixes an long-standing problem reprted by several
+	player startup. This fixes an long-standing problem reported by several
 	people on the mailing list.
 
 

@@ -641,6 +641,11 @@ class keybindings(configsection):
         playerplayfaster = configkeys("}")
         playerplayslower = configkeys("{")
         playerspeedreset = configkeys("~")
+        playerratecurrentsong1 = configkeys("alt-1")
+        playerratecurrentsong2 = configkeys("alt-2")
+        playerratecurrentsong3 = configkeys("alt-3")
+        playerratecurrentsong4 = configkeys("alt-4")
+        playerratecurrentsong5 = configkeys("alt-5")
 
     class filelistwindow(configsection):
         selectnext = configkeys("KEY_DOWN j")
