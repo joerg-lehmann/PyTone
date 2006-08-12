@@ -64,6 +64,11 @@ descriptions = {
           "playerplayfaster":  (_("play faster"), _("increase the play speed")),
           "playerplayslower":  (_("play slower"), _("decrease the play speed")),
           "playerspeedreset":  (_("default play speed"), _("reset the play speed to normal")),
+          "playerratecurrentsong1":  (_("rate current song 1"), _("rate currently playing song with 1 star")),
+          "playerratecurrentsong2":  (_("rate current song 2"), _("rate currently playing song with 2 stars")),
+          "playerratecurrentsong3":  (_("rate current song 3"), _("rate currently playing song with 3 stars")),
+          "playerratecurrentsong4":  (_("rate current song 4"), _("rate currently playing song with 4 stars")),
+          "playerratecurrentsong5":  (_("rate current song 5"), _("rate currently playing song with 5 stars")),
     },
     "filelistwindow": {
           "selectnext":        (_("down"), _("move to the next entry")),
