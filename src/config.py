@@ -416,7 +416,7 @@ class player(configsection):
         autoplay = configboolean("true")
 
         # only for internal player
-        driver = configalternatives("oss", ["alsa", "alsa09", "arts", "esd", "oss", "sun"])
+        driver = configalternatives("oss", ["alsa", "alsa09", "arts", "esd", "oss", "sun", "macosx"])
         device = configstring("/dev/dsp")
         bufsize = configint(100)
         crossfading = configboolean("true")
@@ -439,7 +439,7 @@ class player(configsection):
         autoplay = configboolean("true")
 
         # only for internal player
-        driver = configalternatives("oss", ["alsa", "alsa09", "arts", "esd", "oss", "sun"])
+        driver = configalternatives("oss", ["alsa", "alsa09", "arts", "esd", "oss", "sun", "macosx"])
         device = configstring("/dev/dsp1")
         bufsize = configint(100)
         crossfading = configboolean("true")
