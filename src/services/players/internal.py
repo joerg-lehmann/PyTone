@@ -47,7 +47,7 @@ except ImportError:
 
 class aoaudiodev:
     def __init__(self, aodevice, rate, options):
-        self.ao = ao.AudioDevice(aodevice, rate=rate, options=options)
+        self.ao = ao.AudioDevice(aodevice, rate=rate, byte_format=2, options=options)
 
     def play(self, buff, bytes):
         self.ao.play(buff, bytes)

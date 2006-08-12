@@ -142,7 +142,7 @@ bufferedao_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     self->format.bits = 16;
     self->format.rate = 44100;
     self->format.channels = 2;
-    self->format.byte_format =1;
+    self->format.byte_format = 2;
 
     /* parse parameters... */
     if ( !PyArg_ParseTupleAndKeywords(args, kwds, "iis|iiiiO!", kwlist,
