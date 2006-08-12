@@ -17,26 +17,8 @@
 # along with PyTone; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import os.path, locale, re, string, sys, time
+import os.path, re, string, sys, time
 import log, metadata
-
-fallbacklocalecharset = 'iso-8859-1'
-
-# Try to determine "correct" character set for the reencoding of the
-# unicode strings contained in Ogg Vorbis files
-try:
-    # works only in python > 2.3
-    localecharset = locale.getpreferredencoding()
-except:
-    try:
-        localecharset = locale.getdefaultlocale()[1]
-    except:
-        try:
-            localecharset = sys.getdefaultencoding()
-        except:
-            localecharset = fallbacklocalecharset
-if localecharset in [None, 'ANSI_X3.4-1968']:
-    localecharset = fallbacklocalecharset
 
 
 tracknrandtitlere = re.compile("^\[?(\d+)\]? ?[- ] ?(.*)\.(mp3|ogg)$")
