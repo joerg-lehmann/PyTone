@@ -20,6 +20,12 @@ USER WISHLIST:
 - fade out at exit (Dag Wieers <dag@wieers.com>)
 - enhance crossfading such that pauses between songs can be inserted 
   (Rene Maurer <rm@cumparsita.ch>)
+- Format song information like
+        Path: /music/path/Artist/Album
+        Filename: Song.ext
+        File type: mp3 192kbps VBR 
+   (Dag Wieers)
+- put number of artists in title (Dag Wieers)
 
 - General:
   o timer interface
