@@ -256,10 +256,11 @@ class song(dbitem):
            except AttributeError:
                continue
            else:
-               scale = 10.**(db / 20)
-               if scale * peak > 1:
-                   scale = 1.0 / peak # don't clip
-               return min(15, scale)
+               if db is not None and peak is not None:
+                   scale = 10.**(db / 20)
+                   if scale * peak > 1:
+                       scale = 1.0 / peak # don't clip
+                   return min(15, scale)
        else:
            return 1.0
 
