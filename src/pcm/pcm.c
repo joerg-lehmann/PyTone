@@ -391,6 +391,35 @@ static PyObject *py_upsample(PyObject *self, PyObject *args) {
   return returnObj;
 }
 
+/* scale(buff, factor):
+
+inplace scale all elements of buf (interpreted as signed int16) by factor
+*/
+
+static PyObject *py_scale(PyObject *self, PyObject *args) {
+  PyObject *returnObj = NULL;
+  char *b_c;
+  int16_t *b_i;  /* the same as pointer to 16 bit ints */
+  int l;
+  float factor;
+  int i;
+
+  if (PyArg_ParseTuple(args, "t#f", &b_c, &l, &factor )) {
+      b_i  = (int16_t *) b_c;
+      
+      Py_BEGIN_ALLOW_THREADS
+      for (i=0; i<l/2; i++) {
+          double r = b_i[i] * factor;
+          if (r>32768) b_i[i] = 32768;
+          else if (r<-32767) b_i[i] = -32767;
+          else b_i[i] = (int) r;
+      }
+      Py_END_ALLOW_THREADS
+    Py_INCREF(Py_None);
+    returnObj = Py_None;
+  }
+  return returnObj;
+}
 
 /* exported methods */
 
@@ -398,6 +427,7 @@ static PyMethodDef pcm_methods[] = {
   {"mix", py_mix,  METH_VARARGS},
   {"rate_convert", py_rate_convert,  METH_VARARGS},
   {"upsample", py_upsample,  METH_VARARGS},
+  {"scale", py_scale,  METH_VARARGS},
   {NULL, NULL}
 };
 

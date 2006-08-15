@@ -112,7 +112,7 @@ class iteminfowin(window.window):
                 # special handling of last line for songs
                 wc3 = max(len(l[3][-2]), 5) + colsep
                 wc4 = max(len(l[3][-1]), 5)
-                
+
                 self.move(1+lno, self.iw-wc3-wc4-1-self.ix)
                 self.addch(" ")
                 self.addstr(l[3][-2].ljust(wc3)[:wc3], self.colors.description)
@@ -220,7 +220,7 @@ class iteminfowinlong(messagewin.messagewin):
                 # special handling of last line
                 wc3 = max(len(line[-2]), 5) + colsep
                 wc4 = max(len(line[-1]), 5)
-                
+
                 self.move(1+lno, self.iw-wc3-wc4-1-self.ix)
                 self.addch(" ")
                 self.addstr(line[-2].ljust(wc3)[:wc3], self.colors.description)

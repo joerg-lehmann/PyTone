@@ -282,6 +282,16 @@ class song(item):
 
         l.append([_("Genre:"), self.song.genre, "", ""])
         l.append([_("Time:"), "%d:%02d" % divmod(self.song.length, 60), "", ""])
+        replaygain = ""
+        if self.song.replaygain_track_gain is not None and self.song.replaygain_track_peak is not None:
+            replaygain = replaygain + "%s: %+f dB (peak: %f) " % (_("track"),
+                                                                  self.song.replaygain_track_gain,
+                                                                  self.song.replaygain_track_peak)
+        if self.song.replaygain_album_gain is not None and self.song.replaygain_album_peak is not None:
+            replaygain = replaygain + "%s: %+f dB (peak: %f)" % (_("album"),
+                                                                 self.song.replaygain_album_gain,
+                                                                 self.song.replaygain_album_peak)
+        l.append([_("Replaygain:"), replaygain, "", ""])
         l.append([_("Path:"), self.song.path, "", ""])
 
         if self.song.rating:

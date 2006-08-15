@@ -225,6 +225,8 @@ class player(genericplayer):
         if len(self.songs) == 1:
             song = self.songs[0]
             buff = song.read(self.SIZE)
+            if song.replaygain != 1:
+                pcm.scale(buff, song.replaygain)
             if len(buff) > 0:
                 self.audiodev.play(buff, len(buff))
             else:
@@ -316,7 +318,7 @@ class player(genericplayer):
             del self.songs[0]
 
         try:
-            self.songs.append(decoder.decodedsong(song, self.rate))
+            self.songs.append(decoder.decodedsong(song, self.rate, ["track"]))
             if self.crossfading:
                 self.songtransitionmode = "crossfade"
                 # Check whether two songs come after each other on an

@@ -1,3 +1,17 @@
+2006-08-15 Jörg Lehmann  <joerg@luga.de>
+
+        * metadata.py: Use mutagen as default ID3 reader from MP3 files.
+
+        * metadata.py, dbitem.py: Store replaygain information and calculate
+        replaygain scale factor.
+
+        * pcm.c: Add function which allows scaling of the buffer by a factor.
+
+        * decoder.py: Store replaygain scale factor
+
+        * services/players/internal.py: Use track gain for replaygain information.
+
+
 2006-08-12 Jörg Lehmann  <joerg@luga.de>
 
         * Version 2.3.1 released.

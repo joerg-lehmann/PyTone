@@ -68,6 +68,10 @@ class song(dbitem):
         self.genre = ""
         self.tracknr = ""
         self.length = 0
+        self.replaygain_track_gain = None
+        self.replaygain_track_peak = None
+        self.replaygain_album_gain = None
+        self.replaygain_album_peak = None
 
         # statistical information
         self.nrplayed = 0
@@ -135,6 +139,10 @@ class song(dbitem):
             self.genre = md.genre
             self.tracknr = md.tracknr
             self.length = md.length
+            self.replaygain_track_gain = md.replaygain_track_gain
+            self.replaygain_track_peak = md.replaygain_track_peak
+            self.replaygain_album_gain = md.replaygain_album_gain
+            self.replaygain_album_peak = md.replaygain_album_peak
             log.debug("metadata for %s read successfully" % self.path)
         except:
             log.warning("could not read metadata for %s" % self.path)
@@ -231,6 +239,29 @@ class song(dbitem):
         self.tracknr = newsong.tracknr
         self.length = newsong.length
 
+    def replaygain(self, profiles):
+       # the following code is adapted from quodlibet
+       """Return the recommended Replay Gain scale factor.
+
+       profiles is a list of Replay Gain profile names ('album',
+       'track') to try before giving up. The special profile name
+       'none' will cause no scaling to occur.
+       """
+       for profile in profiles:
+           if profile is "none":
+               return 1.0
+           try:
+               db = getattr(self, "replaygain_%s_gain" % profile)
+               peak = getattr(self, "replaygain_%s_peak" % profile)
+           except AttributeError:
+               continue
+           else:
+               scale = 10.**(db / 20)
+               if scale * peak > 1:
+                   scale = 1.0 / peak # don't clip
+               return min(15, scale)
+       else:
+           return 1.0
 
 class artist(dbitem):
     def __init__(self, name):

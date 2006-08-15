@@ -312,7 +312,7 @@ class songdb(service.service):
             print _(" (1) the upgrade has to be protected by a transaction")
             print _("     (safe but may require large amounts of disk space) or")
             print _(" (2) the upgrade has to be done unprotected")
-            print _("     (need less disk space during the upgrade but you should backup your database before")
+            print _("     (needs less disk space during the upgrade but you should backup your database before")
             print _("Note that you can first try alternative (1) and if it fails, use method (2)")
             print
             print _("What upgrade method (1 or 2, any other input cancels the upgrade) should be used? "),

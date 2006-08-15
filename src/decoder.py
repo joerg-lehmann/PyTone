@@ -216,10 +216,11 @@ class decodedsong:
 
     """
 
-    def __init__(self, song, outrate):
+    def __init__(self, song, outrate, replaygainprofiles):
         self.song = song
         self.outrate = outrate
         self.default_rate = outrate
+        self.replaygain = song.replaygain(replaygainprofiles)
 
         try:
             decoder = getdecoder(self.song.type)

@@ -54,6 +54,10 @@ class metadata:
         self.genre = ""
         self.tracknr = ""
         self.length = 0
+        self.replaygain_track_gain = None
+        self.replaygain_track_peak = None
+        self.replaygain_album_gain = None
+        self.replaygain_album_peak = None
 
 # mapping: file type -> (metadata, decoder class, file extension)
 _fileformats = {}
@@ -104,6 +108,52 @@ try:
     log.info("Ogg Vorbis support enabled")
 except ImportError:
     log.info("Ogg Vorbis support disabled, since module is not present")
+#
+# ID3 metadata decoder (using mutagen module)
+#
+
+
+class mp3mutagenmetadata(metadata):
+    framemapping = { "TIT2": "title",
+                     "TALB": "album",
+                     "TPE1": "artist",
+                     "TDRC": "year"  }
+    def __init__(self, path):
+        metadata.__init__(self, path)
+        mp3 = mutagen.mp3.MP3(path, ID3=ID3hack)
+
+        # we definitely want the length of the MP3 file, even if no ID3 tag is present,
+        # so extract this info before anything goes wrong
+        self.length = mp3.info.length
+
+        for frame in mp3.tags.values():
+            if frame.FrameID == "TCON":
+                self.genre = " ".join(frame.genres)
+            elif frame.FrameID == "RVA2":
+                if frame.channel == 1:
+                    if frame.desc == "album":
+                        basename = "replaygain_album_"
+                    else:
+                        # for everything else, we assume its track
+                        basename = "replaygain_track_"
+                    setattr(self, basename+"gain", frame.gain)
+                    setattr(self, basename+"peak", frame.peak)
+            elif frame.FrameID == "TLEN":
+                try:
+                    self.length = int(+frame/1000)
+                except:
+                    pass
+            else:
+                name = self.framemapping.get(frame.FrameID, None)
+                if name:
+                    text = " ".join(map(unicode, frame.text)).encode(localecharset, "replace")
+                    setattr(self, name, text)
+        # self.title = MP3Info._strip_zero(self.title)
+        # self.album = MP3Info._strip_zero(self.album)
+        # self.artist = MP3Info._strip_zero(self.artist)
+
+        # if the playtime is also in the ID3 tag information, we
+        # try to read it from there
 
 #
 # ID3 metadata decoder (using eyeD3 module)
@@ -185,19 +235,34 @@ class mp3MP3Infometadata(metadata):
             self.length = mp3info.mpeg.length
         mp3file.close()
 
-
 try:
-    import eyeD3
-    import MP3Info # we also need this
-    registerfileformat("mp3", mp3eyeD3metadata, ".mp3")
-    log.info("using eyeD3 module for id3 tag parsing")
+    import mutagen.mp3
+    import mutagen.id3
+    import MP3Info
+
+    class ID3hack(mutagen.id3.ID3):
+        "Override 'correct' behavior with desired behavior"
+        def loaded_frame(self, tag):
+            if len(type(tag).__name__) == 3: tag = type(tag).__base__(tag)
+            if tag.HashKey in self and tag.FrameID[0] == "T":
+                self[tag.HashKey].extend(tag[:])
+            else: self[tag.HashKey] = tag
+
+    registerfileformat("mp3", mp3mutagenmetadata, ".mp3")
+    log.info("using mutagen module for id3 tag parsing")
 except ImportError:
     try:
-        import MP3Info
-        registerfileformat("mp3", mp3MP3Infometadata, ".mp3")
-        log.info("using integrated MP3Info module for id3 tag parsing")
+        import eyeD3
+        import MP3Info # we also need this
+        registerfileformat("mp3", mp3eyeD3metadata, ".mp3")
+        log.info("using eyeD3 module for id3 tag parsing")
     except ImportError:
-        pass
+        try:
+            import MP3Info
+            registerfileformat("mp3", mp3MP3Infometadata, ".mp3")
+            log.info("using integrated MP3Info module for id3 tag parsing")
+        except ImportError:
+            pass
 
 #
 # FLAC metadata decoder
