@@ -1,6 +1,6 @@
 # -*- coding: ISO-8859-1 -*-
 
-# Copyright (C) 2005 Jörg Lehmann <joerg@luga.de>
+# Copyright (C) 2005, 2006 Jörg Lehmann <joerg@luga.de>
 #
 # Ogg Vorbis interface by Byron Ellacott <bje@apnic.net>.
 #
@@ -19,7 +19,7 @@
 # along with PyTone; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import locale, sys
+import locale, os, sys
 import log
 
 fallbacklocalecharset = "iso-8859-1"
@@ -54,6 +54,12 @@ class metadata:
         self.genre = ""
         self.tracknr = ""
         self.length = 0
+	self.version = None
+	self.layer = None
+	self.vbr = None
+	self.samplerate = None
+	self.bitrate = None
+	self.size = os.stat(path).st_size
         self.replaygain_track_gain = None
         self.replaygain_track_peak = None
         self.replaygain_album_gain = None
@@ -107,11 +113,11 @@ try:
     registerfileformat("ogg", vorbismetadata, ".ogg")
     log.info("Ogg Vorbis support enabled")
 except ImportError:
-    log.info("Ogg Vorbis support disabled, since module is not present")
+    log.info("Ogg Vorbis support disabled, since ogg.vorbis module is not present")
+
 #
 # ID3 metadata decoder (using mutagen module)
 #
-
 
 class mp3mutagenmetadata(metadata):
     framemapping = { "TIT2": "title",
@@ -126,6 +132,11 @@ class mp3mutagenmetadata(metadata):
         # so extract this info before anything goes wrong
         self.length = mp3.info.length
 
+	self.version = mp3.info.version
+	self.layer = mp3.info.layer
+	self.samplerate = mp3.info.sample_rate
+	self.bitrate = mp3.info.bitrate
+
         for frame in mp3.tags.values():
             if frame.FrameID == "TCON":
                 self.genre = " ".join(frame.genres)
@@ -134,7 +145,7 @@ class mp3mutagenmetadata(metadata):
                     if frame.desc == "album":
                         basename = "replaygain_album_"
                     else:
-                        # for everything else, we assume its track
+                        # for everything else, we assume it's track gain
                         basename = "replaygain_track_"
                     setattr(self, basename+"gain", frame.gain)
                     setattr(self, basename+"peak", frame.peak)
@@ -168,6 +179,9 @@ class mp3eyeD3metadata(metadata):
         # we definitely want the length of the MP3 file, even if no ID3 tag is present,
         # so extract this info before anything goes wrong
         self.length = mp3file.getPlayTime()
+
+	self.vbr, self.bitrate = mp3file.getBitRate()
+	self.samplerate = mp3file.getSampleFreq()
 
         if mp3info:
             self.title = mp3info.getTitle()
@@ -224,6 +238,11 @@ class mp3MP3Infometadata(metadata):
         self.year = mp3info.year
         self.genre  = mp3info.genre
         self.tracknr = mp3info.track
+	self.version = mp3info.mpeg.version
+	self.layer = mp3info.mpeg.layer
+	self.vbr = mp3info.mpeg.is_vbr
+	self.bitrate = mp3info.mpeg.bitrate
+	self.samplerate = mp3info.mpeg.samplerate
         try:
             try:
                 self.length = int(mp3info.id3.tags["TLEN"])/1000

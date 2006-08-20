@@ -267,6 +267,18 @@ class song(item):
 
     def getinfolong(self):
         l = []
+	directory, filename = os.path.split(self.song.path)
+	l.append([_("Path:"), directory, "", ""])
+	l.append([_("File name:"), filename, "", ""])
+	typestring = self.song.type.upper()
+	if self.song.bitrate is not None:
+	    typestring = "%s %dkbps" % (typestring, self.song.bitrate/1000)
+	    if self.song.vbr:
+		typestring = typestring + "VBR"
+	    if self.song.samplerate:
+		typestring = "%s (%.1f kHz)" % (typestring, self.song.samplerate/1000.)
+
+	l.append([_("File type:"), typestring, "", ""])
         l.append([_("Title:"), self.song.title, "", ""])
         l.append([_("Album:"),  self.song.album, "", ""])
         l.append([_("Artist:"), self.song.artist, "", ""])
@@ -292,7 +304,7 @@ class song(item):
                                                                  self.song.replaygain_album_gain,
                                                                  self.song.replaygain_album_peak)
         l.append([_("Replaygain:"), replaygain, "", ""])
-        l.append([_("Path:"), self.song.path, "", ""])
+   
 
         if self.song.rating:
             l.append([_("Rating:"), "*"*self.song.rating, "", ""])

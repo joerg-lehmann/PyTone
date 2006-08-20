@@ -68,6 +68,9 @@ class song(dbitem):
         self.genre = ""
         self.tracknr = ""
         self.length = 0
+	self.bitrate = None
+	self.samplerate = None
+	self.vbr = None
         self.replaygain_track_gain = None
         self.replaygain_track_peak = None
         self.replaygain_album_gain = None
@@ -139,6 +142,9 @@ class song(dbitem):
             self.genre = md.genre
             self.tracknr = md.tracknr
             self.length = md.length
+	    self.bitrate = md.bitrate
+	    self.samplerate = md.samplerate
+	    self.vbr = md.vbr
             self.replaygain_track_gain = md.replaygain_track_gain
             self.replaygain_track_peak = md.replaygain_track_peak
             self.replaygain_album_gain = md.replaygain_album_gain

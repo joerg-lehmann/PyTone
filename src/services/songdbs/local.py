@@ -1,6 +1,6 @@
 # -*- coding: ISO-8859-1 -*-
 
-# Copyright (C) 2002, 2003, 2004 Jörg Lehmann <joerg@luga.de>
+# Copyright (C) 2002, 2003, 2004, 2005, 2006 Jörg Lehmann <joerg@luga.de>
 #
 # This file is part of PyTone (http://www.luga.de/pytone/)
 #
@@ -263,7 +263,7 @@ class songdb(service.service):
                   len(self.genres), len(self.playlists)))
 
         # version information for database
-        currentdbversion = 5
+        currentdbversion = 6
 
         # check whether we have to deal with a newly created database
         if not self.stats:
@@ -325,9 +325,9 @@ class songdb(service.service):
 
             s = _("updating song database %s from version 1 to version 2 ")
             if atomic:
-                s = s + _("(with transaction protection")
+                s = s + _("(with transaction protection)")
             else:
-                s = s + _("(without transaction protection")
+                s = s + _("(without transaction protection)")
             print s
             log.info(s)
 
@@ -555,6 +555,24 @@ class songdb(service.service):
         years.close()
 
         self.stats.put("db_version", 5, txn=self.txn)
+
+    def _upgradefromversion5to6(self, atomic):
+        """ update from database version 5 to version 6 """
+
+        print "%d songs..." % len(self.songs),
+
+        for songid, song in self.songs.items(txn=self.txn):
+	    song.bitrate = None
+	    song.samplerate = None
+	    song.vbr = None
+	    song.replaygain_track_gain = None
+	    song.replaygain_track_peak = None
+	    song.replaygain_album_gain = None
+	    song.replaygain_album_peak = None
+            self.songs.put(songid, song, txn=self.txn)
+	    print songid
+        print
+        self.stats.put("db_version", 6, txn=self.txn)
 
     def _convertfromoldfilelayout(self):
         """ convert databases from old multifile layout """
