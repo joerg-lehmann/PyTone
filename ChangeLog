@@ -1,10 +1,14 @@
 2006-08-20 Jörg Lehmann  <joerg@luga.de>
 
-	* Database version 6: Store bitrate, samplerate, vbr and
-	replaygain information in database.
+	* Database version 6: Store bitrate, samplerate, vbr, size, tracknumber, trackcount,
+	disknumber, diskccount, and replaygain information in database.
 
 	* item.py: Display song information as suggested by Dag Wieers
 	<dag at wieers dot com>.
+
+	* metadata.py: Add replaygain support to eyeD3 decoder
+
+	* services/players/internal.py: Take disk number into account.
 
 
 2006-08-15 Jörg Lehmann  <joerg@luga.de>

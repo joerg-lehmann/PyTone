@@ -331,8 +331,8 @@ class player(genericplayer):
                     # XXX no check for artist/album==UNKNOWN!
                     if (song1.artist == song2.artist and
                         song1.album == song2.album and
-                        song1.tracknr != "" and song2.tracknr != "" and
-                        int(song1.tracknr) == int(song2.tracknr)-1):
+                        song1.tracknumber and song2.tracknumber and
+                        song1.tracknumber == song2.tracknumber-1 ):
                         self.songtransitionmode = "gapkill"
                         log.debug("internal player: I don't crossfade successive songs.")
         except (IOError, RuntimeError):

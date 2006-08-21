@@ -19,7 +19,7 @@
 # along with PyTone; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import locale, os, sys
+import locale, os, struct, sys
 import log
 
 fallbacklocalecharset = "iso-8859-1"
@@ -52,7 +52,10 @@ class metadata:
         self.artist = ""
         self.year = ""
         self.genre = ""
-        self.tracknr = ""
+        self.tracknumber = None
+	self.trackcount = None
+	self.disknumber = None
+	self.diskcount = None
         self.length = 0
 	self.version = None
 	self.layer = None
@@ -115,6 +118,16 @@ try:
 except ImportError:
     log.info("Ogg Vorbis support disabled, since ogg.vorbis module is not present")
 
+def _splitnumbertotal(s):
+    """ split string into number and total number """
+    r = map(int, s.split("/"))
+    number = r[0]
+    if len(r) == 2:
+	count = r[1]
+    else:
+	count = None
+    return number, count
+
 #
 # ID3 metadata decoder (using mutagen module)
 #
@@ -139,7 +152,7 @@ class mp3mutagenmetadata(metadata):
 
         for frame in mp3.tags.values():
             if frame.FrameID == "TCON":
-                self.genre = " ".join(frame.genres)
+                self.genre = " ".join(frame.genres).encode(localecharset, "replace")
             elif frame.FrameID == "RVA2":
                 if frame.channel == 1:
                     if frame.desc == "album":
@@ -154,17 +167,19 @@ class mp3mutagenmetadata(metadata):
                     self.length = int(+frame/1000)
                 except:
                     pass
+	    elif frame.FrameID == "TRCK":
+		self.tracknumber, self.trackcount = _splitnumbertotal(frame.text[0])
+	    elif frame.FrameID == "TPOS":
+		self.disknumber, self.diskcount = _splitnumbertotal(frame.text[0])
             else:
                 name = self.framemapping.get(frame.FrameID, None)
                 if name:
                     text = " ".join(map(unicode, frame.text)).encode(localecharset, "replace")
                     setattr(self, name, text)
+
         # self.title = MP3Info._strip_zero(self.title)
         # self.album = MP3Info._strip_zero(self.album)
         # self.artist = MP3Info._strip_zero(self.artist)
-
-        # if the playtime is also in the ID3 tag information, we
-        # try to read it from there
 
 #
 # ID3 metadata decoder (using eyeD3 module)
@@ -180,7 +195,8 @@ class mp3eyeD3metadata(metadata):
         # so extract this info before anything goes wrong
         self.length = mp3file.getPlayTime()
 
-	self.vbr, self.bitrate = mp3file.getBitRate()
+	self.vbr, bitrate = mp3file.getBitRate()
+	self.bitrate = bitrate * 1000
 	self.samplerate = mp3file.getSampleFreq()
 
         if mp3info:
@@ -207,7 +223,8 @@ class mp3eyeD3metadata(metadata):
             except eyeD3.tag.GenreException, e:
                 self.genre = e.msg.split(':')[1].strip()
 
-            self.tracknr = str(mp3info.getTrackNum()[0])
+            self.tracknumber, self.trackcount = mp3info.getTrackNum()
+	    self.disknumber, self.diskcount = mp3info.getDiscNum()
 
             # if the playtime is also in the ID3 tag information, we
             # try to read it from there
@@ -224,6 +241,32 @@ class mp3eyeD3metadata(metadata):
                 if length:
                     self.length = length
 
+	    for rva2frame in mp3info.frames["RVA2"]:
+		# since eyeD3 currently doesn't support RVA2 frames, we have to decode
+		# them on our own following mutagen
+		desc, rest = rva2frame.data.split("\x00", 1)
+		channel = ord(rest[0])
+		if channel == 1:
+		    gain = struct.unpack('>h', rest[1:3])[0]/512.0
+		    # http://bugs.xmms.org/attachment.cgi?id=113&action=view
+		    rest = rest[3:]
+		    peak = 0
+		    bits = ord(rest[0])
+		    bytes = min(4, (bits + 7) >> 3)
+		    shift = ((8 - (bits & 7)) & 7) + (4 - bytes) * 8
+		    for i in range(1, bytes+1):
+			peak *= 256
+			peak += ord(rest[i])
+		    peak *= 2**shift
+		    peak = (float(peak) / (2**31-1))
+		    if desc == "album":
+                        basename = "replaygain_album_"
+		    else:
+                        # for everything else, we assume it's track gain
+                        basename = "replaygain_track_"
+                    setattr(self, basename+"gain", gain)
+                    setattr(self, basename+"peak", peak)
+
 #
 # ID3 metadata decoder (using MP3Info module)
 #
@@ -237,7 +280,7 @@ class mp3MP3Infometadata(metadata):
         self.artist = mp3info.artist
         self.year = mp3info.year
         self.genre  = mp3info.genre
-        self.tracknr = mp3info.track
+        self.tracknumber = _splitnumbertotal(mp3info.track)
 	self.version = mp3info.mpeg.version
 	self.layer = mp3info.mpeg.layer
 	self.vbr = mp3info.mpeg.is_vbr
@@ -258,7 +301,8 @@ try:
     import mutagen.mp3
     import mutagen.id3
     import MP3Info
-
+    
+    # copied from quodlibet
     class ID3hack(mutagen.id3.ID3):
         "Override 'correct' behavior with desired behavior"
         def loaded_frame(self, tag):

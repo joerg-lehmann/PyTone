@@ -66,11 +66,15 @@ class song(dbitem):
         self.year = None
         self.decade = None
         self.genre = ""
-        self.tracknr = ""
+        self.tracknumber = None
+	self.trackcount = None
+	self.disknumber = None
+	self.diskcount = None
         self.length = 0
-	self.bitrate = None
+ 	self.bitrate = None
 	self.samplerate = None
 	self.vbr = None
+	self.size = None
         self.replaygain_track_gain = None
         self.replaygain_track_peak = None
         self.replaygain_album_gain = None
@@ -105,13 +109,13 @@ class song(dbitem):
         if not os.access(self.path, os.R_OK):
             raise IOError("cannot read song")
 
-        # guesses for title and tracknr using the filename
+        # guesses for title and tracknumber using the filename
         match = re.match(tracknrandtitlere, self.name)
         if match:
-            fntracknr = str(int(match.group(1)))
+            fntracknumber = int(match.group(1))
             fntitle = match.group(2)
         else:
-            fntracknr = ""
+            fntracknumber = None
             fntitle = self.name
             if fntitle.lower().endswith(".mp3") or fntitle.lower().endswith(".ogg"):
                 fntitle = fntitle[:-4]
@@ -140,11 +144,15 @@ class song(dbitem):
             self.artist = md.artist
             self.year = md.year
             self.genre = md.genre
-            self.tracknr = md.tracknr
+            self.tracknumber = md.tracknumber
+	    self.trackcount = md.trackcount
+	    self.disknumber = md.disknumber
+	    self.diskcount = md.diskcount
             self.length = md.length
 	    self.bitrate = md.bitrate
 	    self.samplerate = md.samplerate
 	    self.vbr = md.vbr
+	    self.size = md.size
             self.replaygain_track_gain = md.replaygain_track_gain
             self.replaygain_track_peak = md.replaygain_track_peak
             self.replaygain_album_gain = md.replaygain_album_gain
@@ -154,16 +162,6 @@ class song(dbitem):
             log.warning("could not read metadata for %s" % self.path)
             log.debug_traceback()
 
-        # sanity check for tracknr
-        try:
-            self.tracknr= str(int(self.tracknr))
-        except:
-            # treat track number like "3/12"
-            try:
-                self.tracknr= str(int(self.tracknr[:self.tracknr.index('/')]))
-            except:
-                self.tracknr= ""
-
         # do some further treatment of the song info
 
         # use title from filename, if it is a longer version of
@@ -171,9 +169,9 @@ class song(dbitem):
         if not self.title or fntitle.startswith(self.title):
             self.title = fntitle
 
-        # also try to use tracknr from filename, if not present as id3 tag
-        if not self.tracknr or self.tracknr == "0":
-            self.tracknr = fntracknr
+        # also try to use tracknumber from filename, if not present as id3 tag
+        if not self.tracknumber or self.tracknumber == 0:
+            self.tracknumber = fntracknumber
 
         # we don't want empty album names
         if not self.album:
@@ -242,8 +240,18 @@ class song(dbitem):
         self.artist = newsong.artist
         self.year = newsong.year
         self.genre = newsong.genre
-        self.tracknr = newsong.tracknr
+        self.tracknumber = newsong.tracknumber
+	self.trackcount = newsong.trackcount
+	self.disknumber = newsong.disknumber
+	self.diskcount = newsong.diskcount
         self.length = newsong.length
+ 	self.bitrate = newsong.bitrate
+	self.samplerate = newsong.samplerate
+	self.vbr = newsong.vbr
+        self.replaygain_track_gain = newsong.replaygain_track_gain
+        self.replaygain_track_peak = newsong.replaygain_track_peak
+        self.replaygain_album_gain = newsong.replaygain_album_gain
+        self.replaygain_album_peak = newsong.replaygain_album_peak
 
     def replaygain(self, profiles):
        # the following code is adapted from quodlibet

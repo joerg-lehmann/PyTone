@@ -31,6 +31,7 @@ import metadata
 import dbitem
 import service
 
+from metadata import _splitnumbertotal
 
 class mydbshelve(bsddb.dbshelve.DBShelf):
     def __init__(self, filename, flags=bsddb.db.DB_CREATE, mode=0660, filetype=bsddb.db.DB_HASH, dbenv=None, dbname=None):
@@ -565,12 +566,20 @@ class songdb(service.service):
 	    song.bitrate = None
 	    song.samplerate = None
 	    song.vbr = None
+	    song.size = None
 	    song.replaygain_track_gain = None
 	    song.replaygain_track_peak = None
 	    song.replaygain_album_gain = None
 	    song.replaygain_album_peak = None
+	    try:
+		song.tracknumber, song.trackcount = _splitnumbertotal(song.tracknr)
+	    except:
+		song.tracknumber = None
+		song.trackcount = None
+	    del song.tracknr
+	    song.disknumber = None
+	    song.diskcount = None
             self.songs.put(songid, song, txn=self.txn)
-	    print songid
         print
         self.stats.put("db_version", 6, txn=self.txn)
 

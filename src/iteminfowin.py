@@ -183,7 +183,7 @@ class iteminfowinlong(messagewin.messagewin):
         channel.subscribe(events.selectionchanged, self.selectionchanged)
 
     def _outputlen(self, width):
-        return 18
+        return 20
 
     def showitems(self):
         # get lines to display
