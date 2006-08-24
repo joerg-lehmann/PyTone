@@ -111,6 +111,12 @@ class vorbismetadata(metadata):
         self.tracknr = self.tracknr.encode(localecharset, 'replace')
         self.length = vf.time_total(0)
 
+	# example format according to vorbisgain documentation
+	# REPLAYGAIN_TRACK_GAIN=-7.03 dB
+	# REPLAYGAIN_TRACK_PEAK=1.21822226
+	# REPLAYGAIN_ALBUM_GAIN=-6.37 dB
+	# REPLAYGAIN_ALBUM_PEAK=1.21822226
+
 try:
     import ogg.vorbis
     registerfileformat("ogg", vorbismetadata, ".ogg")
