@@ -156,6 +156,9 @@ class songdbstats:
 checkpointinterval = 60
 
 class songdb(service.service):
+
+    _currentdbversion = 6
+
     def __init__(self, id, config, songdbhub):
         service.service.__init__(self, "%s songdb" % id, hub=songdbhub)
         self.id = id
@@ -263,9 +266,6 @@ class songdb(service.service):
                  (self.id, self.basedir, len(self.songs),  len(self.artists),  len(self.albums),
                   len(self.genres), len(self.playlists)))
 
-        # version information for database
-        currentdbversion = 6
-
         # check whether we have to deal with a newly created database
         if not self.stats:
             try:
@@ -279,7 +279,7 @@ class songdb(service.service):
                     self.stats.put("lastadded", [], txn=self.txn)
 
                 # set version number for new, empty database
-                self.stats.put("db_version", 5, txn=self.txn)
+                self.stats.put("db_version", self._currentdbversion, txn=self.txn)
 
                 # set database version for older databases
                 if not self.stats.has_key("db_version", txn=self.txn):
@@ -300,9 +300,9 @@ class songdb(service.service):
             ondiskdbversion = 1
         else:
             ondiskdbversion = self.stats["db_version"]
-        self._upgradedatabase(ondiskdbversion, currentdbversion)
+        self._upgradedatabase(ondiskdbversion, self._currentdbversion)
 
-        if self.stats["db_version"] > currentdbversion:
+        if self.stats["db_version"] > self._currentdbversion:
             raise RuntimeError("database version %d not supported" % self.stats["db_version"])
 
     def _upgradedatabase(self, ondiskdbversion, currentdbversion):
@@ -324,7 +324,9 @@ class songdb(service.service):
 
             atomic = method == "1"
 
-            s = _("updating song database %s from version 1 to version 2 ")
+	    s = (_("updating song database %s from version %d to version %d") %
+		 (self.id, ondiskdbversion, currentdbversion))
+
             if atomic:
                 s = s + _("(with transaction protection)")
             else:
