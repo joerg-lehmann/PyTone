@@ -47,7 +47,7 @@ except ImportError:
 
 class aoaudiodev:
     def __init__(self, aodevice, rate, options):
-        self.ao = ao.AudioDevice(aodevice, rate=rate, byte_format=2, options=options)
+        self.ao = ao.AudioDevice(aodevice, rate=rate, byte_format=4, options=options)
 
     def play(self, buff, bytes):
         self.ao.play(buff, bytes)
@@ -184,7 +184,7 @@ class player(genericplayer):
 
         # use C version of buffered audio device if present
         if bufferedao_present:
-            self.audiodev = bufferedao.bufferedao(bufsize, self.SIZE, aodevice, rate=self.rate, options=aooptions)
+            self.audiodev = bufferedao.bufferedao(bufsize, self.SIZE, aodevice, byte_format=4, rate=self.rate, options=aooptions)
             # we have to start a new thread for the bufferedao device
             thread.start_new(self.audiodev.start, ())
             log.debug("bufferedao device opened")
