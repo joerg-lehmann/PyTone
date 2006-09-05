@@ -44,8 +44,7 @@ if buildbufferedaoext:
 # list of data files to be installed
 #
 mo_files = ["locale/%s/LC_MESSAGES/PyTone.mo" % locale for locale in locales]
-data_files=[('share/locale/de/LC_MESSAGES', mo_files),
-            ('/etc', ['conf/pytonerc'])]
+data_files=[('share/locale/de/LC_MESSAGES', mo_files)]
 
 #
 # list of scripts to be installed
