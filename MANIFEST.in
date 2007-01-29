@@ -12,3 +12,4 @@ include conf/layout.compact
 include conf/layout.ultracompact
 include locale/PyTone.pot
 recursive-include locale *.mo *.po
+exclude setup.cfg

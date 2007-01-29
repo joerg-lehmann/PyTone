@@ -119,20 +119,22 @@ class playbackinfo:
 
     """
 
-    def __init__(self, playerid, state=STOP, song=None, time=0, crossfade=False):
+    def __init__(self, playerid):
         """ 
 
-        playerid:  player which this playbackinfo instance refers to
-        state:     player state (STOP, PAUSE, PLAY)
-        song:      song currently played (or None, if player is not playing)
-        time:      position in seconds in the song
-        crossfade: crossfade in progress
+        playerid:     player which this playbackinfo instance refers to
+        state:        player state (STOP, PAUSE, PLAY)
+        song:         song currently played (or None, if player is not playing)
+        playlistitem: playlistitem currently played (or None, if player is not playing or no associated playlist)
+        time:         position in seconds in the song
+        crossfade:    crossfade in progress
         """
         self.playerid = playerid
-        self.state = state
-        self.song = song
-        self.time = time
-        self.crossfade = crossfade
+        self.state = STOP
+        self.song = None
+        self.playlistitem = None
+        self.time = 0
+        self.crossfade = False
 
     def __cmp__(self, other):
         return (cmp(self.playerid, other.playerid) or
@@ -151,16 +153,17 @@ class playbackinfo:
             s = s + "playing"
         s = s + " song: "
         if self.song:
-            s = s + "%s at time %f" % ( `self.song`, self.time)
+            s = s + "%r at time %f" % ( self.song, self.time)
         else:
             s = s + "None"
         if self.crossfade:
             s = s+ " (crossfading)"
         return s
 
-    def updatesong(self, song):
-        """ update song and reset time """
+    def updatesong(self, song, playlistitem):
+        """ update song and playlistitem and reset time """
         self.song = song
+        self.playlistitem = playlistitem
         self.time = 0
 
     def stopped(self):
@@ -197,22 +200,25 @@ class playbackinfo:
 class genericplayer(service.service):
     def __init__(self, id, playlistid, autoplay):
         """create a new player
-        
+
         id:         the player id
         playlistid: playlist responsible for feeding player with songs. Set to None, if
                     there is no playlist for the player.
         autoplay:   should the player start automatically, if a song is in the playlist
                     and it has not been stopped explicitely by the user
-                    
+
         """
         service.service.__init__(self, "player %s" % id, daemonize=True)
         self.id = id
         self.autoplay = autoplay
         self.playlistid = playlistid
-        
+
         # if wantplay != autoplay, the user has requested a player stop and thus
         # autoplay is effectively turned off, until the player is restarted again
         self.wantplay = autoplay
+
+        # should we notify the database that the song has been played
+        self.sendplayedevent = False
 
         # the playbackinfo structure describes the current player state
         self.playbackinfo = playbackinfo(self.id)
@@ -237,6 +243,11 @@ class genericplayer(service.service):
 
     def work(self):
         if self.isplaying():
+            if ( self.playbackinfo.playlistitem and not self.playbackinfo.playlistitem.playingregistered and
+                 self.playbackinfo.song and (self.playbackinfo.song.length < 10 or self.playbackinfo.time > 0.8*self.playbackinfo.song.length) ):
+                song = self.playbackinfo.song
+                hub.notify(events.song_played(song.songdbid, song, time.time()-self.playbackinfo.time))
+                self.playbackinfo.playlistitem.playingregistered = True
             self.play()
 
         # request a new song, if none is playing and the player wants to play
@@ -245,7 +256,7 @@ class genericplayer(service.service):
 
         # process incoming events
         self.channel.process()
-        
+
         # and notify the rest of any changes in the playback status
         self.updatestatus()
         # Now the queue of all pending events has been
@@ -278,7 +289,7 @@ class genericplayer(service.service):
     def requestnextsong(self, manual=False, previous=False):
         """request next song from playlist and play it"""
         if self.playlistid is not None:
-            nextsong = hub.request(requests.requestnextsong(self.playlistid, previous))
+            nextsong = hub.request(requests.playlist_requestnextsong(self.playlistid, previous))
             self.playsong(nextsong, manual)
 
     def playsong(self, song, manual):
@@ -404,6 +415,12 @@ class genericplayer(service.service):
     def playernext(self, event):
         """immediately play next song"""
         if event.playerid == self.id:
+            # mark playing of song as skipped if it belongs to a playlist
+            if self.playbackinfo.playlistitem and self.playbackinfo.song and not self.playbackinfo.playlistitem.playingregistered:
+                song = self.playbackinfo.song
+                hub.notify(events.song_skipped(song.songdbid, song))
+                # we also prevent this song from being registered as played
+                self.playbackinfo.playlistitem.playingregistered = True
             self.requestnextsong(manual=1)
 
     def playerprevious(self, event):
@@ -431,7 +448,7 @@ class genericplayer(service.service):
     def playerplaysong(self, event):
         """play event.song next"""
         if event.playerid == self.id:
-            self.playsong(event.song, manual=1)
+            self.playsong(event.playlistitemorsong, manual=1)
 
     def playerratecurrentsong(self, event):
         """play event.song next"""

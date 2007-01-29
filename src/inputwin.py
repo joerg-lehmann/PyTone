@@ -149,7 +149,7 @@ class popupinputwin(inputwin):
         sbar += [("ESC", config.colors.statusbar.key),
                  (": "+_("cancel"), config.colors.statusbar.description)]
         sbar += statusbar.terminate
-        hub.notify(events.updatestatusbar(0, sbar))
+        hub.notify(events.statusbar_update(0, sbar))
 
         self.update()
 

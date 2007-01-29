@@ -3,7 +3,7 @@
 POTFILE=locale/PyTone.pot
 LOCALES="de it pl fr"
 
-pygettext -o $POTFILE src/*.py src/services/*.py src/services/songdbs/*.py src/services/players/*.py
+pygettext.py -o $POTFILE src/*.py src/services/*.py src/services/songdbs/*.py src/services/players/*.py
 for locale in $LOCALES; do
   echo Processing locale $locale...
   localedir=locale/$locale/LC_MESSAGES

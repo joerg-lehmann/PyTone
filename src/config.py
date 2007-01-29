@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import ConfigParser, copy, curses, sys, getopt, exceptions, os.path, types, re, types
-import log, version
+import log, encoding, version
 
 
 class ConfigError(Exception):
@@ -233,6 +233,8 @@ class configcolor(configitem):
 class configkeys(configitem):
 
     def _check(self, s):
+        if not s:
+           return
         for key in s.split(" "):
             keyorig = key
             if key[:5].lower()=="ctrl-":
@@ -373,7 +375,6 @@ class general(configsection):
     playerinfofile = configpath("~/.pytone/playerinfo")
     dumpfile = configpath("~/.pytone/pytone.dump")
     debugfile = configpath("")
-    playlistdir = configpath("/mnt/mp3/playlists")
     randominsertlength = configfloat("3600")
     colorsupport = configalternatives("auto", ["auto", "on", "off"])
     layout = configalternatives("twocolumn", ["onecolumn", "twocolumn"])
@@ -385,10 +386,7 @@ class database(configsection):
     requestcachesize = configint("50000")
     class __template__(configsection):
         type = configalternatives("local", ["local", "remote"])
-        # the next two options will be removed in the future!
-        basename = configpath("~/.pytone/mp3")
-        dbfile = configpath("")
-        dbenvdir = configpath("~/.pytone/mp3")
+        dbfile = configpath("~/.pytone/main.db")
         cachesize = configint("1000")
         musicbasedir = configpath("")
         tracknrandtitlere = configre(r"^\[?(\d+)\]? ?[- ] ?(.*)\.(mp3|ogg)$")
@@ -398,6 +396,12 @@ class database(configsection):
         autoregisterer = configboolean("on")
         playingstatslength = configint("100")
         networklocation = confignetworklocation("localhost:1972")
+
+class tag(configsection):
+    class __template__(configsection):
+        name = configstring("")
+        key = configkeys("")
+
 
 class mixer(configsection):
     device = configpath("/dev/mixer")
@@ -496,7 +500,11 @@ class statswindow(configsection):
 
 
 class iteminfolongwindow(configsection):
-    autoclosetime = configfloat("10")
+    autoclosetime = configfloat("30")
+
+
+class lyricswindow(configsection):
+    autoclosetime = configfloat("0")
 
 
 class inputwindow(configsection):
@@ -559,6 +567,13 @@ class colors(configsection):
         content = configcolor("color white")
         background = configcolor("color white")
         description = configcolor("color brightcyan mono bold")
+        activeborder = configcolor("color brightgreen mono bold")
+        border = configcolor("color green")
+
+    class lyricswindow(configsection):
+        title = configcolor("color brightgreen mono bold")
+        content = configcolor("color white")
+        background = configcolor("color white")
         activeborder = configcolor("color brightgreen mono bold")
         border = configcolor("color green")
 
@@ -627,7 +642,6 @@ class keybindings(configsection):
         playlistdeleteplayedsongs = configkeys("KEY_BACKSPACE")
         playlistclear = configkeys("ctrl-d")
         playlistsave = configkeys("ctrl-w")
-        playlistload = configkeys("ctrl-r")
         playlistreplay = configkeys("ctrl-u")
         playlisttoggleautoplaymode = configkeys("ctrl-t")
         togglelayout = configkeys("KEY_F10")
@@ -635,6 +649,7 @@ class keybindings(configsection):
         showlog = configkeys("!")
         showstats = configkeys("%")
         showiteminfolong = configkeys("=")
+        showlyrics = configkeys("L")
         toggleiteminfowindow = configkeys("ctrl-v")
         volumeup = configkeys(")")
         volumedown = configkeys("(")
@@ -685,8 +700,8 @@ class keybindings(configsection):
 # register known configuration sections
 #
 
-sections = ['mixerwindow', 'helpwindow', 'filelistwindow', 'database', 'iteminfowindow',
-            'logwindow', 'statswindow', 'iteminfolongwindow', 'mixer', 'colors', 'playerwindow', 'playlistwindow',
+sections = ['mixerwindow', 'helpwindow', 'filelistwindow', 'database', 'tag', 'iteminfowindow',
+            'logwindow', 'statswindow', 'iteminfolongwindow', 'lyricswindow', 'mixer', 'colors', 'playerwindow', 'playlistwindow',
             'general', 'inputwindow', 'network', 'player', 'keybindings']
 
 ##############################################################################
@@ -834,7 +849,7 @@ def gendefault():
 
 def usage():
     print "PyTone %s" % version.version
-    print "Copyright %s" % version.copyright
+    print "Copyright %s" % encoding.encode(version.copyright)
     print "usage: pytone.py [options]"
     print "-h, --help: show this help"
     print "-c, --config <filename>: read config from filename"
@@ -878,8 +893,7 @@ def checkoptions():
 
 
     # check database options
-    basenames = []
-    dbenvdirs = []
+    dbfiles = []
 
     if not database.getsubsections():
         print "Please define at least one song database in your configuration file."
@@ -888,28 +902,16 @@ def checkoptions():
     for databasename in database.getsubsections():
         songdb = database[databasename]
 
-        if songdb == "local" and songdb.musicbasedir == "":
+        if songdb.type == "local" and songdb.musicbasedir == "":
             print ( "Please set musicbasedir in the [database.%s] section of the config file pytonerc\n"
                     "to the location of your MP3/Ogg Vorbis files." % databasename )
             sys.exit(2)
 
-        if songdb.basename != "":
-            if songdb.basename in basenames:
-                print "basename '%s' of database '%s' already in use." % (songdb.basename, databasename)
+        if songdb.dbfile != "":
+            if songdb.dbfile in dbfiles:
+                print "dbfile '%s' of database '%s' already in use." % (songdb.dbfile, databasename)
                 sys.exit(2)
-            basenames.append(songdb.basename)
-
-        if songdb.dbenvdir in dbenvdirs:
-            print "dbenvdir '%s' of database '%s' already in use." % (songdb.dbenvdir, databasename)
-            sys.exit(2)
-        dbenvdirs.append(songdb.dbenvdir)
-
-        if songdb.dbfile:
-            if songdb.dbfile == "db":
-                log.warning(_('using dbfile="db" by default, please remove dbfile entry in [database.%s] section of your config file') % databasename)
-            else:
-                print "setting dbfile not possible anymore, please move dbfile of database '%s'" % databasename
-                sys.exit(2)
+            dbfiles.append(songdb.dbfile)
 
     # check whether oss module is present
     try:

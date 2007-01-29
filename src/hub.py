@@ -105,7 +105,7 @@ class hub:
 
     def notify(self, item, priority=0):
 	""" notify all channels belonging to hub of item (event or request) """
-	log.debug("event: %s (priority %d)" % (str(item), priority))
+	log.debug("event: %s (priority %d)" % (repr(item), priority))
 	for channel in self.channels:
 	    channel._notify(item, priority)
 
@@ -117,7 +117,7 @@ class hub:
 	"""
 	# generate a request response object for the request,
 	# send it to hub and wait for result
-	log.debug("request: %s (priority %d)" % (str(request), priority))
+	log.debug("request: %s (priority %d)" % (repr(request), priority))
 	rr = requestresponse(request)
 	self.notify(rr, priority)
 	rr.waitforcompletion()

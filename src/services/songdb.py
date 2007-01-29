@@ -20,69 +20,11 @@
 import copy, gc, math, random, service, time
 import config
 import events, hub, requests
-import dbitem, item, log
+import item
+import log
 
 # helper function for the random selection of songs
 
-def _genrandomchoice(songs):
-    """ returns random selection of songs up to the maximal length
-    configured. Note that this method changes as a side-effect the
-    parameter songs"""
-
-    # consider trivial case separately
-    if not songs:
-        return []
-
-    # choose item, avoiding duplicates. Stop after a predefined
-    # total length (in seconds). Take rating of songs/albums/artists
-    # into account
-    length = 0
-    result = []
-
-    # generate an initial random sample of large enough size samplesize 
-    # to choose from
-    samplesize = min(100, len(songs))
-    sample = random.sample(songs, samplesize)
-    currenttime = time.time()
-
-    # relative percentage of songs accepted with a given rating
-    ratingdistribution = [5, 10, 20, 30, 35]
-
-    # normalize distribution
-    normfactor = float(sum(ratingdistribution))
-    ratingdistribution = [x/normfactor for x in ratingdistribution]
-
-    # scale for rating reduction: for playing times longer
-    # ago than lastplayedscale seconds, the rating is not
-    # influenced.
-    lastplayedscale = 60.0 * 60 * 24
-
-    while length < config.general.randominsertlength:
-        for song in sample:
-            rating = song.rating or 3
-            if song.lastplayed:
-                # Simple heuristic algorithm to consider song ratings
-                # for random selection. Certainly not optimal!
-                last = max(0, (currenttime-song.lastplayed[-1])/60)
-                rating -= 2 * math.exp(-last/lastplayedscale)
-                if rating < 1:
-                    rating = 1
-            if rating == 5:
-                threshold = ratingdistribution[4]
-            else:
-                # get threshold by linear interpolation
-                intpart = int(rating)
-                rest = rating-intpart
-                threshold = (ratingdistribution[intpart-1] +
-                             (ratingdistribution[intpart] - ratingdistribution[intpart-1])*rest)
-            if random.random() <= threshold or len(sample) == 1:
-                result.append(song)
-                length += song.length
-                if length >= config.general.randominsertlength or len(result) >= samplesize:
-                    return result
-        # recreate sample without already chosen songs, if we ran out of songs
-        sample = [song for song in sample if song not in result]
-    return result
 
 #
 # a collection of statistical information
@@ -111,12 +53,12 @@ class songdbmanager(service.service):
     - dbitem.song instances are wrapped in item.song instances which also contain the
       id of the database where the song is stored.
     - Random song selections are handled.
-    
+
     """
-    
+
     def __init__(self):
         service.service.__init__(self, "songdb manager")
-        
+
         # hub for the various song databases
         self.songdbhub = hub.hub()
 
@@ -132,7 +74,7 @@ class songdbmanager(service.service):
         self.requestcachemisses = 0
         # current number of objects referred to by items in result cache
         self.requestcachesize = 0 
-        
+
         # we are a database service provider...
         self.channel.supply(requests.dbrequestsingle, self.dbrequestsingle)
         self.channel.supply(requests.dbrequestsongs, self.dbrequestsongs)
@@ -141,10 +83,9 @@ class songdbmanager(service.service):
         self.channel.supply(requests.getnumberofsongs, self.getnumberofsongs)
         self.channel.supply(requests.getnumberofalbums, self.getnumberofalbums)
         self.channel.supply(requests.getnumberofartists, self.getnumberofartists)
-        self.channel.supply(requests.getnumberofdecades, self.getnumberofdecades)
-        self.channel.supply(requests.getnumberofgenres, self.getnumberofgenres)
+        self.channel.supply(requests.getnumberoftags, self.getnumberoftags)
         self.channel.supply(requests.getnumberofratings, self.getnumberofratings)
-        
+
         # and need to be informed about database changes
         self.channel.subscribe(events.dbevent, self.dbevent)
 
@@ -164,8 +105,8 @@ class songdbmanager(service.service):
             return None
 
         if type=="local":
-            import songdbs.local
-            songdb = songdbs.local.songdb(id, config, self.songdbhub)
+            import songdbs.sqlite
+            songdb = songdbs.sqlite.songdb(id, config, self.songdbhub)
         elif type=="remote":
             import songdbs.remote
             songdb = songdbs.remote.songdb(id, config.networklocation, self.songdbhub)
@@ -183,15 +124,16 @@ class songdbmanager(service.service):
     def cacheresult(requesthandler):
         """ method decorator which caches results of the request """
         def newrequesthandler(self, request):
+            log.debug("dbrequest cache: query for request: %s" % repr(request))
             requesthash = hash(request)
-            log.debug("dbrequest cache query for request: %s, %d" % (request, requesthash))
+            log.debug("dbrequest cache: sucessfully hashed request: %d" % requesthash)
             try:
                 # try to get the result from the cache
                 result = self.requestcache[requesthash][0]
                 # update atime
                 self.requestcache[requesthash][2] = time.time()
                 self.requestcachehits += 1
-                log.debug("dbrequest cache hit for request: %s" % request)
+                log.debug("dbrequest cache: hit for request: %s" % repr(request))
             except KeyError:
                 # make a copy of request for later storage in cache
                 requestcopy = copy.copy(request)
@@ -202,16 +144,89 @@ class songdbmanager(service.service):
                 self.requestcachesize += resultnoobjects
                 # remove least recently used items from cache
                 if self.requestcachesize > self.requestcachemaxsize:
-                    log.debug("db rqeuest cache: purging old items")
+                    log.debug("dbrequest cache: purging old items")
                     cachebytime = [(item[2], key) for key, item in self.requestcache.items()]
                     cachebytime.sort()
                     for atime, key in cachebytime[-10:]:
                         self.requestcachesize -= self.requestcache[key][3]
                         del self.requestcache[key]
                 log.debug("db request cache miss for request: %s (%d requests and %d objects cached)" %
-                          (request, len(self.requestcache), self.requestcachesize))
+                          (repr(request), len(self.requestcache), self.requestcachesize))
             return result
         return newrequesthandler
+
+    def _genrandomchoice(self, songs):
+        """ returns random selection of songs up to the maximal length
+        configured. Note that this method changes as a side-effect the
+        parameter songs"""
+
+        # consider trivial case separately
+        if not songs:
+            return []
+
+        # choose item, avoiding duplicates. Stop after a predefined
+        # total length (in seconds). Take rating of songs/albums/artists
+        # into account
+        length = 0
+        result = []
+
+        # generate an initial random sample of large enough size samplesize 
+        # to choose from
+        samplesize = min(100, len(songs))
+        sample = random.sample(songs, samplesize)
+        currenttime = time.time()
+
+        # relative percentage of songs accepted with a given rating
+        ratingdistribution = [5, 10, 20, 30, 35]
+
+        # normalize distribution
+        normfactor = float(sum(ratingdistribution))
+        ratingdistribution = [x/normfactor for x in ratingdistribution]
+
+        # scale for rating reduction: for playing times longer
+        # ago than lastplayedscale seconds, the rating is not
+        # influenced.
+        lastplayedscale = 60.0 * 60 * 24
+
+        while length < config.general.randominsertlength:
+            for song in sample:
+                # we have to query the song from our databases 
+                # since otherwise this is done automatically leading to
+                # a deadlock
+                if song.song_metadata is None:
+                    song.song_metadata = self.songdbhub.request(requests.getsong_metadata(song.songdbid, song.id))
+                    # if the song has been deleted in the meantime, we proceed to the next one
+                    if song.song_metadata is None:
+                        continue
+                if song.rating:
+                    rating = song.rating
+                else:
+                    # punish skipped songs if they have not been rated
+                    rating = max(1, 3 + max(0, 0.5*(song.playcount - song.skipcount)))
+                if song.date_lastplayed:
+                    # Simple heuristic algorithm to consider song ratings
+                    # for random selection. Certainly not optimal!
+                    last = max(0, (currenttime-song.date_lastplayed)/60)
+                    rating -= 2 * math.exp(-last/lastplayedscale)
+                    if rating < 1:
+                        rating = 1
+                if rating == 5:
+                    threshold = ratingdistribution[4]
+                else:
+                    # get threshold by linear interpolation
+                    intpart = int(rating)
+                    rest = rating-intpart
+                    threshold = (ratingdistribution[intpart-1] +
+                                 (ratingdistribution[intpart] - ratingdistribution[intpart-1])*rest)
+                if random.random() <= threshold or len(sample) == 1:
+                    result.append(song)
+                    length += song.length
+                    if length >= config.general.randominsertlength or len(result) >= samplesize:
+                        return result
+            # recreate sample without already chosen songs, if we ran out of songs
+            sample = [song for song in sample if song not in result]
+        return result
+
 
     def selectrandom(requesthandler):
         """ method decorator which returns a random selection of the request result if requested
@@ -221,16 +236,17 @@ class songdbmanager(service.service):
         def newrequesthandler(self, request):
             songs = requesthandler(self, request)
             if request.random:
-                return _genrandomchoice(songs)
+                 return self._genrandomchoice(songs)
             else:
-                return songs
+                 return songs
         return newrequesthandler
 
     def sortresult(requesthandler):
         """ method decorator which sorts the result list if requested """
         def newrequesthandler(self, request):
             result = requesthandler(self, request)
-            if request.sort:
+            # XXX turned off
+            if request.sort and 0:
                 result.sort(request.sort)
             return result
         return newrequesthandler
@@ -241,24 +257,24 @@ class songdbmanager(service.service):
         """ update/clear requestcache when database event sent """
         if isinstance(event, (events.checkpointdb, events.autoregistersongs)):
             return
-        if isinstance(event, events.updatesong):
-            oldsong = self.songdbhub.request(requests.getsong(event.songdbid, event.song.id))
-            newsong = event.song
-            # The following is an optimization for an updatesong event which occurs rather often
+        if isinstance(event, events.update_song):
+            oldsong_metadata = self.songdbhub.request(requests.getsong_metadata(event.songdbid, event.song.id))
+            newsong_metadata = event.song.song_metadata
+            # The following is an optimization for an update_song event which occurs rather often
             # Not very pretty, but for the moment enough
-            if ( oldsong.album == newsong.album and
-                 oldsong.artist == newsong.artist and
-                 oldsong.genre == newsong.genre and
-                 oldsong.decade == newsong.decade and
-                 oldsong.rating == newsong.rating ):
+            if ( oldsong_metadata.album == newsong_metadata.album and
+                 oldsong_metadata.artist == newsong_metadata.artist and
+                 oldsong_metadata.tags == newsong_metadata.tags and
+                 oldsong_metadata.rating == newsong_metadata.rating ):
                 # only the playing information was changed, so we just
                 # delete the relevant cache results
 
                 for key, item in self.requestcache.items():
-                    if isinstance(item[1], (requests.gettopplayedsongs, requests.getlastplayedsongs)):
+                    if isinstance(item[1], (requests.getsongs)):
                         del self.requestcache[key]
                 return
         # otherwise we delete the queries for the correponding database (and all compound queries)
+        log.debug("dbrequest cache: emptying cache for database %s" % event.songdbid)
         for key, item in self.requestcache.items():
             songdbid = item[1].songdbid
             if songdbid is None or songdbid == event.songdbid:
@@ -275,7 +291,7 @@ class songdbmanager(service.service):
             log.error("songdbmanager: invalid songdbid '%s' for database event" % event.songdbid)
             return
 
-        # first update result cache (to allow the updatechace method
+        # first update result cache (to allow the updatecache method
         # to query the old state of the database)
         self.updatecache(event)
         # and then send the event to the database
@@ -288,33 +304,17 @@ class songdbmanager(service.service):
             log.error("songdbmanager: invalid songdbid '%s' for database request" % request.songdbid)
             return
 
-        result = self.songdbhub.request(request)
-        # wrap all dbitm.song instances in result in a item.song instance
-        if isinstance(result, dbitem.song):
-            return item.song(request.songdbid, result)
-        else:
-            try:
-                newresult = []
-                for aitem in result:
-                    if isinstance(aitem, dbitem.song):
-                        newresult.append(item.song(request.songdbid, aitem))
-                    else:
-                        newresult.append(aitem)
-                return newresult
-            except:
-                return result
+        return self.songdbhub.request(request)
 
     def dbrequestsongs(self, request):
         # make a copy of the original request, because we will subsequently modify it
         nrequest = copy.copy(request)
-        # we do not care about the random choice flag, this is done by the method decorator
-        nrequest.random = False
-        # also reset the sort and wrapper function as otherwise
+        # also reset the sort function as otherwise
         # sending over the network (which requires pickling the
         # request) fails
-        nrequest.sort = False
-        nrequest.wrapperfunc = False
+        # XXX we disable this at the moment
         if request.songdbid is None:
+            nrequest.sort = False
             resulthash = {}
             for songdbid in self.songdbids:
                 nrequest.songdbid = songdbid
@@ -322,31 +322,20 @@ class songdbmanager(service.service):
                 # the result.
                 # Note that in the case of getlastplayedsongs requests, we cheat
                 # a little bit, since then the result of the database request is a tuple
-                # (playingtime, dbsong). Correspondingly, wrapperfunc has to deal
-                # with such tuples instead of with the dbsongs themselves.
+                # (playingtime, dbsong).
                 for dbsong in self.dbrequestsongs(nrequest):
                     resulthash[dbsong] = songdbid
-            if request.wrapperfunc:
-                return [request.wrapperfunc(dbsong, songdbid) for dbsong, songdbid in resulthash.items()]
-            else:
-                return resulthash.values()
+            return resulthash.values()
         elif request.songdbid not in self.songdbids:
             log.error("songdbmanager: invalid songdbid '%s' for database request" % request.songdbid)
             return
         else:
-            dbsongs = self.songdbhub.request(nrequest)
-            if request.wrapperfunc:
-                return [request.wrapperfunc(dbsong, request.songdbid) for dbsong in dbsongs]
-            else:
-                return dbsongs
+            return self.songdbhub.request(nrequest)
     dbrequestsongs = selectrandom(cacheresult(sortresult(dbrequestsongs)))
 
     def dbrequestlist(self, request):
         # make a copy of the original request, because we will subsequently modify it
         nrequest = copy.copy(request)
-        # we do not want to wrap and sort the intermediate results
-        nrequest.wrapperfunc = None
-        nrequest.sort = False
 
         if request.songdbid is None:
             resulthash = {}
@@ -354,23 +343,17 @@ class songdbmanager(service.service):
                 nrequest.songdbid = songdbid
                 for result in self.dbrequestlist(nrequest):
                     resulthash[result] = songdbid
-            if request.wrapperfunc is not None:
-                return [request.wrapperfunc(item, songdbid) for item, songdbid in resulthash.items()]
-            else:
-                return resulthash.keys()
+            # sort results
+            return resulthash.keys()
         elif request.songdbid not in self.songdbids:
             log.error("songdbmanager: invalid songdbid '%s' for database request" % request.songdbid)
         else:
             # use nrequest here instead of request in order to not
-            # send wrapperfunc and sort to database (this fails when
+            # send sort to database (this fails when
             # using a network channel, since we cannot pickle these
             # objects)
-            result = self.songdbhub.request(nrequest)
-            if request.wrapperfunc is not None:
-                return [request.wrapperfunc(item, request.songdbid) for item in result]
-            else:
-                return result
-    dbrequestlist = cacheresult(sortresult(dbrequestlist))
+            return self.songdbhub.request(nrequest)
+    dbrequestlist = cacheresult(dbrequestlist)
 
     def getdatabasestats(self, request):
         if request.songdbid is None:
@@ -385,11 +368,11 @@ class songdbmanager(service.service):
     def getnumberofsongs(self, request):
         if request.songdbid is not None and request.songdbid not in self.songdbids:
             log.error("songdbmanager: invalid songdbid '%s' for database request" % request.songdbid)
-        if request.songdbid is not None and request.artist is request.album is None and not request.filters:
+        # XXX use filters in sqlite instead
+        if request.songdbid is not None and request.filters is None:
             return self.songdbhub.request(request)
         else:
             return len(self.dbrequestsongs(requests.getsongs(songdbid=request.songdbid,
-                                                             artist=request.artist, album=request.album,
                                                              filters=request.filters)))
     getnumberofsongs = cacheresult(getnumberofsongs)
 
@@ -410,17 +393,13 @@ class songdbmanager(service.service):
         return self._requestnumbers(request, requests.getalbums)
     getnumberofalbums = cacheresult(getnumberofalbums)
 
-    def getnumberofdecades(self, request):
-        return self._requestnumbers(request, requests.getdecades)
-    getnumberofdecades = cacheresult(getnumberofdecades)
+    def getnumberoftags(self, request):
+        return self._requestnumbers(request, requests.gettags)
+    getnumberoftags = cacheresult(getnumberoftags)
 
     def getnumberofartists(self, request):
         return self._requestnumbers(request, requests.getartists)
     getnumberofartists = cacheresult(getnumberofartists)
-
-    def getnumberofgenres(self, request):
-        return self._requestnumbers(request, requests.getgenres)
-    getnumberofgenres = cacheresult(getnumberofgenres)
 
     def getnumberofratings(self, request):
         return self._requestnumbers(request, requests.getratings)
@@ -434,4 +413,3 @@ class songdbmanager(service.service):
                                   self.requestcachesize, self.requestcachemaxsize,
                                   len(self.requestcache),
                                   self.requestcachehits, self.requestcachemisses)
-        

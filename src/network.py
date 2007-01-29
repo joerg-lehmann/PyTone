@@ -24,7 +24,7 @@ import events, hub
 import log
 
 # for unpickling
-import item, dbitem, requests, services, services.player, services.playlist
+import item, metadata, requests, services, services.player, services.playlist
 
 _EVENT = "EVENT"
 _REQUEST = "REQUEST"

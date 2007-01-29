@@ -209,12 +209,12 @@ class slist:
                 return True
         return False
 
-    def selectbyname(self, name):
-        """select entry by name
+    def selectbyid(self, id):
+        """select entry by id
         Returns True if selection was valid, otherwise False."""
         if len(self) > 0:
             for i in range(len(self)):
-                if self[i].name == name:
+                if self[i].id == id:
                     self.selected = i
                     self._notifyselectionchanged()
                     self._updatetop()

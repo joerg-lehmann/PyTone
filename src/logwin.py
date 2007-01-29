@@ -62,7 +62,7 @@ class logwin(messagewin.messagewin):
             else:
                 words = item[2].split()
                 s = words.pop(0)
-                while len(s)+len(words[0])<mw:
+                while words and len(s)+len(words[0])<mw:
                     s += " %s" % words.pop(0)
                 self.addstr(y, self.mc, s, color)
                 y += 1

@@ -1,3 +1,9 @@
+2007-01-21 Jörg Lehmann  <joerg@luga.de>
+
+        * config.py: Fix check for local song databases (thanks to Alexander
+        Wirt <formorer at formorer dot de> for reporting this bug).
+
+
 2006-09-04 Jörg Lehmann  <joerg@luga.de>
 
 	* Use platform byte order for ao devices.

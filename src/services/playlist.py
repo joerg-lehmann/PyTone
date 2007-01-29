@@ -24,9 +24,10 @@ import pickle
 
 import config
 import events, hub, requests
-import dbitem, item
+import item
 import log
 import service
+import encoding
 
 _counter = 0
 
@@ -44,6 +45,8 @@ class playlistitem:
         self.song = song
         self.played = played
         self.playstarttime = playstarttime
+        # has the playing of the song registered in the database
+        self.playingregistered = False
         self.id = _counter
         _counter += 1
 
@@ -62,7 +65,6 @@ class playlistitem:
     def markplayed(self):
         self.played = True
         self.playstarttime = time.time()
-        self.song.play()
 
     def markunplayed(self):
         self.played = False
@@ -105,14 +107,13 @@ class playlist(service.service):
         self.channel.subscribe(events.playlistdeleteplayedsongs,
                                self.playlistdeleteplayedsongs)
         self.channel.subscribe(events.playlistreplay, self.playlistreplay)
-        self.channel.subscribe(events.playlistload, self.playlistload)
         self.channel.subscribe(events.playlistsave, self.playlistsave)
         self.channel.subscribe(events.playlistshuffle, self.playlistshuffle)
         self.channel.subscribe(events.playlisttoggleautoplaymode, self.playlisttoggleautoplaymode)
         self.channel.subscribe(events.playlistplaysong, self.playlistplaysong)
         self.channel.subscribe(events.songchanged, self.songchanged)
 
-        self.channel.supply(requests.requestnextsong, self.requestnextsong)
+        self.channel.supply(requests.playlist_requestnextsong, self.playlist_requestnextsong)
         self.channel.supply(requests.playlistgetcontents, self.playlistgetcontents)
 
         # try to load dump from prior crash, if existent
@@ -157,19 +158,8 @@ class playlist(service.service):
     def _logplay(self, item):
         if self.logfilename:
             logfile = open(self.logfilename, "a")
-            logfile.write("%s: %s\n" % (time.asctime(), item.song.path))
+            logfile.write("%s: %s\n" % (time.asctime(), encoding.encode_path(item.song.url)))
             logfile.close()
-
-    def _checkabortion(self):
-        """check whether currently playing song was aborted too early"""
-        if self.playingitem:
-            playingtime = time.time() - self.playingitem.playstarttime
-            # check whether the song has been played at least 
-            # 30 seconds or alternatively for 80 percent of its total
-            # length
-            if playingtime < min(30, 0.8*self.playingitem.song.length):
-                # if not, consider it as not having been played
-                self.playingitem.song.unplay()
 
     def _updateplaystarttimes(self):
         # TODO: take crossfading time into account
@@ -185,12 +175,11 @@ class playlist(service.service):
     def _playitem(self, item):
         """ check for a song abortion, register song as being played
         and update playlist information accordingly"""
-        
-        self._checkabortion()
+
         if not item.hasbeenplayed():
             self.ptime += item.song.length
-        item.markplayed()
         self.playingitem = item
+        item.markplayed()
         self._updateplaystarttimes()
         self._logplay(item)
 
@@ -241,10 +230,15 @@ class playlist(service.service):
         # it is ok if the song is contained in a local song database, so we first
         # check whether this is the case.
         # XXX make this behaviour configurable?
+	stats = hub.request(requests.getdatabasestats(song.songdbid))
         if isinstance(song, item.song):
-            stats = hub.request(requests.getdatabasestats(song.songdbid))
             if stats.type == "local":
                 return song
+
+	return song
+
+        # XXX do we really need this
+        # currently it does not work anymore
         if os.path.isfile(song.path):
             # first we try to access the song via its filesystem path
             return hub.request(requests.queryregistersong(self.songdbid, song.path))
@@ -284,46 +278,17 @@ class playlist(service.service):
             self._markunplayed(item)
 
     # convenience method for issuing a playlistchanged event
-    
+
     def notifyplaylistchanged(self):
         hub.notify(events.playlistchanged(self.items, self.ptime, self.ttime, self.autoplaymode, self.playingitem))
-    
+
     # statusbar input handler
 
     def saveplaylisthandler(self, name, key):
-        name = os.path.join(config.general.playlistdir, name.strip())
-        if key==ord("\n") and name!="":
-            if name[-4:]!=".m3u":
-                name = name + ".m3u"
-            try:
-                file = open(name, "w")
-                for item in self.items:
-                    file.write("%s\n" % item.song.path)
-                file.close()
-                playlist = dbitem.playlist(name)
-                hub.notify(events.registerplaylists(self.songdbid, [playlist]))
-            except (IOError, OSError):
-                pass
-
-    def loadplaylisthandler(self, name, key):
-        if key == ord("\n"):
-            if name[-4:] != ".m3u":
-                name = name + ".m3u"
-            try:
-                path = os.path.join(config.general.playlistdir, name)
-                file = open(path, "r")
-                self._clear()
-                for line in file.xreadlines():
-                    if not line.startswith("#"):
-                        song = hub.request(requests.queryregistersong(self.songdbid,
-                                                                      line.strip()))
-                        if song:
-                            self.append(playlistitem(song))
-                file.close()
-            except (IOError, OSError):
-                pass
-            self._updateplaystarttimes()
-            self.notifyplaylistchanged()
+        name = name.strip()
+        if key == ord("\n") and name != "" and self.items:
+            songs = [item.song for item in self.items if item.song.songdbid == self.songdbid ]
+            hub.notify(events.add_playlist(self.songdbid, name, songs))
 
     def _locatesong(self, id):
         """ locate position of item in playlist by id """
@@ -373,7 +338,6 @@ class playlist(service.service):
         # should prevent any problems.
         if event.playerid == self.playerid:
             if self.playingitem:
-                self._checkabortion()
                 self._markunplayed(self.playingitem)
                 self.playingitem = None
                 self.notifyplaylistchanged()
@@ -395,7 +359,7 @@ class playlist(service.service):
                     self.append(newitem)
                 self._playitem(newitem)
                 self._updateplaystarttimes()
-                hub.notify(events.playerplaysong(self.playerid, song))
+                hub.notify(events.playerplaysong(self.playerid, newitem))
                 self.notifyplaylistchanged()
 
     def playlistdeletesong(self, event):
@@ -435,11 +399,6 @@ class playlist(service.service):
                                        _("Name:"),
                                        self.saveplaylisthandler))
 
-    def playlistload(self, event):
-        hub.notify(events.requestinput(_("Load playlist"),
-                                       _("Name:"),
-                                       self.loadplaylisthandler))
-
     def playlistshuffle(self, event):
         random.shuffle(self.items)
         self._updateplaystarttimes()
@@ -458,7 +417,7 @@ class playlist(service.service):
         i = self._locatesong(event.id)
         self._playitem(self.items[i])
         self.notifyplaylistchanged()
-        hub.notify(events.playerplaysong(self.playerid, self.items[i].song))
+        hub.notify(events.playerplaysong(self.playerid, self.items[i]))
 
     def songchanged(self, event):
         # check whether one of our playlist items is affected by the change
@@ -477,7 +436,7 @@ class playlist(service.service):
     # request handler
     #
 
-    def requestnextsong(self, request):
+    def playlist_requestnextsong(self, request):
         if request.playlistid != self.id:
             raise hub.DenyRequest
         if not request.previous:
@@ -495,10 +454,7 @@ class playlist(service.service):
         else:
             nextitem = self._playprevious()
         self.notifyplaylistchanged()
-        if nextitem:
-            return nextitem.song
-        else:
-            return None
+        return nextitem
 
     def playlistgetcontents(self, request):
         return self.items, self.ptime, self.ttime, self.autoplaymode, self.playingitem

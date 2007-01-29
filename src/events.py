@@ -1,4 +1,4 @@
-# -*- coding: ISO-8859-1 -*-
+## -*- coding: ISO-8859-1 -*-
 
 # Copyright (C) 2002, 2003, 2004 Jörg Lehmann <joerg@luga.de>
 #
@@ -60,7 +60,7 @@ class selectionchanged(event):
         self.item = item
 
     def __str__(self):
-        return "%s(%s)" % (self.__class__.__name__, self.item)
+        return "%s(%s)" % (self.__class__.__name__, repr(self.item))
 
 
 class focuschanged(event):
@@ -109,7 +109,18 @@ class checkpointdb(dbevent):
     """flush memory pool, write checkpoint record to log and flush flog of songdbid"""
 
 
-class updatesong(dbevent):
+class add_song(dbevent):
+    """ add song to database """
+
+    def __init__(self, songdbid, song):
+        self.songdbid = songdbid
+        self.song = song
+
+    def __str__(self):
+        return "%s(%s)->%s" % (self.__class__.__name__, self.song, self.songdbid)
+
+
+class update_song(dbevent):
     """ update song in database """
 
     def __init__(self, songdbid, song):
@@ -120,20 +131,31 @@ class updatesong(dbevent):
         return "%s(%s)->%s" % (self.__class__.__name__, self.song, self.songdbid)
 
 
-class rescansong(dbevent):
-    """ reread id3 information of song (or delete it if it does not longer exist) """
+class song_played(dbevent):
+    """ register playing of song in database """
+
+    def __init__(self, songdbid, song, date_played):
+        self.songdbid = songdbid
+        self.song = song
+        self.date_played = date_played
+
+    def __str__(self):
+        return "%s(%s, %s)->%s" % (self.__class__.__name__, self.song, self.date_played, self.songdbid)
+
+
+class song_skipped(dbevent):
+    """ register skipping of song in database """
 
     def __init__(self, songdbid, song):
         self.songdbid = songdbid
         self.song = song
 
     def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.song, self.songdbid)
+        return "%s(%s, %s)->%s" % (self.__class__.__name__, self.song, self.songdbid)
 
 
-class delsong(dbevent):
+class delete_song(dbevent):
     """ delete song from database """
-
     def __init__(self, songdbid, song):
         self.songdbid = songdbid
         self.song = song
@@ -142,79 +164,67 @@ class delsong(dbevent):
         return "%s(%s)->%s" % (self.__class__.__name__, self.song, self.songdbid)
 
 
-class updatealbum(dbevent):
-    """ update album in database """
-
-    def __init__(self, songdbid, album):
+class add_playlist(dbevent):
+    """ add playlist to database """
+    def __init__(self, songdbid, name, songs):
         self.songdbid = songdbid
-        self.album = album
-
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.album, self.songdbid)
-
-
-class updateartist(dbevent):
-    """ update artist in database """
-
-    def __init__(self, songdbid, artist):
-        self.songdbid = songdbid
-        self.artist = artist
-
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.artist, self.songdbid)
-
-
-class updateplaylist(dbevent):
-    """ update playlist in database """
-
-    def __init__(self, songdbid, playlist):
-        self.songdbid = songdbid
-        self.playlist = playlist
-
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.playlist, self.songdbid)
-
-
-class delplaylist(dbevent):
-    """ delete playlist from database """
-
-    def __init__(self, songdbid, playlist):
-        self.songdbid = songdbid
-        self.playlist = playlist
-
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.playlist, self.songdbid)
-
-
-class registersongs(dbevent):
-    def __init__(self, songdbid, songs):
-        self.songdbid = songdbid
+        self.name = name
         self.songs = songs
 
     def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.songs, self.songdbid)
+        return "%s(%s)->%s" % (self.__class__.__name__, self.name, self.songs, self.songdbid)
 
 
-class registerplaylists(dbevent):
-    def __init__(self, songdbid, playlists):
+class update_playlist(dbevent):
+    """ update playlist in database """
+
+    def __init__(self, songdbid, name, songs):
         self.songdbid = songdbid
-        self.playlists = playlists
+        self.name = name
+        self.songs = songs
 
     def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.playlists, self.songdbid)
+        return "%s(%s)->%s" % (self.__class__.__name__, self.name, self.songs, self.songdbid)
+
+
+class delete_playlist(dbevent):
+    """ delete playlist from database """
+
+    def __init__(self, songdbid, name):
+        self.songdbid = songdbid
+        self.name = name
+
+    def __str__(self):
+        return "%s(%s)->%s" % (self.__class__.__name__, self.name, self.songdbid)
+
+
 
 
 class autoregistersongs(dbevent):
-    """ start autoregisterer for database """
+    """ start autoregisterer for database 
 
-
-class rescansongs(dbevent):
-    def __init__(self, songdbid, songs):
+    If force is set, the m_time of songs is ignored and they are always rescanned.
+    """
+    def __init__(self, songdbid, force=False):
         self.songdbid = songdbid
-        self.songs = songs
+        self.force = force
 
     def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.songs, self.songdbid)
+        return "%s(%s)->%s" % (self.__class__.__name__, self.force, self.songdbid)
+
+
+class autoregisterer_rescansongs(dbevent):
+    """ rescan songs in given database 
+
+    If force is set, the m_time of songs is ignored and they are always rescanned
+    """
+    def __init__(self, songdbid, songs, force=False):
+        self.songdbid = songdbid
+        self.songs = songs
+        self.force = force
+
+    def __str__(self):
+        return "%s(%s, %s)->%s" % (self.__class__.__name__, self.songs, self.force, self.songdbid)
 
 
 class clearstats(dbevent):
@@ -237,22 +247,39 @@ class songchanged(event):
         return "%s(%s)->%s" % (self.__class__.__name__, self.song, self.songdbid)
 
 
-class artistaddedordeleted(event):
-    def __init__(self, songdbid, artist):
+class songschanged(event):
+    "list of songs in database changed"
+    def __init__(self, songdbid):
         self.songdbid = songdbid
-        self.artist = artist
 
     def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.artist, self.songdbid)
+        return "%s->%s" % (self.__class__.__name__, self.songdbid)
 
-
-class albumaddedordeleted(event):
-    def __init__(self, songdbid, album):
+class artistschanged(event):
+    "list of artists in database changed"
+    def __init__(self, songdbid):
         self.songdbid = songdbid
-        self.album = album
 
     def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.album, self.songdbid)
+        return "%s->%s" % (self.__class__.__name__, self.songdbid)
+
+
+class albumschanged(event):
+    "list of albums in database changed"
+    def __init__(self, songdbid):
+        self.songdbid = songdbid
+
+    def __str__(self):
+        return "%s->%s" % (self.__class__.__name__, self.songdbid)
+
+
+class tagschanged(event):
+    "list of tags in database changed"
+    def __init__(self, songdbid):
+        self.songdbid = songdbid
+
+    def __str__(self):
+        return "%s->%s" % (self.__class__.__name__, self.songdbid)
 
 
 class dbplaylistchanged(event):
@@ -262,15 +289,6 @@ class dbplaylistchanged(event):
 
     def __str__(self):
         return "%s(%s)->%s" % (self.__class__.__name__, self.playlist, self.songdbid)
-
-
-class requestnextsong(event):
-    def __init__(self, playerid, previous=0):
-        self.playerid = playerid
-        self.previous = previous
-
-    def __str__(self):
-        return "%s(%s, %s)" % (self.__class__.__name__, self.playerid, self.previous)
 
 
 class playerevent(event):
@@ -345,14 +363,14 @@ class playerstop(playerevent):
 
 
 class playerplaysong(playerevent):
-    """ play song on player """
+    """ play song or playlistitem on player """
 
-    def __init__(self, playerid, song):
+    def __init__(self, playerid, playlistitemorsong):
         self.playerid = playerid
-        self.song = song
+        self.playlistitemorsong = playlistitemorsong
 
     def __str__(self):
-        return "%s(%s->%s)" % (self.__class__.__name__, self.song, self.playerid)
+        return "%s(%s->%s)" % (self.__class__.__name__, self.playlistitemorsong, self.playerid)
 
 
 class playerratecurrentsong(playerevent):
@@ -373,7 +391,7 @@ class playbackinfochanged(event):
         return "%s(%s)" % (self.__class__.__name__, self.playbackinfo)
 
 
-class updatestatusbar(event):
+class statusbar_update(event):
     """ update status bar
 
     pos = 0: info for currently selected window
@@ -387,6 +405,17 @@ class updatestatusbar(event):
 
     def __str__(self):
         return "%s(%s, %s)" % (self.__class__.__name__, self.pos, self.content)
+
+
+class statusbar_showmessage(event):
+    """ show a message (which automatically disappears after some time in the statusbar"""
+
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return "%r(%r)" % (self.__class__.__name__, self.content)
+
 
 
 class requestinput(event):
@@ -444,10 +473,6 @@ class playlistmovesongdown(playlistevent):
 
     def __str__(self):
         return "%s(%s)" % (self.__class__.__name__, self.id)
-
-
-class playlistload(playlistevent):
-    pass
 
 
 class playlistsave(playlistevent):

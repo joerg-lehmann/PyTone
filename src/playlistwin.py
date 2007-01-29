@@ -1,6 +1,6 @@
 # -*- coding: ISO-8859-1 -*-
 
-# Copyright (C) 2002, 2003, 2004 Jörg Lehmann <joerg@luga.de>
+# Copyright (C) 2002, 2003, 2004, 2006 Jörg Lehmann <joerg@luga.de>
 #
 # This file is part of PyTone (http://www.luga.de/pytone/)
 #
@@ -24,6 +24,7 @@ import events, hub
 import playlist
 import statusbar
 import window
+import encoding
 
 from helper import formattime
 
@@ -62,7 +63,7 @@ class playlistwin(window.window):
             sbar += statusbar.separator
 
         sbar += statusbar.generatedescription("playlistwindow", "activatefilelist")
-        hub.notify(events.updatestatusbar(0, sbar))
+        hub.notify(events.statusbar_update(0, sbar))
 
     def updatescrollbar(self):
         self.drawscrollbar(self.playlist.top, len(self.playlist))
@@ -113,7 +114,7 @@ class playlistwin(window.window):
             elif key in self.keybindings["shuffle"]:
                 hub.notify(events.playlistshuffle())
             elif key in self.keybindings["rescan"]:
-                self.playlist.rescanselection()
+                self.playlist.rescanselection(True)
             elif ord("0")<=key<=ord("5"):
                 self.playlist.rateselection(key-ord("1")+1)
             elif key in self.keybindings["filelistjumptoselectedsong"]:
@@ -190,7 +191,7 @@ class playlistwin(window.window):
                 adddict = {"playstarthours":   h,
                            "playstartminutes": m,
                            "playstartseconds": s}
-                name = item.song.format(self.songformat, adddict=adddict)
+                name = encoding.encode(item.song.format(self.songformat, adddict=adddict))
                 if self.playlist.playingitem and item is self.playlist.playingitem:
                     if self.playlist.selected==i and self.hasfocus():
                         attr = self.colors.selected_playingsong

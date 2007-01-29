@@ -139,7 +139,7 @@ class mixerwin(window.window):
             sbar += statusbar.generatedescription("general", "volumeup")
             sbar += statusbar.terminate
 
-            hub.notify(events.updatestatusbar(0, sbar))
+            hub.notify(events.statusbar_update(0, sbar))
 
     def update(self):
         self.top()

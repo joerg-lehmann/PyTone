@@ -42,14 +42,14 @@ class statswin(messagewin.messagewin):
         indent = " "*3
         for songdbstats in stats.songdbsstats:
             dbidstring = _("Database %s") % songdbstats.id + ":"
-            dbstatstring = _("%d songs, %d albums, %d artists, %d genres, %d decades") % (songdbstats.numberofsongs,
-                                                                                          songdbstats.numberofalbums,
-                                                                                          songdbstats.numberofartists,
-                                                                                          songdbstats.numberofgenres,
-                                                                                          songdbstats.numberofdecades) 
+            dbstatstring = _("%d songs, %d albums, %d artists, %d tags") % (songdbstats.numberofsongs,
+									    songdbstats.numberofalbums,
+									    songdbstats.numberofartists,
+									    songdbstats.numberoftags)
+
             lines.append((dbidstring, dbstatstring))
             if songdbstats.type == "local":
-                dbtypestring = _("local database (dbenv directory: %s)") % (songdbstats.dbenvdir)
+                dbtypestring = _("local database (db file: %s)") % (songdbstats.dbfile)
             else:
                 dbtypestring = _("remote database (server: %s)") % (songdbstats.location)
             lines.append((indent + _("type") + ":", dbtypestring))

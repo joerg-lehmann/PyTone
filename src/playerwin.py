@@ -23,6 +23,7 @@ import log
 import window
 import events, hub
 import statusbar
+import encoding
 
 from helper import formattime
 
@@ -64,7 +65,7 @@ class playerwin(window.window):
             sbar = statusbar.generatedescription("general", "playerpause")
         else:
             sbar = statusbar.generatedescription("general", "playerstart")
-        hub.notify(events.updatestatusbar(1, sbar))
+        hub.notify(events.statusbar_update(1, sbar))
         
     def update(self):
         window.window.update(self)
@@ -98,27 +99,29 @@ class playerwin(window.window):
             self.paused = event.playbackinfo.ispaused()
             self.stopped = event.playbackinfo.isstopped()
             if self.song:
-                self.settitle("%s%s" % (event.playbackinfo.iscrossfading() and "-> " or "",
-                                             self.song.format(self.songformat)))
+                self.settitle(u"%s%s" % (event.playbackinfo.iscrossfading() and "-> " or "", self.song.format(self.songformat)))
             else:
                 self.settitle(_("Playback Info"))
             self.time = event.playbackinfo.time
             self.update()
 
             # update player info file, if configured
-            if self.playerinfofd and self.song:
+            if self.playerinfofd:
                 try:
                     self.playerinfofd.seek(0)
-                    info = "%s - %s (%s/%s)\n"  % ( self.song.artist,
-                                                    self.song.title,
-                                                    formattime(self.time),
-                                                    formattime(self.song.length))
+                    if self.song:
+                        info = "%s - %s (%s/%s)\n"  % ( self.song.artist,
+                                                        self.song.title,
+                                                        formattime(self.time),
+                                                        formattime(self.song.length))
+                    else:
+                        info = _("Not playing") + "\n"
+                    info = encoding.encode(info)
                     self.playerinfofd.write(info)
                     self.playerinfofd.truncate(len(info))
                 except IOError, e:
                     log.error(_("error '%s' occured during write to playerinfofile") % e)
                     self.playerinfofd = None
-                    
 
     def keypressed(self, event):
         key = event.key

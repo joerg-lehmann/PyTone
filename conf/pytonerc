@@ -5,13 +5,6 @@
 ##############################################################################
 
 [general]
-# playlistdir: Directory, where new playlists should be stored
-#
-# Note that PyTone searches for playlists in all subdirs of
-# basedir. This option only specifies the directory, where new playlists
-# should be stored if no path is specified.
-playlistdir = /mnt/mp3/playlists
-
 # randominsertlength:
 #
 # Total length of songs in seconds after which the random song insert
@@ -118,9 +111,8 @@ requestcachesize = 50000
 
 # type = local: local bsddb database
 #
-# dbenvdir:                 Name of the directory for the bsddb database
-#                           environment. Note that every database must have
-#                           its own database environment directory!
+# dbfile:                   Name of the database file
+#                           Note that every database must have its own database database file!
 # musicbasedir:             basedir for filesystem based navigation and auto
 #                           registering of songs in database.
 #                           !!! You have to adjust this setting !!!
@@ -156,9 +148,7 @@ requestcachesize = 50000
 [database.main]
 type = local
 
-# directory where db and log files are stored (every database has to have its own)
-dbenvdir = ~/.pytone/mp3
-
+dbfile = ~/.pytone/main.db
 musicbasedir =
 
 tracknrandtitlere = ^\[?(\d+)\]? ?[- ] ?(.*)\.(mp3|ogg)$
@@ -639,7 +629,6 @@ playerstop                = S
 playlistdeleteplayedsongs = KEY_BACKSPACE
 playlistclear             = ctrl-d
 playlistsave              = ctrl-w
-playlistload              = ctrl-r
 playlistreplay            = ctrl-u
 playlisttoggleautoplaymode= ctrl-t
 togglelayout              = KEY_F10
@@ -647,6 +636,7 @@ showhelp                  = ?
 showlog                   = !
 showstats                 = %
 showiteminfolong          = =
+showlyrics                = L
 toggleiteminfowindow      = ctrl-v
 volumeup                  = )
 volumedown                = (

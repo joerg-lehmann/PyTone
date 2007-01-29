@@ -32,7 +32,7 @@ import curses, os, os.path, signal, imp, sys
 try:
     import gettext
     locallocaledir = os.path.join(os.path.dirname(sys.argv[0]), "../locale")
-    gettext.install("PyTone", locallocaledir)
+    gettext.install("PyTone", locallocaledir, unicode=True)
 except:
     # Disable localization if there is any problem with the above.
     # This works around a problem with Python 2.1

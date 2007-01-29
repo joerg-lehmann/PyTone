@@ -20,10 +20,10 @@
 import item
 
 class request:
-    def __str__(self):
+    def __repr__(self):
         return self.__class__.__name__
 
-    __repr__ = __str__
+    __repr__ = __repr__
 
 #
 # database requests
@@ -33,16 +33,16 @@ class dbrequest:
     def __init__(self, songdbid):
         self.songdbid = songdbid
 
-    def __str__(self):
-        return "%s->%s" % (self.__class__.__name__, self.songdbid)
+    def __repr__(self):
+        return "%r->%r" % (self.__class__.__name__, self.songdbid)
 
     def __cmp__(self, other):
         cmp(hash(self), hash(other))
 
     def __hash__(self):
         # for the cashing system every dbrequest has to be hashable
-        # by default we rely on self.__str__ for computing the hash value
-        return hash(str(self))
+        # by default we rely on self.__repr__ for computing the hash value
+        return hash(repr(self))
 
 class dbrequestsingle(dbrequest):
     """ db request yielding a single result (not a list) and requiring a
@@ -59,43 +59,28 @@ class dbrequestsongs(dbrequest):
 
     """
 
-    # standard song wrapper function, wrapping a dbitem.song instance in a item.song instance
-    def _songwrapper(song, songdbid):
-        return item.song(songdbid, song)
-
-    def __init__(self, songdbid, random=False, sort=False, wrapperfunc=_songwrapper, filters=None):
+    def __init__(self, songdbid, random=False, sort=False, filters=None):
         self.songdbid = songdbid
         self.sort = sort
         self.random = random
-        self.wrapperfunc = wrapperfunc
         self.filters = filters
 
-    def __str__(self):
-        return "%s(%s, %s, %s, random=%s)->%s" % (self.__class__.__name__, self.wrapperfunc, self.sort, self.filters,
-                                                  self.random, self.songdbid)
-        
+    def __repr__(self):
+        return "%r(%r, %r, random=%r)->%r" % (self.__class__.__name__, self.sort, self.filters, self.random, self.songdbid)
+
 
 class dbrequestlist(dbrequest):
     """ db request yielding a result list (not containing songs),
     which have to be merged when querying multiple databases
 
-    If wrapperfunc is not None, is has to be a function which will be
-    called for every item of the result list. wrapperfunc has to
-    accepts two arguments: The first one is the item, and the second
-    one is the id of the database/one of the databases where it has
-    been found. The return value of wrapperfunc will then be used
-    instead of the original item in the result list.
-
     Note that the resulting list must not be changed by the caller!
     """
-    def __init__(self, songdbid, wrapperfunc=None, sort=False, filters=None):
+    def __init__(self, songdbid, filters=None):
         self.songdbid = songdbid
-        self.wrapperfunc = wrapperfunc
-        self.sort = sort
         self.filters = filters
 
-    def __str__(self):
-        return "%s(%s, %s, %s)->%s" % (self.__class__.__name__, self.wrapperfunc, self.sort, self.filters, self.songdbid)
+    def __repr__(self):
+        return "%r(%r)->%r" % (self.__class__.__name__, self.filters, self.songdbid)
 
 #
 # database requests which yield a single result
@@ -106,136 +91,50 @@ class getdatabasestats(dbrequest):
     pass
 
 
-class queryregistersong(dbrequestsingle):
-    def __init__(self, songdbid, path):
+class getsong_metadata(dbrequestsingle):
+    """fetch song metadata from database songdbid corresponding to song_id""" 
+    def __init__(self, songdbid, song_id):
         self.songdbid = songdbid
-        self.path = path
+        self.song_id = song_id
 
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.path, self.songdbid)
+    def __repr__(self):
+        return "%r(%r)->%r" % (self.__class__.__name__, self.song_id, self.songdbid)
 
 
-class getsong(dbrequestsingle):
-    def __init__(self, songdbid, id):
+class gettag_id(dbrequestsingle):
+    def __init__(self, songdbid, tag_name):
         self.songdbid = songdbid
-        self.id = id
+        self.tag_name = tag_name
 
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.id, self.songdbid)
+    def __repr__(self):
+        return "%r(%r)->%r" % (self.__class__.__name__, self.tag_name, self.songdbid)
 
-
-class getalbum(dbrequestsingle):
-    def __init__(self, songdbid, album):
-        self.songdbid = songdbid
-        self.album = album
-
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.album, self.songdbid)
-
-
-class getartist(dbrequestsingle):
-    def __init__(self, songdbid, artist):
-        self.songdbid = songdbid
-        self.artist = artist
-
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.artist, self.songdbid)
-
-
-class getplaylist(dbrequestsingle):
-    def __init__(self, songdbid, path):
-        self.songdbid = songdbid
-        self.path = path
-
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.path, self.songdbid)
-
-
-class getsongsinplaylist(dbrequestsingle):
-    """ return all songs stored in playlist path """
-    def __init__(self, songdbid, path, random=False):
-        self.songdbid = songdbid
-        self.path = path 
-        self.random = random
-
-    def __str__(self):
-        return "%s(%s,random=%s)->%s" % (self.__class__.__name__,
-                                         self.path, self.random, self.songdbid)
 
 #
 # database requests which yield a list of songs
 #
 
 class getsongs(dbrequestsongs):
-
-    def __init__(self, songdbid, artist=None, album=None, sort=False, filters=None, random=False):
-        dbrequestsongs.__init__(self, songdbid, random, sort)
-        self.songdbid = songdbid
-        self.artist = artist
-        self.album = album
-        self.filters = filters
-
-    def __str__(self):
-        return "%s(%s, %s, sort=%s, filters=%s, random=%s)->%s" % (self.__class__.__name__,
-                  self.artist, self.album, self.sort,  self.filters, self.random, self.songdbid)
+    pass
 
 
 class getlastplayedsongs(dbrequestsongs):
-
-    # in the case of getlastplayedsongs, the database returns tuples (playingtime, dbsong)
-    # instead of dbsongs. We thus have to use a different wrapper function here.
-    def _songwrapper(playingtimesongtuple, songdbid):
-        song, playingtime = playingtimesongtuple
-        return item.song(songdbid, song, playingtime)
-
-    def __init__(self, songdbid, random=False, sort=False, wrapperfunc=_songwrapper, filters=None):
-        dbrequestsongs.__init__(self, songdbid, random, sort, wrapperfunc, filters)
-
-
-class gettopplayedsongs(dbrequestsongs):
     pass
 
 
-class getlastaddedsongs(dbrequestsongs):
-    pass
-
-
-class getsongsinplaylists(dbrequestsongs):
-    """ return all songs stored in all playlists """
-    pass
-
+#
+# database requests which yield lists of other items
+#
 
 class getartists(dbrequestlist):
-    def __init__(self, songdbid, wrapperfunc=None, sort=False, filters=None):
-        self.songdbid = songdbid
-        self.wrapperfunc = wrapperfunc
-        self.sort = sort
-        self.filters = filters
-
-    def __str__(self):
-        return "%s(%s, %s, %s)->%s" % (self.__class__.__name__,
-                                       self.wrapperfunc, self.sort, self.filters, self.songdbid)
+    pass
 
 
 class getalbums(dbrequestlist):
-    def __init__(self, songdbid, artist=None, wrapperfunc=None, sort=False, filters=None):
-        self.songdbid = songdbid
-        self.artist = artist
-        self.wrapperfunc = wrapperfunc
-        self.sort = sort
-        self.filters = filters
-
-    def __str__(self):
-        return "%s(%s, %s, %s, %s)->%s" % (self.__class__.__name__,
-                                           self.artist, self.wrapperfunc, self.sort, self.filters,
-                                           self.songdbid)
-
-
-class getgenres(dbrequestlist):
     pass
 
 
-class getdecades(dbrequestlist):
+class gettags(dbrequestlist):
     pass
 
 
@@ -247,21 +146,16 @@ class getplaylists(dbrequestlist):
     pass
 
 #
-# database request yielding the numbe of items of a certain kind
+# database request yielding the number of items of a certain kind
 #
 
 class getnumberofsongs(dbrequest):
-    def __init__(self, songdbid, artist=None, album=None, filters=None):
+    def __init__(self, songdbid, filters=None):
         self.songdbid = songdbid
-        self.artist = artist
-        self.album = album
         self.filters = filters
 
-    def __str__(self):
-        return ( "%s(%s, %s, %s))->%s" %
-                 (self.__class__.__name__,
-                  self.artist, self.album, self.filters,
-                  self.songdbid))
+    def __repr__(self):
+        return "%r(%r))->%r" % (self.__class__.__name__, self.filters, self.songdbid)
 
 
 class dbrequestnumber(dbrequest):
@@ -269,8 +163,8 @@ class dbrequestnumber(dbrequest):
         self.songdbid = songdbid
         self.filters = filters
 
-    def __str__(self):
-        return ( "%s(%s))->%s" % (self.__class__.__name__, self.filters, self.songdbid))
+    def __repr__(self):
+        return ( "%r(%r)->%r" % (self.__class__.__name__, self.filters, self.songdbid))
 
 
 class getnumberofalbums(dbrequestnumber):
@@ -279,14 +173,21 @@ class getnumberofalbums(dbrequestnumber):
 class getnumberofartists(dbrequestnumber):
     pass
 
-class getnumberofdecades(dbrequestnumber):
-    pass
-
-class getnumberofgenres(dbrequestnumber):
+class getnumberoftags(dbrequestnumber):
     pass
 
 class getnumberofratings(dbrequestnumber):
     pass
+
+# autoregisterer request
+
+class autoregisterer_queryregistersong(dbrequest):
+    def __init__(self, songdbid, path):
+        self.songdbid = songdbid
+        self.path = path
+
+    def __repr__(self):
+        return "%r(%r)->%r" % (self.__class__.__name__, self.path, self.songdbid)
 
 # songdbmanager
 
@@ -300,14 +201,14 @@ class getsongdbmanagerstats(request):
 # other requests for playlist and player service
 #
 
-class requestnextsong(request):
-    """ request a song from playlistid. Go back in playlist if previous is set """
+class playlist_requestnextsong(request):
+    """ request a playlistitem from playlistid. Go back in playlist if previous is set """
     def __init__(self, playlistid, previous=0):
         self.playlistid = playlistid
         self.previous = previous
 
-    def __str__(self):
-        return "%s->%s,%s" % (self.__class__.__name__, `self.playlistid`, `self.previous`)
+    def __repr__(self):
+        return "%r->%r,%r" % (self.__class__.__name__, self.playlistid, self.previous)
 
 
 class getplaybackinfo(request):
@@ -315,8 +216,8 @@ class getplaybackinfo(request):
     def __init__(self, playerid):
         self.playerid = playerid
 
-    def __str__(self):
-        return "%s->%s" % (self.__class__.__name__, `self.playerid`)
+    def __repr__(self):
+        return "%r->%r" % (self.__class__.__name__, `self.playerid`)
 
 
 class requestinput:
@@ -325,8 +226,8 @@ class requestinput:
         self.prompt = prompt
         self.handler = handler
 
-    def __str__(self):
-        return "%s(%s,%s,%s)" % (self.__class__.__name__,
+    def __repr__(self):
+        return "%r(%r,%r,%r)" % (self.__class__.__name__,
                               self.title, self.prompt, `self.handler`)
 
 

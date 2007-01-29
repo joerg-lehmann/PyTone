@@ -1,11 +1,24 @@
 - FLAC: finish decoder when not using it any more
 
+- check pytonectl
+- check David Bowie Let's Dance
+- make removeaccents work again: howto use unicode.translate
+
+- No more options:
+  playlistdir, playlistload, dbenvdir
+
+- allow tagging of no artists dir
+
+
 TOCHECK:
 - what happens to mpg123 when pytone crashes
 - song is not registered as currently being played, when its playback
   is resumed after a restart of PyTone (in particular, player window
   titlebar is wrong)
 - update playingtime when updating song!
+- secondary player doesn't seem to work with bufferedao module.
+  The version Rothsee-2006/PyTone-2.4.0-Rothsee/src/services/players/internal.py
+  contains a workaround
 
 USER WISHLIST:
 

@@ -22,6 +22,7 @@ import help
 import events, hub
 import messagewin
 import statusbar
+import encoding
 
 def getitems(section):
     items = []
@@ -45,7 +46,7 @@ class helpwin(messagewin.messagewin):
                                        config.helpwindow.autoclosetime)
 
         sbar = statusbar.generatedescription("general", "showhelp")
-        hub.notify(events.updatestatusbar(2, sbar))
+        hub.notify(events.statusbar_update(2, sbar))
 
     def showitems(self):
         y = self.iy
@@ -53,11 +54,10 @@ class helpwin(messagewin.messagewin):
             self.addstr(y, 1, " "*self.iw, self.colors.background)
             self.move(y, 1)
             for keyname in item[0][:-1]:
-                self.addstr(keyname, self.colors.key)
+                self.addstr(encoding.encode(keyname), self.colors.key)
                 self.addstr("/", self.colors.description)
-            self.addstr(item[0][-1], self.colors.key)
-            assert type(item[1])==type(""), item[1]
-            self.addnstr(y, 35, item[1], self.iw-35)
+            self.addstr(encoding.encode(item[0][-1]), self.colors.key)
+            self.addnstr(y, 35, encoding.encode(item[1]), self.iw-35)
             y += 1
             if y>=self.iy+self.ih:
                 break

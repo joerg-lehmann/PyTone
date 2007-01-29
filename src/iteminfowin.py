@@ -23,6 +23,7 @@ import services.playlist
 import events, hub
 import window
 import messagewin
+import encoding
 
 # marker class
 class _selection:
@@ -85,7 +86,7 @@ class iteminfowin(window.window):
 
         # get lines to display
         empty= [["", "", "", ""]]
-        if aitem:
+        if aitem is not None:
             info = aitem.getinfo()
         else:
             info = []
@@ -102,21 +103,27 @@ class iteminfowin(window.window):
 
         for lno in range(4):
             self.move(1+lno, self.ix)
-            self.addstr(l[lno][0].ljust(wc1)[:wc1], self.colors.description)
-            self.addstr(l[lno][1].ljust(wc2)[:wc2], self.colors.content)
+            l0 = encoding.encode(l[lno][0])
+            l1 = encoding.encode(l[lno][1])
+            self.addstr(l0.ljust(wc1)[:wc1], self.colors.description)
+            self.addstr(l1.ljust(wc2)[:wc2], self.colors.content)
             self.addch(" ")
             if lno != 3 or isinstance(aitem, item.diritem):
-                self.addstr(l[lno][2].ljust(wc3)[:wc3], self.colors.description)
-                self.addstr(l[lno][3].ljust(wc4)[:wc4], self.colors.content)
+                l2 = encoding.encode(l[lno][2])
+                l3 = encoding.encode(l[lno][3])
+                self.addstr(l2.ljust(wc3)[:wc3], self.colors.description)
+                self.addstr(l3.ljust(wc4)[:wc4], self.colors.content)
             else:
+                l2 = encoding.encode(l[3][-2])
+                l3 = encoding.encode(l[3][-1])
                 # special handling of last line for songs
-                wc3 = max(len(l[3][-2]), 5) + colsep
-                wc4 = max(len(l[3][-1]), 5)
+                wc3 = max(len(l2), 5) + colsep
+                wc4 = max(len(l3), 5)
 
                 self.move(1+lno, self.iw-wc3-wc4-1-self.ix)
                 self.addch(" ")
-                self.addstr(l[3][-2].ljust(wc3)[:wc3], self.colors.description)
-                self.addstr(l[3][-1].ljust(wc4)[:wc4], self.colors.content)
+                self.addstr(l2.ljust(wc3)[:wc3], self.colors.description)
+                self.addstr(l3.ljust(wc4)[:wc4], self.colors.content)
 
     # event handler
 
@@ -130,20 +137,9 @@ class iteminfowin(window.window):
         self.update()
 
     def songchanged(self, event):
-        # needed only for songs, since these can be rated or updated
-        # when they are played note that this may update too often (if
-        # multiple songdbs are used), but who cares.
-        changed = False
-        for view, aitem in self.items.items():
-            if isinstance(aitem, item.song) and event.songdbid == aitem.songdbid and event.song == aitem:
-                aitem.song = event.song
-                changed = True
-            elif ( isinstance(aitem, services.playlist.playlistitem) and
-                   event.songdbid == aitem.song.songdbid and event.song == aitem.song):
-                aitem.song.song = event.song
-                changed = True
-        if changed:
-            self.update()
+        # here we assume that a possible change actually has also affected our
+        # item, if not we're missing it
+        self.update()
 
     def playbackinfochanged(self, event):
         playerid = event.playbackinfo.playerid
@@ -183,7 +179,7 @@ class iteminfowinlong(messagewin.messagewin):
         channel.subscribe(events.selectionchanged, self.selectionchanged)
 
     def _outputlen(self, width):
-        return 20
+        return 16
 
     def showitems(self):
         # get lines to display
@@ -199,16 +195,18 @@ class iteminfowinlong(messagewin.messagewin):
         # calculate width of columns
         wc1 = 0
         wc3 = 0
+        wc4 = 0
         for line in info:
+            line = map(encoding.encode, line)
             wc1 = max(wc1, len(line[0]))
             wc3 = max(wc3, len(line[2]))
+            wc4 = max(wc3, len(line[3]))
         wc1 += colsep
         wc3 += colsep
-        wc4 = 0
         wc2 = self.iw-wc1-wc3-wc4-1
         self.clear()
         for lno in range(len(info)):
-            line = l[lno]
+            line = map(encoding.encode, l[lno])
             self.move(self.iy+lno, self.ix)
             self.addstr(line[0].ljust(wc1)[:wc1], self.colors.description)
             self.addstr(line[1].ljust(wc2)[:wc2], self.colors.content)

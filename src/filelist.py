@@ -18,22 +18,37 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import config
-import events, hub
+import events, requests, hub
 import item
 import slist
+import log
 
 class filelist(slist.slist):
 
     def __init__(self, win, songdbids):
         slist.slist.__init__(self, win, config.filelistwindow.scrollmode == "page")
 
-        self.basedir = item.basedir(songdbids)
+        def tagfilter(tag_name, inverted):
+            tag_id = hub.request(requests.gettag_id(songdbids[0], tag_name))
+            if tag_id:
+                return item.tagfilter(tag_id, tag_name, inverted)
+            else:
+                log.info("filter tag '%s' not known" % tag_name)
+
+        filters = [tagfilter("G:Podcast", True), tagfilter("U:Muzak", True)]
+        basefilters = item.filters(tuple(filter for filter in filters if filter))
+
+        self.basedir = item.basedir(songdbids, basefilters, rootdir=True)
+        # self.basedir = item.basedir(songdbids)
         self.dir = [self.basedir]
         self.shistory = []
         self.readdir()
 
-        self.win.channel.subscribe(events.artistaddedordeleted, self.artistaddedordeleted)
-        self.win.channel.subscribe(events.albumaddedordeleted, self.albumaddedordeleted)
+        self.win.channel.subscribe(events.songschanged, self.songschanged)
+        self.win.channel.subscribe(events.artistschanged, self.artistschanged)
+        self.win.channel.subscribe(events.albumschanged, self.albumschanged)
+        self.win.channel.subscribe(events.tagschanged, self.tagschanged)
+        self.win.channel.subscribe(events.songchanged, self.songchanged)
         self.win.channel.subscribe(events.dbplaylistchanged, self.dbplaylistchanged)
         self.win.channel.subscribe(events.filelistjumptosong, self.filelistjumptosong)
 
@@ -60,7 +75,7 @@ class filelist(slist.slist):
         # In the case of the selected item having been an artist check
         # whether only one album is present. If yes directly jump to
         # this album.
-        if config.filelistwindow.skipsinglealbums and self.dir[-1].isartist() and len(self) <= 2:
+        if config.filelistwindow.skipsinglealbums and isinstance(self.dir[-1], item.artist) and len(self) <= 2:
             self.dir = self.getselectedsubdir()
             self.readdir()
 
@@ -93,43 +108,95 @@ class filelist(slist.slist):
             hub.notify(events.playlistaddsongs([self.getselected()]))
 
     def rateselection(self, rating):
-        if (isinstance(self.getselected(), item.song) or
-            isinstance(self.getselected(), item.album) or
-            isinstance(self.getselected(), item.artist)):
-            self.getselected().rate(rating)
-
-    def rescanselection(self):
         if self.isdirselected():
-            # instead of rescanning of a whole filesystem we start the autoregisterer
-            if ( isinstance(self.getselected(), item.basedir) or
-                 ( isinstance(self.getselected(), item.filesystemdir) and self.getselected().isbasedir()) ):
-                hub.notify(events.autoregistersongs(self.getselected().songdbid))
+            if not isinstance(self.getselected(), (item.artist, item.album)):
+                self.win.sendmessage(_("Not rating virtual directories!"))
+                return False
+            songs = self.getselected().getcontentsrecursive()
+            if rating:
+                self.win.sendmessage(_("Rating %d song(s) with %d star(s)...") % (len(songs), rating))
             else:
+                self.win.sendmessage(_("Removing rating of %d song(s)...") % len(songs))
+        elif self.issongselected():
+            songs = [self.getselected()]
+        for song in songs:
+            song.rate(rating)
+        return True
+
+    def addtagselection(self, tag):
+        if self.isdirselected():
+            if not isinstance(self.getselected(), (item.artist, item.album)):
+                self.win.sendmessage(_("Not tagging virtual directories!"))
+                return False
+            songs = self.getselected().getcontentsrecursive()
+            self.win.sendmessage(_("Tagging %d song(s) with tag '%s'...") % (len(songs), tag))
+        elif self.issongselected():
+            songs = [self.getselected()]
+        for song in songs:
+            song.addtag(tag)
+        return True
+
+    def removetagselection(self, tag):
+        if self.isdirselected():
+            if not isinstance(self.getselected(), (item.artist, item.album)):
+                self.win.sendmessage(_("Not untagging virtual directories!"))
+                return False
+            songs = self.getselected().getcontentsrecursive()
+            self.win.sendmessage(_("Removing tag '%s' from %d song(s)...") % (tag, len(songs)))
+        elif self.issongselected():
+            songs = [self.getselected()]
+        for song in songs:
+            song.removetag(tag)
+        return True
+
+    def rescanselection(self, force):
+        if ( isinstance(self.getselected(), item.basedir) or
+             ( isinstance(self.getselected(), item.filesystemdir) and self.getselected().isbasedir()) ):
+            # instead of rescanning of a whole filesystem we start the autoregisterer
+            self.win.sendmessage(_("Scanning for songs in database '%s'...") % self.getselected().songdbid)
+            hub.notify(events.autoregistersongs(self.getselected().songdbid))
+        else:
+            if self.isdirselected():
                 # distribute songs over songdbs
                 # Note that we have to ensure that only dbitem.song (and not item.song) instances
                 # are sent to the db
-                dsongs = {}
-                for song in self.getselected().getcontentsrecursive():
-                    dsongs.setdefault(song.songdbid, []).append(song.song)
-                for songdbid, songs in dsongs.items():
-                    if songs:
-                        hub.notify(events.rescansongs(songdbid, songs))
-        else:
-            self.getselected().rescan()
+                songs = self.getselected().getcontentsrecursive()
+            else:
+                songs = [self.getselected()]
+            self.win.sendmessage(_("Rescanning %d song(s)...") % len(songs))
+            dsongs = {}
+            for song in songs:
+                dsongs.setdefault(song.songdbid, []).append(song)
+            for songdbid, songs in dsongs.items():
+                if songs:
+                    hub.notify(events.autoregisterer_rescansongs(songdbid, songs, force))
 
     # event handler
 
-    def artistaddedordeleted(self, event):
-        #if isinstance(self.dir[-1], item.basedir):
-        self.updatedir()
-        self.win.update()
+    def songschanged(self, event):
+        if isinstance( self.dir[-1], (item.songs, item.album)):
+            self.updatedir()
+            self.win.update()
 
-    def albumaddedordeleted(self, event):
-        #if (isinstance(self.dir[-1], item.artist) and
-        #    self.dir[-1].songdbid==event.songdbid and
-        #    self.dir[-1].name in event.album.artists):
-        self.updatedir()
-        self.win.update()
+    def artistschanged(self, event):
+        if isinstance( self.dir[-1], item.basedir):
+            self.updatedir()
+            self.win.update()
+
+    def albumschanged(self, event):
+        if isinstance(self.dir[-1], (item.albums, item.artist, item.compilations)):
+            self.updatedir()
+            self.win.update()
+
+    def tagschanged(self, event):
+        if isinstance(self.dir[-1], item.tags):
+            self.updatedir()
+            self.win.update()
+
+    def songchanged(self, event):
+        if isinstance( self.dir[-1], (item.songs, item.album, item.topplayedsongs, item.lastplayedsongs)):
+            self.updatedir()
+            self.win.update()
 
     def dbplaylistchanged(self, event):
         #if (isinstance(self.dir[-1], item.artist) and
@@ -145,12 +212,13 @@ class filelist(slist.slist):
         self.shistory = []
         self.dir = [self.basedir]
         self.readdir()
-        if self.selectbyname(event.song.artist):
+        # either we are able to locate the artist or we should look under compilations
+        if ( (event.song.artist_id and (self.selectbyid(event.song.artist_id) or self.selectbyid("compilations"))) or
+             self.selectbyid("noartist") ):
             self.dirdown()
             # We might have skipped the album when there is only a single one of
             # the given artist.
-            if not self.dir[-1].isalbum():
-                if self.selectbyname(event.song.album):
-                    self.dirdown()
-                self.selectbyname(event.song.name)
+            if not isinstance(self.dir[-1], item.album) and self.selectbyid(event.song.album_id):
+                self.dirdown()
+            self.selectbyid(event.song.id)
         self.win.update()

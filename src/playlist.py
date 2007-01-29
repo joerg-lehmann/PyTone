@@ -87,9 +87,10 @@ class playlist(slist.slist):
         if self.selected is not None:
             self.getselectedsong().rate(rating)
 
-    def rescanselection(self):
+    def rescanselection(self, force):
         if self.selected is not None:
-            self.getselectedsong().rescan()
+            song = self.getselectedsong()
+            hub.notify(events.autoregisterer_rescansongs(song.songdbid, [song], force))
 
     def playselected(self):
         item = self.getselected()

@@ -19,8 +19,12 @@
 # along with PyTone; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import os.path
+
+import hub, requests
 import log
 import pcm
+import encoding
 
 #
 # decoder class and simple decoder registry
@@ -66,6 +70,7 @@ def getdecoder(type):
 
 class mp3decoder(decoder):
     def __init__(self, path):
+        assert isinstance(path, str), "path has to be a string"
         self.file = mad.MadFile(path)
 
     def samplerate(self):
@@ -216,25 +221,39 @@ class decodedsong:
 
     """
 
-    def __init__(self, song, outrate, replaygainprofiles):
-        self.song = song
+    def __init__(self, song, outrate):
         self.outrate = outrate
         self.default_rate = outrate
-        self.replaygain = song.replaygain(replaygainprofiles)
 
         try:
-            decoder = getdecoder(self.song.type)
+            decoder = getdecoder(song.type)
         except:
-            log.error("No decoder for song type '%s' registered "% self.song.type)
-            raise RuntimeError("No decoder for song type '%s' registered "% self.song.type)
+            log.error("No decoder for song type '%s' registered "% song.type)
+            raise RuntimeError("No decoder for song type '%s' registered "% song.type)
 
-        self.decodedfile = decoder(song.path)
+        url = encoding.encode_path(song.url)
+        if url.startswith("file://"):
+            dbstats = hub.request(requests.getdatabasestats(song.songdbid))
+            if not dbstats.basedir:
+                log.error("Currently only support for locally stored songs available")
+                raise RuntimeError("Currently only support for locally stored songs available")
+            path = os.path.join(dbstats.basedir, url[7:])
+            self.decodedfile = decoder(path)
+        else:
+            log.error("Currently only support for locally stored songs available")
+            raise RuntimeError("Currently only support for locally stored songs available")
 
         # Use the total time given by the decoder library and not the one
         # stored in the database. The former one turns out to be more precise
         # for some VBR songs.
-        self.ttime = self.decodedfile.ttime()
-        self.samplerate = self.decodedfile.samplerate()
+        self.ttime = max(self.decodedfile.ttime(), song.length)
+
+        # sometimes the mad library seems to report a wrong sample rate,
+        # so use the one stored in the database
+        if song.samplerate:
+            self.samplerate = song.samplerate
+        else:
+            self.samplerate = self.decodedfile.samplerate()
 
         self.buff = self.last_l = self.last_r = None
         self.buffpos = 0

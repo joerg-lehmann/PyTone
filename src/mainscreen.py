@@ -26,6 +26,7 @@ import filelistwin
 import playlistwin
 import playerwin
 import iteminfowin
+import lyricswin
 import helpwin
 import inputwin
 import mixerwin
@@ -45,7 +46,7 @@ class mainscreen:
         self.channel = hub.newchannel()
         self.keybindings = config.keybindings.general
         self.done = False
-        
+
         self.statusbar = statusbar.statusbar(screen, self.h-1, self.w, self.channel)
 
         # first we setup the input window in order to have it as first window
@@ -70,6 +71,7 @@ class mainscreen:
         self.statswin = statswin.statswin(screen, self.h, self.w, self.channel, len(songdbids))
 
         self.iteminfowinlong = iteminfowin.iteminfowinlong(screen, self.h, self.w, self.channel)
+        self.lyricswin = lyricswin.lyricswin(screen, self.h, self.w, self.channel)
 
         self.mixerwin = None
         if config.mixer.device:
@@ -320,8 +322,6 @@ class mainscreen:
             hub.notify(events.activatefilelist())
         elif key in self.keybindings["playlistreplay"]:
             hub.notify(events.playlistreplay())
-        elif key in self.keybindings["playlistload"]:
-            hub.notify(events.playlistload())
         elif key in self.keybindings["playlistsave"]:
             hub.notify(events.playlistsave())
         elif key in self.keybindings["playlisttoggleautoplaymode"]:
@@ -333,7 +333,6 @@ class mainscreen:
                 context = "playlistwindow"
             else:
                 context = None
-            
             self.helpwin.showhelp(context)
         elif key in self.keybindings["showlog"]:
             self.logwin.show()
@@ -341,6 +340,8 @@ class mainscreen:
             self.statswin.show()
         elif key in self.keybindings["showiteminfolong"]:
             self.iteminfowinlong.show()
+        elif key in self.keybindings["showlyrics"]:
+            self.lyricswin.show()
         elif key in self.keybindings["togglelayout"]:
             self.layout = self.layout == "onecolumn" and "twocolumn" or "onecolumn"
             self.resizeterminal()

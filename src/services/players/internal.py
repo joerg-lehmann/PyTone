@@ -25,6 +25,7 @@ import time
 import pcm
 import decoder
 from services.player import genericplayer
+import services.playlist
 import log
 
 try:
@@ -43,7 +44,7 @@ except ImportError:
         ossaudiodev_present = False
     except ImportError:
         ossaudiodev_present = False
-    
+
 
 class aoaudiodev:
     def __init__(self, aodevice, rate, options):
@@ -81,14 +82,14 @@ class bufferedaudiodev(threading.Thread):
         self.aooptions = aooptions
         self.rate = rate
         self.SIZE = SIZE
-        
+
         # initially, we do not open the audio device
         self.audiodev = None
 
         # output queue
         queuesize = 1024*bufsize/self.SIZE + 1
         self.queue = Queue.Queue(queuesize)
-        
+
         self.done = False
         # wait if player thread is paused
         self.ispaused = False
@@ -174,6 +175,72 @@ class bufferedaudiodev(threading.Thread):
         self.closedevice()
         self.restart.set()
 
+#
+# wrapper class for playlistitems or songs
+#
+
+class decodedsong:
+    def __init__(self, playlistitemorsong, rate, profiles):
+        if isinstance(playlistitemorsong, services.playlist.playlistitem):
+            self.song = playlistitemorsong.song
+            self.playlistitem = playlistitemorsong
+        else:
+            self.song = playlistitemorsong
+            self.playlistitem = None
+        self.decodedsong = decoder.decodedsong(self.song, rate)
+        self.replaygain = self.calculate_replaygain(["track"])
+
+        # these method are handled by the decodedsong
+        self.read = self.decodedsong.read
+        self.seekrelative = self.decodedsong.seekrelative
+        self.playfaster = self.decodedsong.playfaster
+        self.playslower = self.decodedsong.playslower
+        self.resetplayspeed = self.decodedsong.resetplayspeed
+
+    def __repr__(self):
+        return "decodedsong(%r)" % repr(self.song)
+
+    def succeedsonalbum(self, otherdecodedsong):
+        " checks whether otherdeocedsong follows self on the same album "
+        return (self.song.artist      and self.song.artist == otherdecodedsong.song.artist and
+                self.song.album       and self.song.album == otherdecodedsong.song.album and
+                self.song.tracknumber and otherdecodedsong.song.tracknumber and
+                self.song.tracknumber == otherdecodedsong.song.tracknumber-1 )
+
+    def calculate_replaygain(self, profiles):
+       # the following code is adapted from quodlibet
+       """Return the recommended Replay Gain scale factor.
+
+       profiles is a list of Replay Gain profile names ('album',
+       'track') to try before giving up. The special profile name
+       'none' will cause no scaling to occur.
+       """
+       for profile in profiles:
+           if profile is "none":
+               return 1.0
+           try:
+               db = getattr(self.song, "replaygain_%s_gain" % profile)
+               peak = getattr(self.song, "replaygain_%s_peak" % profile)
+           except AttributeError:
+               continue
+           else:
+               if db is not None and peak is not None:
+                   scale = 10.**(db / 20)
+                   if scale * peak > 1:
+                       scale = 1.0 / peak # don't clip
+                   return min(15, scale)
+       else:
+           return 1.0
+
+    def rtime(self):
+        " remaing playing time "
+        return self.decodedsong.ttime - self.decodedsong.ptime
+
+    def ptime(self):
+        " playing time "
+        return self.decodedsong.ptime
+
+
 
 class player(genericplayer):
 
@@ -194,7 +261,7 @@ class player(genericplayer):
             self.audiodev.start()
 
         # songs currently playing
-        self.songs = []
+        self.decodedsongs = []
 
         self.crossfading = crossfading
         if self.crossfading:
@@ -212,7 +279,7 @@ class player(genericplayer):
 
     def _flushqueue(self):
         """ delete internal player queue and flush audiodevice """
-        self.songs = []
+        self.decodedsongs = []
         self.audiodev.flush()
         self.audiodev.closedevice()
 
@@ -222,28 +289,28 @@ class player(genericplayer):
         # unpause buffered ao if necessary
         self.audiodev.unpause()
 
-        if len(self.songs) == 1:
-            song = self.songs[0]
+        if len(self.decodedsongs) == 1:
+            song = self.decodedsongs[0]
             buff = song.read(self.SIZE)
             if song.replaygain != 1:
                 pcm.scale(buff, song.replaygain)
             if len(buff) > 0:
                 self.audiodev.play(buff, len(buff))
             else:
-                log.debug("internal player: song ends: %s (0 songs in queue)" % self.songs[0])
-                del self.songs[0]
+                log.debug("internal player: song ends: %s (0 songs in queue)" % self.decodedsongs[0])
+                del self.decodedsongs[0]
 
             # reset songtransition mode, but before possibly requesting a new song
             self.songtransitionmode = None
 
-            if len(buff) == 0 or (self.crossfading and song.ttime-song.ptime < self.crossfadingstart):
+            if len(buff) == 0 or (self.crossfading and song.rtime() < self.crossfadingstart):
                 self.requestnextsong()
 
-        elif len(self.songs) == 2:
+        elif len(self.decodedsongs) == 2:
             if self.songtransitionmode == "crossfade":
                 # perform crossfading
-                buff1 = self.songs[0].read(self.SIZE)
-                buff2 = self.songs[1].read(self.SIZE)
+                buff1 = self.decodedsongs[0].read(self.SIZE)
+                buff2 = self.decodedsongs[1].read(self.SIZE)
 
                 if len(buff1) and len(buff2):
                     # normal operation: no song has ended
@@ -253,56 +320,56 @@ class player(genericplayer):
                     if self.crossfadingratio >= 1:
                         self.crossfadingratio = 0
                         log.debug("internal player: song ends: %s (1 song in queue)" %
-                              self.songs[0])
-                        del self.songs[0]
+                              self.decodedsongs[0])
+                        del self.decodedsongs[0]
                 if len(buff1) == 0:
                     buff = buff2
                     self.crossfadingratio = 0
-                    log.debug("internal player: song ends: %s (1 song in queue)" % self.songs[0])
-                    del self.songs[0]
+                    log.debug("internal player: song ends: %s (1 song in queue)" % self.decodedsongs[0])
+                    del self.decodedsongs[0]
                 if len(buff2) == 0:
                     buff = buff1
                     self.crossfadingratio = 0
-                    log.debug("internal player: song ends: %s" % self.songs[-1])
-                    del self.songs[-1]
-                    log.debug("internal player: %d songs in queue" % len(self.songs))
+                    log.debug("internal player: song ends: %s" % self.decodedsongs[-1])
+                    del self.decodedsongs[-1]
+                    log.debug("internal player: %d songs in queue" % len(self.decodedsongs))
             elif self.songtransitionmode == "gapkill":
                 # just kill gap between songs
-                buff = self.songs[0].read(self.SIZE)
+                buff = self.decodedsongs[0].read(self.SIZE)
                 if len(buff) < self.SIZE:
-                    log.debug("internal player: song ends: %s (1 song in queue)" % self.songs[0])
-                    del self.songs[0]
+                    log.debug("internal player: song ends: %s (1 song in queue)" % self.decodedsongs[0])
+                    del self.decodedsongs[0]
 
-                    buff2 = self.songs[0].read(self.SIZE)
+                    buff2 = self.decodedsongs[0].read(self.SIZE)
                     if len(buff2) == 0:
-                        log.debug("internal player: song ends: %s" % self.songs[0])
-                        del self.songs[0]
-                        log.debug("internal player: %d songs in queue" % len(self.songs))
+                        log.debug("internal player: song ends: %s" % self.decodedsongs[0])
+                        del self.decodedsongs[0]
+                        log.debug("internal player: %d songs in queue" % len(self.decodedsongs))
                     else:
                         buff = buff + buff2
             else:
                 # neither crossfading nor gap killing
-                del self.songs[0]
-                buff = self.songs[0].read(self.SIZE)
+                del self.decodedsongs[0]
+                buff = self.decodedsongs[0].read(self.SIZE)
 
             if len(buff) > 0:
                 self.audiodev.play(buff, len(buff))
 
         # update playbackinfo
 
-        if len(self.songs) > 0:
+        if len(self.decodedsongs) > 0:
             # determine which song is currently played
             # try to take the buffer length into account
-            if self.songtransitionmode == "crossfade" and self.songs[-1].ptime-self.audiodev.queuelen() >= 0:
-                playingsong = self.songs[-1]
+            if self.songtransitionmode == "crossfade" and self.decodedsongs[-1].ptime()-self.audiodev.queuelen() >= 0:
+                playingsong = self.decodedsongs[-1]
                 self.playbackinfo.updatecrossfade(1)
             else:
-                playingsong = self.songs[0]
+                playingsong = self.decodedsongs[0]
                 self.playbackinfo.updatecrossfade(0)
 
-            time = int(max(playingsong.ptime-self.audiodev.queuelen(), 0))
+            time = int(max(playingsong.ptime()-self.audiodev.queuelen(), 0))
 
-            self.playbackinfo.updatesong(playingsong.song)
+            self.playbackinfo.updatesong(playingsong.song, playingsong.playlistitem)
             self.playbackinfo.updatetime(time)
         else:
             self.playbackinfo.stopped()
@@ -314,31 +381,25 @@ class player(genericplayer):
             self._flushqueue()
 
         # we want maximally 2 songs in queue
-        if len(self.songs) == 2:
-            del self.songs[0]
+        if len(self.decodedsongs) == 2:
+            del self.decodedsongs[0]
 
         try:
-            self.songs.append(decoder.decodedsong(song, self.rate, ["track"]))
+            self.decodedsongs.append(decodedsong(song, self.rate, ["track"]))
             if self.crossfading:
                 self.songtransitionmode = "crossfade"
                 # Check whether two songs come after each other on an
                 # album In such a case, we don't want to crossfade.  If,
                 # however, the user has requested the song change (via
                 # playerforward), we do want crossfading.
-                if not manual and len(self.songs) == 2:
-                    song1 = self.songs[0].song
-                    song2 = self.songs[1].song
-                    # XXX no check for artist/album==UNKNOWN!
-                    if (song1.artist == song2.artist and
-                        song1.album == song2.album and
-                        song1.tracknumber and song2.tracknumber and
-                        song1.tracknumber == song2.tracknumber-1 ):
+                if not manual and len(self.decodedsongs) == 2:
+                    if self.decodedsongs[0].succeedsonalbum(self.decodedsongs[1]):
                         self.songtransitionmode = "gapkill"
-                        log.debug("internal player: I don't crossfade successive songs.")
+                        log.debug("internal player: don't crossfade successive songs.")
         except (IOError, RuntimeError):
-            log.warning(_('failed to open song "%s"') % song.path)
+            log.warning(_('failed to open song "%r"') % str(song.url))
 
-        log.debug("internal player: %d songs in queue" % len(self.songs))
+        log.debug("internal player: %d songs in queue" % len(self.decodedsongs))
 
     def _playerpause(self):
         self.audiodev.pause()
@@ -347,28 +408,28 @@ class player(genericplayer):
         self._flushqueue()
 
     def _playerseekrelative(self, seconds):
-        if len(self.songs) == 0:
+        if len(self.decodedsongs) == 0:
             return
-        if len(self.songs) == 2:
+        if len(self.decodedsongs) == 2:
             # we refuse to seek backward during crossfading
             if seconds < 0:
                 return
-            del self.songs[0]
-        song = self.songs[0]
+            del self.decodedsongs[0]
+        song = self.decodedsongs[0]
         song.seekrelative(seconds)
         self.audiodev.flush()
 
     def _playerplayfaster(self):
-        if self.songs:
-            self.songs[0].playfaster()
+        if self.decodedsongs:
+            self.decodedsongs[0].playfaster()
 
     def _playerplayslower(self):
-        if self.songs:
-            self.songs[0].playslower()
+        if self.decodedsongs:
+            self.decodedsongs[0].playslower()
 
     def _playerspeedreset(self):
-        if self.songs:
-            self.songs[0].resetplayspeed()
+        if self.decodedsongs:
+            self.decodedsongs[0].resetplayspeed()
 
     def _playerreleasedevice(self):
         self.audiodev.closedevice()
