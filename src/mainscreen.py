@@ -341,6 +341,8 @@ class mainscreen:
         elif key in self.keybindings["showiteminfolong"]:
             self.iteminfowinlong.show()
         elif key in self.keybindings["showlyrics"]:
+            # XXX disabled at the moment
+            return 
             self.lyricswin.show()
         elif key in self.keybindings["togglelayout"]:
             self.layout = self.layout == "onecolumn" and "twocolumn" or "onecolumn"
