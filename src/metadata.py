@@ -19,7 +19,7 @@
 # along with PyTone; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import os.path, re, struct, time
+import os.path, re, struct, string, time
 import encoding
 import log
 
@@ -270,6 +270,16 @@ def gettype(extension):
 # ID3 metadata decoder (using mutagen module)
 ##############################################################################
 
+def _splitnumbertotal(s):
+    """ split string into number and total number """
+    r = map(int, s.split("/"))
+    number = r[0]
+    if len(r) == 2:
+        count = r[1]
+    else:
+        count = None
+    return number, count
+
 _mutagen_framemapping = { "TIT2": "title",
                           "TALB": "album",
                           "TPE1": "artist" }
@@ -452,7 +462,8 @@ def read_vorbis_metadata(md, path):
     md.samplerate = vf.info().rate
     md.is_vbr = vf.info().bitrate_lower != vf.info().bitrate_upper
 
-    for name, value in vf.comments().as_dict():
+    for name, value in vf.comment().as_dict().items():
+        value = value[0]
         if name == "TITLE": md.title = value
         if name == "ALBUM": md.album = value
         if name == "ARTIST": md.artist = value
@@ -508,16 +519,6 @@ try:
     log.info("Ogg Vorbis support enabled")
 except ImportError:
     log.info("Ogg Vorbis support disabled: ogg.vorbis module not found")
-
-def _splitnumbertotal(s):
-    """ split string into number and total number """
-    r = map(int, s.split("/"))
-    number = r[0]
-    if len(r) == 2:
-        count = r[1]
-    else:
-        count = None
-    return number, count
 
 
 ##############################################################################
