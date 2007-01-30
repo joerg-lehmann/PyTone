@@ -443,12 +443,8 @@ except ImportError:
 
 def read_vorbis_metadata(md, path):
     vf = ogg.vorbis.VorbisFile(path)
-    field_dict = vf.comment().as_dict()
 
-    def get_string_field(name):
-        return field_dict.get(name, [""])[0]
-
-    # We use the information for all streams (not stream 0). 
+    # We use the information for all streams (not stream 0).
     # XXX Is this correct?
     md.length = int(vf.time_total(-1))
     md.bitrate = vf.bitrate(-1)
@@ -456,55 +452,55 @@ def read_vorbis_metadata(md, path):
     md.samplerate = vf.info().rate
     md.is_vbr = vf.info().bitrate_lower != vf.info().bitrate_upper
 
-    md.title = get_field("TITLE")
-    md.album = get_field("ALBUM")
-    md.artist = get_field("ARTIST")
+    for name, value in vf.comments().as_dict():
+        if name == "TITLE": md.title = value
+        if name == "ALBUM": md.album = value
+        if name == "ARTIST": md.artist = value
+        if name == "DATE": 
+            try: md.year = int(value)
+            except ValueError: pass
+        if name == "GENRE" and value:
+            md.tags.append("G:%s" % value)
+        if name == "COMMENT":
+           md.comments = [value]
+        if name == "TRACKNUMBER":
+            try: md.tracknumber = int(value)
+            except ValueError: pass
+        if name == "TRACKCOUNT":
+            try: md.trackcount = int(value)
+            except ValueError: pass
+        if name == "DISCNUMBER":
+            try: md.disknumber = int(value)
+            except ValueError: pass
+        if name == "DISCCOUNT":
+            try: md.diskcount = int(value)
+            except ValueError: pass
+        if name == "BPM":
+            try: md.bpm = int(value)
+            except ValueError: pass
+        if name.startswith("REPLAYGAIN_"):
+            # ReplayGain:
+            # example format according to vorbisgain documentation
+            # REPLAYGAIN_TRACK_GAIN=-7.03 dB
+            # REPLAYGAIN_TRACK_PEAK=1.21822226
+            # REPLAYGAIN_ALBUM_GAIN=-6.37 dB
+            # REPLAYGAIN_ALBUM_PEAK=1.21822226
+            try:
+                profile, type = name[11:].split("_")
+                basename = "replaygain_%s_" % profile.tolower()
+                if type == "GAIN":
+                   md[basename + "gain"] = float(value.split()[0])
+                   if not md.has_key(basename + "peak" % profile):
+                        md[basename + "peak"] = 1.0
+                if type == "PEAK":
+                   md[basename + "peak"] = float(value)
+                   if not md.has_key(basename + "gain"):
+                        md[basename + "gain"] = 0.0
+            except (ValueError, IndexError):
+                pass
 
-    try: md.year = int(get_field("DATE"))
-    except ValueError: pass
-
-    genre  = get_field("GENRE")
-    if genre:
-        md.tags.append("G:%s" % genre)
-
-    md.comments = [get_field("COMMENT")]
-
-    # XXX how is the song lyrics stored?
-    # md.lyrics = []
-
-    # XXX are the following correct?
-    try: md.tracknumber = get_field("TRACKNUMBER")
-    except ValueError: pass
-
-    try: md.tracknumber = get_field("TRACKNUMBER")
-    except ValueError: pass
-
-    try: md.trackcount = get_field("TRACKCOUNT")
-    except ValueError: pass
-
-    try: md.disknumber = get_field("DISCNUMBER")
-    except ValueError: pass
-
-    try: md.disknumber = get_field("DISCCOUNT")
-    except ValueError: pass
-
-    try: md.bpm = int(get_field("BPM"))
-    except ValueError: pass
-
-    # ReplayGain:
-    # example format according to vorbisgain documentation
-    # REPLAYGAIN_TRACK_GAIN=-7.03 dB
-    # REPLAYGAIN_TRACK_PEAK=1.21822226
-    # REPLAYGAIN_ALBUM_GAIN=-6.37 dB
-    # REPLAYGAIN_ALBUM_PEAK=1.21822226
-    for profile in ["track", "album"]:
-        try:
-            gain = float(get_filed("REPLAYGAIN_%s_GAIN" % profile.toupper()).split()[0])
-            peak = float(get_field("REPLAYGAIN_%s_PEAK" % profile))
-            md["replaygain_%s_gain" % profile] = gain
-            md["replaygain_%s_peak" % profile] = peak
-        except (IndexError, ValueError):
-            continue
+        # XXX how is the song lyrics stored?
+        # md.lyrics = []
 
 try:
     import ogg.vorbis
