@@ -427,14 +427,14 @@ try:
             else: self[tag.HashKey] = tag
 
     registerfileformat("mp3", read_mp3_mutagen_metadata, ".mp3")
-    log.info("using mutagen module for id3 tag parsing")
+    log.info("MP3 support enabled: using mutagen module for id3 tag parsing")
 except ImportError:
     try:
         import eyeD3
         registerfileformat("mp3", read_mp3_eyeD3_metadata, ".mp3")
-        log.info("using eyeD3 module for id3 tag parsing")
+        log.info("MP3 support enabled: using eyeD3 module for id3 tag parsing")
     except ImportError:
-        log.info("MP3 support disabled, since no metadata reader module has been found")
+        log.info("MP3 support disabled: no metadata reader module found")
 
 
 ##############################################################################
@@ -511,7 +511,7 @@ try:
     registerfileformat("ogg", read_vorbis_metadata, ".ogg")
     log.info("Ogg Vorbis support enabled")
 except ImportError:
-    log.info("Ogg Vorbis support disabled, since ogg.vorbis module is not present")
+    log.info("Ogg Vorbis support disabled: ogg.vorbis module not found")
 
 def _splitnumbertotal(s):
     """ split string into number and total number """
@@ -553,6 +553,6 @@ def read_flac_metadata(md, path):
 try:
     import flac.metadata
     registerfileformat("flac", read_flac_metadata, ".flac")
-    log.info("flac support enabled (VERY EXPERIMENTAL)")
+    log.info("FLAC support enabled (VERY EXPERIMENTAL)")
 except ImportError:
-    log.info("flac support disabled, since flac module is not present")
+    log.info("FLAC support disabled: flac module not found")
