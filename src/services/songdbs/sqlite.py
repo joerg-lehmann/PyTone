@@ -1064,10 +1064,13 @@ class songautoregisterer(service.service):
                 song = self._registerorupdatesong(path, force)
                 # remove song from list of songs to be checked (if present)
                 oldsongs.discard(song)
-            except:
+            except (IOError, OSError):
                 # if the registering or update failed we do nothing and the song
                 # will be deleted from the database later on
                 pass
+            except:
+                # but in case of non-IO exceptions report them in debugging mode
+                log.debug_traceback()
         log.debug("registerer: leaving %r"% dir)
 
     def run(self):
