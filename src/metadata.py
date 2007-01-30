@@ -266,21 +266,24 @@ def gettype(extension):
             return type
     return None
 
-#
+
+##############################################################################
 # Ogg Vorbis metadata decoder
-#
+##############################################################################
 
 def read_vorbis_metadata(md, path):
     vf = ogg.vorbis.VorbisFile(path)
     # XXX to be updated
     id3get = vf.comment().as_dict().get
-    self.title = id3get('TITLE', [""])[0]
-    self.album = id3get('ALBUM', [""])[0]
-    self.artist = id3get('ARTIST', [""])[0]
-    self.year = int(id3get('DATE', [""])[0])
-    self.genre  = id3get('GENRE', [""])[0]
-    self.tracknr = id3get('TRACKNUMBER', [""])[0]
-    self.length = int(vf.time_total(0))
+    md.title = id3get('TITLE', [""])[0]
+    md.album = id3get('ALBUM', [""])[0]
+    md.artist = id3get('ARTIST', [""])[0]
+    md.year = int(id3get('DATE', [""])[0])
+    genre  = id3get('GENRE', [""])[0]
+    if genre:
+        md.tags.append("G:%s" % genre)
+    md.tracknr = id3get('TRACKNUMBER', [""])[0]
+    md.length = int(vf.time_total(0))
 
     # example format according to vorbisgain documentation
     # REPLAYGAIN_TRACK_GAIN=-7.03 dB
@@ -305,9 +308,10 @@ def _splitnumbertotal(s):
         count = None
     return number, count
 
-#
+
+##############################################################################
 # ID3 metadata decoder (using mutagen module)
-#
+##############################################################################
 
 _mutagen_framemapping = { "TIT2": "title",
                           "TALB": "album",
@@ -372,9 +376,9 @@ def read_mp3_mutagen_metadata(md, path):
         log.debug("Could not read ID3 tags for song '%r'" % path)
 
 
-#
+##############################################################################
 # ID3 metadata decoder (using eyeD3 module)
-#
+##############################################################################
 
 def read_mp3_eyeD3_metadata(md, path):
     mp3file = eyeD3.Mp3AudioFile(path)
@@ -455,7 +459,6 @@ def read_mp3_eyeD3_metadata(md, path):
 try:
     import mutagen.mp3
     import mutagen.id3
-    import MP3Info
 
     # copied from quodlibet
     class ID3hack(mutagen.id3.ID3):
@@ -471,15 +474,15 @@ try:
 except ImportError:
     try:
         import eyeD3
-        import MP3Info # we also need this
         registerfileformat("mp3", read_mp3_eyeD3_metadata, ".mp3")
         log.info("using eyeD3 module for id3 tag parsing")
     except ImportError:
         log.info("MP3 support disabled, since no metadata reader module has been found")
 
-#
+
+##############################################################################
 # FLAC metadata decoder
-#
+##############################################################################
 
 def read_flac_metadata(md, path):
     chain = flac.metadata.Chain()
