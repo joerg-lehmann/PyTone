@@ -241,9 +241,8 @@ def regularize_metadata(md, capitalize, stripleadingarticle, removeaccents):
 
 
 #
-# various tag readers for different file formats
+# various metadata readers for different file formats
 #
-
 
 # mapping: file type -> (metadata, decoder class, file extension)
 _fileformats = {}
@@ -265,48 +264,6 @@ def gettype(extension):
         if extension.lower() in extensions:
             return type
     return None
-
-
-##############################################################################
-# Ogg Vorbis metadata decoder
-##############################################################################
-
-def read_vorbis_metadata(md, path):
-    vf = ogg.vorbis.VorbisFile(path)
-    # XXX to be updated
-    id3get = vf.comment().as_dict().get
-    md.title = id3get('TITLE', [""])[0]
-    md.album = id3get('ALBUM', [""])[0]
-    md.artist = id3get('ARTIST', [""])[0]
-    md.year = int(id3get('DATE', [""])[0])
-    genre  = id3get('GENRE', [""])[0]
-    if genre:
-        md.tags.append("G:%s" % genre)
-    md.tracknr = id3get('TRACKNUMBER', [""])[0]
-    md.length = int(vf.time_total(0))
-
-    # example format according to vorbisgain documentation
-    # REPLAYGAIN_TRACK_GAIN=-7.03 dB
-    # REPLAYGAIN_TRACK_PEAK=1.21822226
-    # REPLAYGAIN_ALBUM_GAIN=-6.37 dB
-    # REPLAYGAIN_ALBUM_PEAK=1.21822226
-
-try:
-    import ogg.vorbis
-    registerfileformat("ogg", read_vorbis_metadata, ".ogg")
-    log.info("Ogg Vorbis support enabled")
-except ImportError:
-    log.info("Ogg Vorbis support disabled, since ogg.vorbis module is not present")
-
-def _splitnumbertotal(s):
-    """ split string into number and total number """
-    r = map(int, s.split("/"))
-    number = r[0]
-    if len(r) == 2:
-        count = r[1]
-    else:
-        count = None
-    return number, count
 
 
 ##############################################################################
@@ -478,6 +435,57 @@ except ImportError:
         log.info("using eyeD3 module for id3 tag parsing")
     except ImportError:
         log.info("MP3 support disabled, since no metadata reader module has been found")
+
+
+##############################################################################
+# Ogg Vorbis metadata decoder
+##############################################################################
+
+def read_vorbis_metadata(md, path):
+    vf = ogg.vorbis.VorbisFile(path)
+
+
+    id3get = vf.comment().as_dict().get
+    md.title = id3get('TITLE', [""])[0]
+    md.album = id3get('ALBUM', [""])[0]
+    md.artist = id3get('ARTIST', [""])[0]
+    md.year = int(id3get('DATE', [""])[0])
+    genre  = id3get('GENRE', [""])[0]
+    if genre:
+        md.tags.append("G:%s" % genre)
+    md.length = int(vf.time_total(0))
+
+    # XXX to be implemented
+    # md.samplerate =
+    # md.bitrate =
+    # md.comments = []
+    # md.lyrics = []
+    # md.tracknumber, md.trackcount =
+    # md.disknumber, md.diskcount =
+    # md.bpm =
+
+    # example format according to vorbisgain documentation
+    # REPLAYGAIN_TRACK_GAIN=-7.03 dB
+    # REPLAYGAIN_TRACK_PEAK=1.21822226
+    # REPLAYGAIN_ALBUM_GAIN=-6.37 dB
+    # REPLAYGAIN_ALBUM_PEAK=1.21822226
+
+try:
+    import ogg.vorbis
+    registerfileformat("ogg", read_vorbis_metadata, ".ogg")
+    log.info("Ogg Vorbis support enabled")
+except ImportError:
+    log.info("Ogg Vorbis support disabled, since ogg.vorbis module is not present")
+
+def _splitnumbertotal(s):
+    """ split string into number and total number """
+    r = map(int, s.split("/"))
+    number = r[0]
+    if len(r) == 2:
+        count = r[1]
+    else:
+        count = None
+    return number, count
 
 
 ##############################################################################
