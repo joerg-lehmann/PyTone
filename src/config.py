@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import ConfigParser, copy, curses, sys, getopt, exceptions, os.path, types, re, types
-import log, encoding, version
+import log, encoding, metadata, version
 
 
 class ConfigError(Exception):
@@ -390,9 +390,7 @@ class database(configsection):
         cachesize = configint("1000")
         musicbasedir = configpath("")
         tracknrandtitlere = configre(r"^\[?(\d+)\]? ?[- ] ?(.*)\.(mp3|ogg)$")
-        tags_capitalize = configboolean("true")
-        tags_stripleadingarticle = configboolean("true")
-        tags_removeaccents = configboolean("true")
+        postprocessors = configlist("capitalize strip_leading_article add_decade")
         autoregisterer = configboolean("on")
         playingstatslength = configint("100")
         networklocation = confignetworklocation("localhost:1972")
@@ -892,6 +890,7 @@ def checkoptions():
     #    sys.exit(2)
 
 
+    import metadata
     # check database options
     dbfiles = []
 
@@ -912,6 +911,12 @@ def checkoptions():
                 print "dbfile '%s' of database '%s' already in use." % (songdb.dbfile, databasename)
                 sys.exit(2)
             dbfiles.append(songdb.dbfile)
+        for postprocessor_name in songdb.postprocessors:
+            try:
+                metadata.get_metadata_postprocessor(postprocessor_name)
+            except:
+                print "Unkown metadata postprocesor '%s' for database '%s'" % (postprocessor_name, databasename)
+                sys.exit(2)
 
     # check whether oss module is present
     try:

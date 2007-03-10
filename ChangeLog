@@ -1,3 +1,13 @@
+2007-03-10 Jörg Lehmann  <joerg@luga.de>
+
+        * config.py: Remove tags_* options and replace them by postprocessors
+        lists
+
+        * metadata.py: Add postprocessors for metadata (including registry to
+        allow plugins to register their own postprocessors) and move old tags_*
+        code and decade adding code to the new system
+
+
 2007-01-21 Jörg Lehmann  <joerg@luga.de>
 
         * config.py: Fix check for local song databases (thanks to Alexander

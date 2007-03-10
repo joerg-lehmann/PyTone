@@ -28,9 +28,9 @@ VARIOUS = u"___VARIOUS___"
 
 tracknrandtitlere = re.compile("^\[?(\d+)\]? ?[- ] ?(.*)\.(mp3|ogg)$")
 
-#
+##############################################################################
 # song metadata class
-#
+##############################################################################
 
 class song_metadata:
 
@@ -111,13 +111,57 @@ class song_metadata:
         self.replaygain_album_peak = other.replaygain_album_peak
         self.date_updated = other.date_updated
 
-#
-# factory function for song metadata
-#
+##############################################################################
+# registry for metadata decoders for various fileformats
+##############################################################################
 
-def metadata_from_file(relpath, basedir, 
-                       tracknrandtitlere, capitalize, stripleadingarticle, removeaccents):
-    """ create song metadata from given file with relative (to basedir) path relpath """
+# mapping: file type -> (metadata, decoder class, file extension)
+_fileformats = {}
+
+def registerfileformat(type, metadataclass, extension):
+    _fileformats[type] = (metadataclass, extension)
+
+def getmetadatadecoder(type):
+    return _fileformats[type][0]
+
+def getextensions():
+    result = []
+    for decoder_function, extension in _fileformats.values():
+        result.append(extension)
+    return result
+
+def gettype(extension):
+    for type, extensions in _fileformats.items():
+        if extension.lower() in extensions:
+            return type
+    return None
+
+##############################################################################
+# registry for metadata postprocessors for metadata
+##############################################################################
+
+_metadata_postprocessors = {}
+# mapping: metadata postprocessor name -> metadata postprocessing function
+
+def register_metadata_postprocessor(name, metadata_postprocessor):
+    """ register a metadata postprocessor function of the given name
+
+    - The name must not contain any whitespace 
+    - metadata_postprocessor has to be a callable accepting exactly one
+      parameter which will be an instance of the metadata class. 
+    """
+    _metadata_postprocessors[name] = metadata_postprocessor
+
+def get_metadata_postprocessor(name):
+    return _metadata_postprocessors[name]
+
+##############################################################################
+# factory function for song metadata
+##############################################################################
+
+def metadata_from_file(relpath, basedir, tracknrandtitlere, postprocessors):
+    """ create song metadata from given file with relative (to basedir) path 
+    relpath applying the given list of postprocessors"""
 
     path = os.path.normpath(os.path.join(basedir, relpath))
     if not os.access(path, os.R_OK):
@@ -142,21 +186,33 @@ def metadata_from_file(relpath, basedir,
         log.warning("could not read metadata for %r" % path)
         log.debug_traceback()
 
-    regularize_metadata(md, capitalize, stripleadingarticle, removeaccents)
+    # strip leading and trailing whitespace
+    if md.title:
+        md.title = md.title.strip()
+    if md.artist:
+        md.artist = md.artist.strip()
+    if md.album:
+        md.album = md.album.strip()
 
     if md.length is None:
         log.warning("could not read length of song %r" % path)
-        raise RuntimeError("could not read length of song %s" % path)
+        raise RuntimeError("could not read length of song %r" % path)
 
-    # automatically add tags
-    if md.year:
-        md.tags.append("D:%d" % (10*(md.year//10)))
+    for postprocessor_name in postprocessors:
+        try:
+            get_metadata_postprocessor(postprocessor_name)(md)
+        except:
+            log.warning("Postprocessing of song %r metadata with '%r' failed" % (path, postprocessor_name))
+            log.debug_traceback()
+
+    # set album_artist if not present
+    if md.album_artist is None:
+        if md.compilation: 
+            md.album_artist = VARIOUS
+        else:
+            md.album_artist = md.artist
 
     return md
-
-#
-# various helper functions for different sub tasks 
-#
 
 def read_path_metadata(md, relpath, tracknrandtitlere):
     relpath = os.path.normpath(relpath)
@@ -199,72 +255,9 @@ def read_path_metadata(md, relpath, tracknrandtitlere):
     if fntracknumber:
         md.tracknumber = fntracknumber
 
-    if "Compilations" in relpath:
-        md.compilation = True
 
 # accent_trans = string.maketrans('ÁÀÄÂÉÈËÊÍÌÏÎÓÒÖÔÚÙÜÛáàäâéèëêíìïîóòöôúùüû',
 #                                'AAAAEEEEIIIIOOOOUUUUaaaaeeeeiiiioooouuuu')
-
-def regularize_metadata(md, capitalize, stripleadingarticle, removeaccents):
-    if md.title:
-        md.title = md.title.strip()
-    if md.artist:
-        md.artist = md.artist.strip()
-    if md.album:
-        md.album = md.album.strip()
-
-    if capitalize:
-        if md.title:
-            md.title = string.capwords(md.title)
-        if md.artist:
-           md.artist = string.capwords(md.artist)
-        if md.album:
-            mdalbum = string.capwords(md.album)
-
-    if stripleadingarticle and md.artist:
-        # strip leading "The " in artist names, often used inconsistently
-        if md.artist.startswith("The ") and len(md.artist)>4:
-            md.artist = md.artist[4:]
-
-    # XXX disabled because I don't know how to get translate working
-    # with unicode strings (except for encoding them first)
-    if removeaccents and 0:
-        md.artist = md.artist.translate(accent_trans)
-        md.album = md.album.translate(accent_trans)
-        md.title = md.title.translate(accent_trans)
-
-    if md.album_artist is None:
-        if md.compilation: 
-            md.album_artist = VARIOUS
-        else:
-            md.album_artist = md.artist
-
-
-#
-# various metadata readers for different file formats
-#
-
-# mapping: file type -> (metadata, decoder class, file extension)
-_fileformats = {}
-
-def registerfileformat(type, metadataclass, extension):
-    _fileformats[type] = (metadataclass, extension)
-
-def getmetadatadecoder(type):
-    return _fileformats[type][0]
-
-def getextensions():
-    result = []
-    for decoder_function, extension in _fileformats.values():
-        result.append(extension)
-    return result
-
-def gettype(extension):
-    for type, extensions in _fileformats.items():
-        if extension.lower() in extensions:
-            return type
-    return None
-
 
 ##############################################################################
 # ID3 metadata decoder (using mutagen module)
@@ -553,3 +546,39 @@ try:
     log.info("FLAC support enabled (VERY EXPERIMENTAL)")
 except ImportError:
     log.info("FLAC support disabled: flac module not found")
+
+##############################################################################
+# various metadata postprocessors
+##############################################################################
+
+def md_pp_capitalize(md):
+    if md.title:
+        md.title = string.capwords(md.title)
+    if md.artist:
+       md.artist = string.capwords(md.artist)
+    if md.album:
+        mdalbum = string.capwords(md.album)
+
+def md_pp_strip_leading_article(md):
+    # strip leading "The " in artist names, often used inconsistently
+    if md.artist and md.artist.startswith("The ") and len(md.artist)>4:
+        md.artist = md.artist[4:]
+
+def md_pp_remove_accents(md):
+    # XXX disabled because I don't know how to get translate working
+    # with unicode strings (except for encoding them first)
+    md.artist = md.artist.translate(accent_trans)
+    md.album = md.album.translate(accent_trans)
+    md.title = md.title.translate(accent_trans)
+
+def md_pp_add_decade(md):
+    # automatically add tags
+    if md.year:
+        md.tags.append("D:%d" % (10*(md.year//10)))
+
+register_metadata_postprocessor("capitalize", md_pp_capitalize)
+register_metadata_postprocessor("strip_leading_article", md_pp_strip_leading_article)
+register_metadata_postprocessor("add_decade", md_pp_add_decade)
+
+#    if "Compilations" in relpath:
+#       md.compilation = True

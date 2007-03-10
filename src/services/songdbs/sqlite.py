@@ -227,9 +227,7 @@ class songdb(service.service):
         self.channel.supply(requests.getplaylists, self.getplaylists)
 
         self.autoregisterer = songautoregisterer(self.basedir, self.id, self.isbusy,
-                                                 config.tracknrandtitlere,
-                                                 config.tags_capitalize, config.tags_stripleadingarticle, 
-                                                 config.tags_removeaccents)
+                                                 config.tracknrandtitlere, config.postprocessors)
         self.autoregisterer.start()
 
     def run(self):
@@ -960,15 +958,13 @@ class songdb(service.service):
 class songautoregisterer(service.service):
 
     def __init__(self, basedir, songdbid, dbbusymethod,
-                 tracknrandtitlere, tagcapitalize, tagstripleadingarticle, tagremoveaccents):
+                 tracknrandtitlere, postprocessors):
         service.service.__init__(self, "songautoregisterer", daemonize=True)
         self.basedir = basedir
         self.songdbid = songdbid
         self.dbbusymethod = dbbusymethod
         self.tracknrandtitlere = tracknrandtitlere
-        self.tagcapitalize = tagcapitalize
-        self.tagstripleadingarticle = tagstripleadingarticle
-        self.tagremoveaccents = tagremoveaccents
+        self.postprocessors = postprocessors
         self.done = False
         # support file extensions
         self.supportedextensions = metadata.getextensions()
@@ -1014,10 +1010,7 @@ class songautoregisterer(service.service):
             song.song_metadata = self._request(requests.getsong_metadata(self.songdbid, song.id))
             if force or song.song_metadata.date_updated < os.stat(path).st_mtime:
                 # the song has changed since the last update
-                newsong_metadata = metadata.metadata_from_file(relpath, self.basedir,
-                                                               self.tracknrandtitlere,
-                                                               self.tagcapitalize, self.tagstripleadingarticle, 
-                                                               self.tagremoveaccents)
+                newsong_metadata = metadata.metadata_from_file(relpath, self.basedir, self.tracknrandtitlere, self.postprocessors)
                 song.song_metadata.update(newsong_metadata)
                 self._notify(events.update_song(self.songdbid, song))
                 log.debug("registerer: song '%r' rescanned" % song_url)
@@ -1025,10 +1018,7 @@ class songautoregisterer(service.service):
                 log.debug("registerer: not scanning unchanged song '%r'" % song_url)
         else:
             # song was not stored in database
-            newsong_metadata = metadata.metadata_from_file(relpath, self.basedir,
-                                                           self.tracknrandtitlere,
-                                                           self.tagcapitalize, self.tagstripleadingarticle, 
-                                                           self.tagremoveaccents)
+            newsong_metadata = metadata.metadata_from_file(relpath, self.basedir, self.tracknrandtitlere, self.postprocessors)
             self._notify(events.add_song(self.songdbid, newsong_metadata))
             # fetch new song from database
             song = self._request(requests.getsongs(self.songdbid, filters=urlfilter))[0]
@@ -1094,10 +1084,7 @@ class songautoregisterer(service.service):
         path = os.path.join(self.basedir, relpath)
         try:
             if force or song_metadata.date_updated < os.stat(path).st_mtime:
-                newsong_metadata = metadata.metadata_from_file(relpath, self.basedir,
-                                                               self.tracknrandtitlere,
-                                                               self.tagcapitalize, self.tagstripleadingarticle, 
-                                                               self.tagremoveaccents)
+                newsong_metadata = metadata.metadata_from_file(relpath, self.basedir, self.tracknrandtitlere, self.postprocessors)
                 song.song_metadata.update(newsong_metadata)
                 self._notify(events.update_song(self.songdbid, song))
         except (IOError, OSError):
