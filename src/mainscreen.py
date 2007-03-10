@@ -90,8 +90,10 @@ class mainscreen:
 
         # now we start the plugins
         for pluginmodule, pluginconfig in plugins:
-            plugin = pluginmodule.plugin(self.channel, pluginconfig, self)
-            plugin.start()
+            plugin_class = pluginmodule.plugin
+            if plugin_class:
+                plugin = plugin_class(self.channel, pluginconfig, self)
+                plugin.start()
 
         self.channel.subscribe(events.keypressed, self.keypressed)
         self.channel.subscribe(events.activateplaylist, self.activateplaylist)
