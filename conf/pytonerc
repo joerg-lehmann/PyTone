@@ -118,11 +118,11 @@ requestcachesize = 50000
 #                           !!! You have to adjust this setting !!!
 # tracknrandtitlere         Regular expression used for obtaining track nr and title 
 #                           from the song filename.
-# tags_capitalize:          Should the artist, album and song names  be capitalized
-#                           automatically.
-# tags_stripleadingarticle: Should a lead "The " be striped from the artist name.
-# tags_removeaccents.       Should accents be removed in artist, album and song
-#                           names.
+# postprocessors:           List of metadata postprocessors to be used. By default the following
+#                           postprocesors are used:
+#                           - capitalize:            Capitalize title, album and artist
+#                           - strip_leading_article: strip leading "The " from artists names
+#                           - add_decace:            Add decade tags automatically
 # autoregisterer:           start song and playlist autoregisterer?
 #                           If yes, PyTone tries to find new songs and playlists
 #                           in musicbasedir when it is started.
@@ -152,9 +152,7 @@ dbfile = ~/.pytone/main.db
 musicbasedir =
 
 tracknrandtitlere = ^\[?(\d+)\]? ?[- ] ?(.*)\.(mp3|ogg)$
-tags_capitalize = true 
-tags_stripleadingarticle = true
-tags_removeaccents = true
+postprocessors = capitalize strip_leading_artist add_decade
 
 autoregisterer = on
 playingstatslength = 100
