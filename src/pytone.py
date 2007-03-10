@@ -102,6 +102,36 @@ try:
     # there periodic events with this service
     services.timer.timer().start()
 
+    # Determine plugins specified in the config file and read their config.
+    # The result goees into a list of tuples (pluginmodule, pluginconfig).
+    plugins = []
+
+    userpluginpath = os.path.expanduser("~/.pytone/plugins/")
+    cwd = os.path.abspath(os.path.dirname(sys.argv[0]))
+    globalpluginpath = os.path.join(cwd, "plugins")
+    pluginpath = [userpluginpath, globalpluginpath]
+
+    for name in config.general.plugins:
+        try:
+            # We use imp.find_module to narrow down the plugin search path
+            # to the two possible locations. Setting sys.path correspondingly
+            # would not work, however, since then the plugin could not
+            # import its needed modules. 
+            fp, pathname, description = imp.find_module(name, pluginpath)
+            pluginmodule = imp.load_module(name, fp, pathname, description)
+            # 
+            # process configuration of plugin
+            pluginconfig = pluginmodule.config
+            if pluginconfig is not None:
+                config.readconfigsection("plugin.%s" % name, pluginconfig)
+                config.finishconfigsection(pluginconfig)
+                pluginconfig = pluginconfig()
+            plugins.append((pluginmodule, pluginconfig))
+        except Exception, e:
+             raise
+             log.error(_("Cannot load plugin '%s': %s") % (name, e))
+             log.debug_traceback()
+
     # initialize song database manager and start it immediately so
     # that it can propagate quit events in case something goes wrong
     # when setting up the databases
@@ -136,33 +166,6 @@ try:
     playerids = [services.player.initplayer("main", config.player.main),
                  services.player.initplayer("secondary", config.player.secondary)]
 
-    # Determine plugins specified in the config file and read their config.
-    # The result goees into a list of tuples (pluginmodule, pluginconfig).
-    plugins = []
-
-    userpluginpath = os.path.expanduser("~/.pytone/plugins/")
-    cwd = os.path.abspath(os.path.dirname(sys.argv[0]))
-    globalpluginpath = os.path.join(cwd, "plugins")
-    pluginpath = [userpluginpath, globalpluginpath]
-
-    for name in config.general.plugins:
-        try:
-            # We use imp.find_module to narrow down the plugin search path
-            # to the two possible locations. Setting sys.path correspondingly
-            # would not work, however, since then the plugin could not
-            # import its needed modules. 
-            fp, pathname, description = imp.find_module(name, pluginpath)
-            pluginmodule = imp.load_module(name, fp, pathname, description)
-            # 
-            # process configuration of plugin
-            pluginconfig = pluginmodule.config
-            if pluginconfig is not None:
-                config.readconfigsection("plugin.%s" % name, pluginconfig)
-                config.finishconfigsection(pluginconfig)
-            pluginconfig = pluginconfig()
-            plugins.append((pluginmodule, pluginconfig))
-        except Exception, e:
-             log.error(_("Cannot load plugin '%s': %s") % (name, e))
 except:
     # if something goes wrong, shutdown all already running services
     hub.notify(events.quit(), 100)
