@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import ConfigParser, copy, curses, sys, getopt, exceptions, os.path, types, re, types
-import log, encoding, metadata, version
+import log, encoding, version
 
 
 class ConfigError(Exception):
@@ -911,12 +911,6 @@ def checkoptions():
                 print "dbfile '%s' of database '%s' already in use." % (songdb.dbfile, databasename)
                 sys.exit(2)
             dbfiles.append(songdb.dbfile)
-        for postprocessor_name in songdb.postprocessors:
-            try:
-                metadata.get_metadata_postprocessor(postprocessor_name)
-            except:
-                print "Unkown metadata postprocesor '%s' for database '%s'" % (postprocessor_name, databasename)
-                sys.exit(2)
 
     # check whether oss module is present
     try:

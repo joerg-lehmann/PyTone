@@ -20,6 +20,7 @@
 import copy, gc, math, random, service, time
 import config
 import events, hub, requests
+import metadata
 import item
 import log
 
@@ -110,6 +111,12 @@ class songdbmanager(service.service):
         elif type=="remote":
             import songdbs.remote
             songdb = songdbs.remote.songdb(id, config.networklocation, self.songdbhub)
+
+        for postprocessor_name in config.postprocessors:
+            try:
+                metadata.get_metadata_postprocessor(postprocessor_name)
+            except:
+                raise RuntimeError("Unkown metadata postprocesor '%s' for database '%s'" % (postprocessor_name, id))
 
         self.songdbids.append(id)
         songdb.setName("song database thread (id=%s)" % id)
