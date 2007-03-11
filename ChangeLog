@@ -1,3 +1,9 @@
+2007-03-11 Jörg Lehmann  <joerg@luga.de>
+
+        * services/songdb.py: Introduce upper cutoff for automatic rating according
+        to times played minus skipped.
+
+
 2007-03-10 Jörg Lehmann  <joerg@luga.de>
 
         * config.py: Remove tags_* options and replace them by postprocessors

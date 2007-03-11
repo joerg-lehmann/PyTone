@@ -209,7 +209,7 @@ class songdbmanager(service.service):
                     rating = song.rating
                 else:
                     # punish skipped songs if they have not been rated
-                    rating = max(1, 3 + max(0, 0.5*(song.playcount - song.skipcount)))
+                    rating = min(5, max(1, 3 + max(0, 0.5*(song.playcount - song.skipcount))))
                 if song.date_lastplayed:
                     # Simple heuristic algorithm to consider song ratings
                     # for random selection. Certainly not optimal!
