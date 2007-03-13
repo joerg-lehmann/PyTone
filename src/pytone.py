@@ -110,7 +110,6 @@ try:
     cwd = os.path.abspath(os.path.dirname(sys.argv[0]))
     globalpluginpath = os.path.join(cwd, "plugins")
     pluginpath = [userpluginpath, globalpluginpath]
-    print pluginpath
 
     for name in config.general.plugins:
         try:
