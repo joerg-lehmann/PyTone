@@ -25,6 +25,9 @@ if _fs_encoding in [None, 'ascii', 'ANSI_X3.4-1968']:
 def encode(ustring):
     return ustring.encode(_localecharset, "replace")
 
+def decode(string):
+    return string.decode(_localecharset, "replace")
+
 def decode_path(path):
     return path.decode(_fs_encoding)
 

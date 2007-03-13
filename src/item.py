@@ -525,7 +525,7 @@ class song(item):
         d["length"] = "%d:%02d" % (d["minutes"], d["seconds"])
 
         if safe:
-            allowedchars = string.letters + string.digits + " :"
+            allowedchars = encoding.decode(string.letters + string.digits + " :")
             for key, value in d.items():
                 try:
                     l = []
