@@ -122,7 +122,7 @@ requestcachesize = 50000
 #                           postprocesors are used:
 #                           - capitalize:            Capitalize title, album and artist
 #                           - strip_leading_article: strip leading "The " from artists names
-#                           - add_decace:            Add decade tags automatically
+#                           - add_decace_tag:        Add decade tag automatically
 # autoregisterer:           start song and playlist autoregisterer?
 #                           If yes, PyTone tries to find new songs and playlists
 #                           in musicbasedir when it is started.
@@ -152,7 +152,7 @@ dbfile = ~/.pytone/main.db
 musicbasedir =
 
 tracknrandtitlere = ^\[?(\d+)\]? ?[- ] ?(.*)\.(mp3|ogg)$
-postprocessors = capitalize strip_leading_artist add_decade
+postprocessors = capitalize strip_leading_artist add_decade_tag
 
 autoregisterer = on
 playingstatslength = 100

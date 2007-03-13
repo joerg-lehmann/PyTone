@@ -571,14 +571,14 @@ def md_pp_remove_accents(md):
     md.album = md.album.translate(accent_trans)
     md.title = md.title.translate(accent_trans)
 
-def md_pp_add_decade(md):
-    # automatically add tags
+def md_pp_add_decade_tag(md):
+    # automatically add decade tag
     if md.year:
         md.tags.append("D:%d" % (10*(md.year//10)))
 
 register_metadata_postprocessor("capitalize", md_pp_capitalize)
 register_metadata_postprocessor("strip_leading_article", md_pp_strip_leading_article)
-register_metadata_postprocessor("add_decade", md_pp_add_decade)
+register_metadata_postprocessor("add_decade_tag", md_pp_add_decade_tag)
 
 #    if "Compilations" in relpath:
 #       md.compilation = True

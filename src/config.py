@@ -390,7 +390,7 @@ class database(configsection):
         cachesize = configint("1000")
         musicbasedir = configpath("")
         tracknrandtitlere = configre(r"^\[?(\d+)\]? ?[- ] ?(.*)\.(mp3|ogg)$")
-        postprocessors = configlist("capitalize strip_leading_article add_decade")
+        postprocessors = configlist("capitalize strip_leading_article add_decade_tag")
         autoregisterer = configboolean("on")
         playingstatslength = configint("100")
         networklocation = confignetworklocation("localhost:1972")
