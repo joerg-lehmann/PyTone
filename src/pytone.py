@@ -110,6 +110,7 @@ try:
     cwd = os.path.abspath(os.path.dirname(sys.argv[0]))
     globalpluginpath = os.path.join(cwd, "plugins")
     pluginpath = [userpluginpath, globalpluginpath]
+    print pluginpath
 
     for name in config.general.plugins:
         try:
@@ -128,7 +129,6 @@ try:
                 pluginconfig = pluginconfig()
             plugins.append((pluginmodule, pluginconfig))
         except Exception, e:
-             raise
              log.error(_("Cannot load plugin '%s': %s") % (name, e))
              log.debug_traceback()
 
