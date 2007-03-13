@@ -25,7 +25,7 @@
 ###
 ###     pytone-users@luga.de, Dag Wieers <dag@wieers.com>
 
-import events, plugin, config, sys, os, re
+import events, encoding, plugin, config, sys, os, re
 
 class config(config.configsection):
     songformat = config.configstring('%(artist)s - %(title)s (%(length)s)')
@@ -47,7 +47,7 @@ class plugin(plugin.plugin):
 
     def changetermtitle(self, event):
         prefix = (event.playbackinfo.iscrossfading() and '-> ' or '')
-        song = event.playbackinfo.song.format(self.config.songformat, safe=True)
+        song = encoding.encode(event.playbackinfo.song.format(self.config.songformat, safe=True))
         sys.stdout.write('\033]0;' + prefix + song + '\007')
 
 # vim:ts=4:sw=4

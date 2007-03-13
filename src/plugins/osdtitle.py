@@ -33,7 +33,7 @@
 ###
 ###     pytone-users@luga.de, Dag Wieers <dag@wieers.com>
 
-import events, plugin, config, os, re
+import events, encoding, plugin, config, os, re
 
 class config(config.configsection):
     songformat = config.configstring('%(artist)s - %(title)s (%(length)s)')
@@ -53,7 +53,7 @@ class plugin(plugin.plugin):
 
     def playbackinfochanged(self, event):
         if event.playbackinfo.song and event.playbackinfo.song != self.previoussong:
-            song = event.playbackinfo.song.format(self.config.songformat, safe=True)
+            song = encoding.encode(event.playbackinfo.song.format(self.config.songformat, safe=True))
             os.system('echo "%s" | %s &' % (song, self.command))
             self.previoussong = event.playbackinfo.song
 
