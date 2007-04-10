@@ -152,7 +152,7 @@ dbfile = ~/.pytone/main.db
 musicbasedir =
 
 tracknrandtitlere = ^\[?(\d+)\]? ?[- ] ?(.*)\.(mp3|ogg)$
-postprocessors = capitalize strip_leading_artist add_decade_tag
+postprocessors = capitalize strip_leading_article add_decade_tag
 
 autoregisterer = on
 playingstatslength = 100
