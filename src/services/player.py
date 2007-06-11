@@ -20,6 +20,7 @@
 import copy, time
 
 import events, hub, requests
+import log
 import services.playlist
 import service
 
@@ -64,6 +65,7 @@ def initplayer(id, config):
                                         crossfadingduration=config.crossfadingduration,
                                         )
         except:
+            log.debug_traceback()
             raise RuntimeError("Cannot initialize %s player: type=internal, device=%s" % (id, config.device))
     elif type=="xmms":
         import players.xmmsplayer
@@ -74,6 +76,7 @@ def initplayer(id, config):
                                           session=config.session,
                                           noqueue=config.noqueue)
         except:
+            log.debug_traceback()
             raise RuntimeError("Cannot initialize %s player: type=xmms, session=%d" % (id, config.session))
     elif type=="mpg123":
         import players.mpg123
@@ -84,13 +87,14 @@ def initplayer(id, config):
                                       cmdline=config.cmdline)
 
         except:
+            log.debug_traceback()
             raise RuntimeError("Cannot initialize %s player: type=mpg123, cmdline=%s" % (id, config.cmdline))
     elif type=="remote":
         import players.remote
         try:
             p = players.remote.player(id, playlistid, config.networklocation)
         except:
-            raise
+            log.debug_traceback()
             raise RuntimeError("Cannot initialize %s player: type=remote, location=%s" % (id, config.networklocation))
 
     p.setName("player thread (id=%s)" % id)
