@@ -557,7 +557,7 @@ def md_pp_capitalize(md):
     if md.artist:
        md.artist = string.capwords(md.artist)
     if md.album:
-        mdalbum = string.capwords(md.album)
+        md.album = string.capwords(md.album)
 
 def md_pp_strip_leading_article(md):
     # strip leading "The " in artist names, often used inconsistently
