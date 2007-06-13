@@ -589,6 +589,3 @@ def md_pp_add_decade_tag(md):
 register_metadata_postprocessor("capitalize", md_pp_capitalize)
 register_metadata_postprocessor("strip_leading_article", md_pp_strip_leading_article)
 register_metadata_postprocessor("add_decade_tag", md_pp_add_decade_tag)
-
-#    if "Compilations" in relpath:
-#       md.compilation = True
