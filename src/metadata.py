@@ -552,12 +552,22 @@ except ImportError:
 ##############################################################################
 
 def md_pp_capitalize(md):
+    def capwords(s):
+        # capitalize words also directly after a single punctuation character
+        words = []
+        for word in s.split():
+            if word[0] in string.punctuation:
+                words.append(word[0] + word[1:].capitalize())
+            else:
+                words.append(word.capitalize())
+        return " ".join(words)
+
     if md.title:
-        md.title = string.capwords(md.title)
+        md.title = capwords(md.title)
     if md.artist:
-       md.artist = string.capwords(md.artist)
+        md.artist = capwords(md.artist)
     if md.album:
-        md.album = string.capwords(md.album)
+        md.album = capwords(md.album)
 
 def md_pp_strip_leading_article(md):
     # strip leading "The " in artist names, often used inconsistently
