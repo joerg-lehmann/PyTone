@@ -281,6 +281,14 @@ class songdb(service.service):
 
     # helper methods
 
+    def _queryindex(self, table, indexnames, values):
+        " query indexnames in table and return id "
+        newindexentry = False
+        wheres = " AND ".join(["%s = ?" % indexname for indexname in indexnames])
+        self.cur.execute("SELECT id FROM %s WHERE %s" % (table, wheres), values)
+        r = self.cur.fetchone()
+        return r["id"]
+
     def _queryregisterindex(self, table, indexnames, values):
         " register in table and return if tuple (id, newentry) "
         newindexentry = False
@@ -445,12 +453,30 @@ class songdb(service.service):
 
         self._txn_begin()
         try:
+
+            # query artist, album_artist and album of oldsong (in comparison to the _add_song method, we do not have
+            # to add entries to the indices
+            if oldsong.artist:
+                oldsong.artist_id = self._queryindex("artists", ["name"], [oldsong.artist])
+            else:
+                oldsong.artist_id = None
+            if oldsong.album_artist:
+                oldsong.album_artist_id = self._queryindex("artists", ["name"], [oldsong.album_artist])
+                if oldsong.album:
+                    oldsong.album_id = self._queryindex("albums", ["artist_id", "name"], [oldsong.album_artist_id, oldsong.album])
+                else:
+                    oldsong.album_id = None
+            else:
+                oldsong.album_artist_id = None
+                oldsong.album_id = None
+
             # flags for changes of corresponding tables
             changedartists = False
             changedalbums = False
             changedtags = False
             # register new artists, album_artists and albums if necessary
             if oldsong.artist != song.artist:
+                log.info("artist: %s->%s" % (oldsong.artist, song.artist))
                 if song.artist:
                     song.artist_id, newartist = self._queryregisterindex("artists", ["name"], [song.artist])
                     changedartists |= newartist
@@ -1115,7 +1141,7 @@ class songautoregisterer(service.service):
 
     def autoregisterer_rescansongs(self, event):
         if self.songdbid == event.songdbid:
-            log.info(_("database %r: rescanning %d songs") % (self.songdbid, len(event.songs)))
+            log.info(_("database %r: rescanning %d songs%s") % (self.songdbid, len(event.songs), event.force and _(" (full)") or ""))
             for song in event.songs:
                 self.rescansong(song, event.force)
             log.info(_("database %r: finished rescanning %d songs") % (self.songdbid, len(event.songs)))
