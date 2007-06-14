@@ -476,7 +476,6 @@ class songdb(service.service):
             changedtags = False
             # register new artists, album_artists and albums if necessary
             if oldsong.artist != song.artist:
-                log.info("artist: %s->%s" % (oldsong.artist, song.artist))
                 if song.artist:
                     song.artist_id, newartist = self._queryregisterindex("artists", ["name"], [song.artist])
                     changedartists |= newartist
