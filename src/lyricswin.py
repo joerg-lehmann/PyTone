@@ -35,16 +35,19 @@ class lyricswin(messagewin.messagewin):
         channel.subscribe(events.selectionchanged, self.selectionchanged)
 
     def _outputlen(self, width):
-        if self.lyrics:
+        try:
             return len(self.lyrics[0][2].split("\n"))
-        else:
+        except IndexError:
             return 1
 
     def showitems(self):
         self.clear()
-        for lno, line in enumerate(self.lyrics[0][2].split("\n")[self.first:self.first+self.ih]):
-            line = encoding.encode(line).center(self.iw)
-            self.addnstr(self.iy+lno, self.ix, line, self.iw, self.colors.content)
+        try:
+            for lno, line in enumerate(self.lyrics[0][2].split("\n")[self.first:self.first+self.ih]):
+                line = encoding.encode(line).center(self.iw)
+                self.addnstr(self.iy+lno, self.ix, line, self.iw, self.colors.content)
+        except IndexError:
+            pass
 
     def selectionchanged(self, event):
         if isinstance(event.item, item.song):
