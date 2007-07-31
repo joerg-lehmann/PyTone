@@ -4,8 +4,20 @@
 - check David Bowie Let's Dance
 - make removeaccents work again: howto use unicode.translate
 
-- No more options:
-  playlistdir, playlistload, dbenvdir
+- Removed config file options:
+  - general.playlistdir and keybindings.general.playlistload:
+    saving and loading of playlists no more supported
+  - database.*.dbenvdir, database.*.basename:
+    not necessary anymore
+  - database.*.tags_*:
+    use new option database.*.postprocessors instead
+
+- New config file options:
+  - database.*.postprocessors:
+    whitespace-separated list of song metadata postprocessors to
+    be applied
+
+
 
 - allow tagging of no artists dir
 
