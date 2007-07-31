@@ -32,7 +32,7 @@
  <li>simple song selection
     <ul>
       <li>using an arbitrary number of music databases with hierarchical (artist/album/songs,
-      genre/artist/album/songs, decades/artist/albums/songs, or rating/artist/albums/songs) navigation,
+      some tags/artist/album/songs) navigation,
       </li>
       <li>from list of top and last played songs,</li>
       <li>from list of most recently added songs,</li>
@@ -94,10 +94,26 @@
 
 <dl>
 
+<dt>2007/08/XX</dt>
+
+<dd>Version 3.0.0 released. This major release features a complete rewrite of
+the database code, which is now based on SQLite, in order to improve speed and
+functionality. A much more comprehensive subset of song metadata is now stored
+including song lyrics, ReplayGain information, skip count, parts of a
+compilation, disk number, songs bpm, sample- and bitrate. The tagging of songs
+and the corresponding filtering has been introduced.
+
+<br><b>Due to lack of resources on my side, there is and will be no converter
+from the old database format. </b>
+
+<br> Please be aware of the status as double-0 version and report any bugs you
+find!</dd>
+
 <dt>2006/08/12</dt>
 
-<dd>Version 2.3.1 released. This release contains various bug fixes, in particular for
-a race condition which sometimes prevented PyTone from starting.</dd>
+<dd>Version 2.3.1 released. This release contains various bug fixes, in
+particular for a race condition which sometimes prevented PyTone from
+starting.</dd>
 
 <dt>2005/09/13</dt>
 
