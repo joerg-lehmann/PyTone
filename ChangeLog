@@ -1,3 +1,10 @@
+2007-08-01 Jörg Lehmann  <joerg@luga.de>
+
+        * network.py, pytonectl.py, item.py: Make pytonectl work again, in particular
+        update allowed modules for unpickling and prevent metadata fetches during
+        unpickling.
+
+
 2007-03-11 Jörg Lehmann  <joerg@luga.de>
 
         * services/songdb.py: Introduce upper cutoff for automatic rating according

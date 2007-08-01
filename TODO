@@ -1,6 +1,5 @@
 - FLAC: finish decoder when not using it any more
 
-- check pytonectl
 - check David Bowie Let's Dance
 - make removeaccents work again: howto use unicode.translate
 
