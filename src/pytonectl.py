@@ -48,6 +48,7 @@ import network, events, requests, version, helper
 server = None
 port = 1972
 unixsocketfile = None
+debugmode = False
 
 def usage():
     print "pytonectl %s" % version.version
@@ -59,6 +60,7 @@ def usage():
     print "   -s, --server <hostname>: connect to PyTone server on hostname"
     print "   -p, --port <portnumber>: connect to PyTone server on given port"
     print "   -f, --file <filename>:   connect to PyTone UNIX socket filename"
+    print "   -d, --debug:             enable debug mode"
     print
     print "The supported commands are:"
     print "    getplayerinfo:                  show information on the song currently being played"
@@ -79,8 +81,8 @@ def usage():
 
 try:
     opts, args = getopt.getopt(sys.argv[1:],
-                               "hs:p:f:",
-                               ["help", "server=", "port=", "file="])
+                               "hs:p:f:d",
+                               ["help", "server=", "port=", "file=", "debug"])
 except getopt.GetoptError:
     usage()
     sys.exit(2)
@@ -95,6 +97,14 @@ for o, a in opts:
         port = int(a)
     if o in ("-f", "--file"):
         unixsocketfile = a
+    if o in ("-d", "--debug"):
+        debugmode = True
+
+# initialize the debug file if necessary
+import log, sys
+if debugmode:
+    log.debugfile = sys.stdout
+    log.info("Debug mode enabled")
 
 if server is not None and unixsocketfile is not None:
     print "Error: cannot connect both via network and unix sockets"
@@ -141,10 +151,13 @@ elif len(args)==1:
     elif args[0]=="getplayerinfo":
         playbackinfo = channel.request(requests.getplaybackinfo("main"))
         if playbackinfo.song:
-            print "%s - %s (%s/%s)" % ( playbackinfo.song.artist,
-                                        playbackinfo.song.title,
+            # we have to manually request the song metadata because there the main event and request hub is not correctly
+            # initialized
+            song_metadata = channel.request(requests.getsong_metadata(playbackinfo.song.songdbid, playbackinfo.song.id))
+            print "%s - %s (%s/%s)" % ( song_metadata.artist,
+                                        song_metadata.title,
                                         helper.formattime(playbackinfo.time),
-                                        helper.formattime(playbackinfo.song.length))
+                                        helper.formattime(song_metadata.length))
     else:
         usage()
         sys.exit(2)
@@ -166,10 +179,10 @@ else:
             sys.exit(2)
         channel.notify(events.playerseekrelative("main", seconds))
     elif args[0]=="playlistaddsongs":
-	songs = [channel.request(requests.queryregistersong("main", path)) for path in args[1:]]
+        songs = [channel.request(requests.autoregisterer_queryregistersong("main", path)) for path in args[1:]]
         channel.notify(events.playlistaddsongs(songs))
     elif args[0]=="playlistaddsongtop" and len(args)==2:
-        song = channel.request(requests.queryregistersong("main", (args[1])))
+        song = channel.request(requests.autoregisterer_queryregistersong("main", (args[1])))
         channel.notify(events.playlistaddsongtop(song))
     else:
         usage()
