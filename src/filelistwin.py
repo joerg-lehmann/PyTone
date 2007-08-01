@@ -179,10 +179,10 @@ class filelistwin(window.window):
                 if self.items.rateselection(key-ord("1")+1):
                     self.items.selectrelative(+1)
             elif key == ord("d"):
-                if self.items.addtagselection("U:Muzak"):
+                if self.items.addtagselection("S:Deleted"):
                     self.items.selectrelative(+1)
             elif key == ord("D"):
-                if self.items.removetagselection("U:Muzak"):
+                if self.items.removetagselection("S:Deleted"):
                     self.items.selectrelative(+1)
             else:
                 return

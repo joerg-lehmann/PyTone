@@ -35,7 +35,8 @@ class filelist(slist.slist):
             else:
                 log.info("filter tag '%s' not known" % tag_name)
 
-        filters = [tagfilter("G:Podcast", True), tagfilter("U:Muzak", True)]
+        filters = [tagfilter("S:Deleted", True)]
+        # filters = [tagfilter("G:Podcast", True), tagfilter("S:Deleted", True)]
         basefilters = item.filters(tuple(filter for filter in filters if filter))
 
         self.basedir = item.basedir(songdbids, basefilters, rootdir=True)
