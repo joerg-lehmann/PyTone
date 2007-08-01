@@ -1,5 +1,7 @@
 2007-08-01 Jörg Lehmann  <joerg@luga.de>
 
+        * Version 3.0.0 released.
+
         * network.py, pytonectl.py, item.py: Make pytonectl work again, in particular
         update allowed modules for unpickling and prevent metadata fetches during
         unpickling.
