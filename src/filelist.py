@@ -150,6 +150,7 @@ class filelist(slist.slist):
             songs = [self.getselected()]
         for song in songs:
             song.toggledelete()
+        self.readdir()
         return True
 
     def rescanselection(self, force):
