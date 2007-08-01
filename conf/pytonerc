@@ -666,6 +666,7 @@ playselectedsong  = alt-\n alt-KEY_ENTER
 activateplaylist  = \t
 insertrandomlist  = r R
 rescan            = u U
+toggledelete      = D
 search            = / ctrl-s
 repeatsearch      = ctrl-g
 

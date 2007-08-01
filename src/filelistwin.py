@@ -173,16 +173,13 @@ class filelistwin(window.window):
             elif key in self.keybindings["rescan"]:
                 self.items.rescanselection(force=True)
                 self.items.selectrelative(+1)
+            elif key in self.keybindings["toggledelete"]:
+                if self.items.toggledeleteselection():
+                    self.items.selectrelative(+1)
             elif ord("a")<=key-1024<=ord("z") or ord("A")<=key-1024<=ord("Z") :
                 self.items.selectbyletter(chr(key-1024))
             elif ord("0")<=key<=ord("5"):
                 if self.items.rateselection(key-ord("1")+1):
-                    self.items.selectrelative(+1)
-            elif key == ord("d"):
-                if self.items.addtagselection("S:Deleted"):
-                    self.items.selectrelative(+1)
-            elif key == ord("D"):
-                if self.items.removetagselection("S:Deleted"):
                     self.items.selectrelative(+1)
             else:
                 return

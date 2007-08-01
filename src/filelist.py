@@ -139,6 +139,19 @@ class filelist(slist.slist):
             song.removetag(tag)
         return True
 
+    def toggledeleteselection(self):
+        if self.isdirselected():
+            if not isinstance(self.getselected(), (item.artist, item.album)):
+                self.win.sendmessage(_("Not (un)deleting virtual directories!"))
+                return False
+            songs = self.getselected().getcontentsrecursive()
+            self.win.sendmessage(_("(Un)deleting %d song(s)...") % len(songs))
+        elif self.issongselected():
+            songs = [self.getselected()]
+        for song in songs:
+            song.toggledelete()
+        return True
+
     def rescanselection(self, force):
         if ( isinstance(self.getselected(), item.basedir) or
              ( isinstance(self.getselected(), item.filesystemdir) and self.getselected().isbasedir()) ):

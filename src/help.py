@@ -88,6 +88,7 @@ descriptions = {
           "search":            (_("search"), _("search entry")),
           "repeatsearch":      (_("repeat search"), _("repeat last search")),
           "rescan":            (_("rescan"), _("rescan/update id3 info for selection")),
+          "toggledelete":      (_("(un)delete"), _("delete/undelete selection ")),
           },
     "playlistwindow": {
           "selectnext":        (_("down"), _("move to the next entry")),

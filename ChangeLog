@@ -6,6 +6,8 @@
 
         * item.py: Implement podcast and deleted songs filtering
 
+        * config.py: New keybindings for (un)deletion of songs
+
 
 2007-03-11 Jörg Lehmann  <joerg@luga.de>
 

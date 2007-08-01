@@ -592,6 +592,15 @@ class song(item):
             self.tags = tags
             self._updatesong_metadata()
 
+    def toggledelete(self):
+        if self.tags is None:
+            return
+        if "S:Deleted" in self.tags:
+            self.tags.remove("S:Deleted")
+        else:
+            self.tags.append("S:Deleted")
+        self._updatesong_metadata()
+
     def getplayingtime(self):
         """ return time at which this particular song instance has been played or the
         last playing time, if no such time has been specified at instance creation time """

@@ -675,6 +675,7 @@ class keybindings(configsection):
         activateplaylist = configkeys("\t")
         insertrandomlist = configkeys("r R")
         rescan = configkeys("u U")
+        toggledelete = configkeys("D")
         search = configkeys("/ ctrl-s")
         repeatsearch = configkeys("ctrl-g")
 
