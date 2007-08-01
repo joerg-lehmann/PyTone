@@ -28,18 +28,7 @@ class filelist(slist.slist):
     def __init__(self, win, songdbids):
         slist.slist.__init__(self, win, config.filelistwindow.scrollmode == "page")
 
-        def tagfilter(tag_name, inverted):
-            tag_id = hub.request(requests.gettag_id(songdbids[0], tag_name))
-            if tag_id:
-                return item.tagfilter(tag_id, tag_name, inverted)
-            else:
-                log.info("filter tag '%s' not known" % tag_name)
-
-        filters = [tagfilter("S:Deleted", True)]
-        # filters = [tagfilter("G:Podcast", True), tagfilter("S:Deleted", True)]
-        basefilters = item.filters(tuple(filter for filter in filters if filter))
-
-        self.basedir = item.basedir(songdbids, basefilters, rootdir=True)
+        self.basedir = item.basedir(songdbids, rootdir=True)
         # self.basedir = item.basedir(songdbids)
         self.dir = [self.basedir]
         self.shistory = []

@@ -4,6 +4,8 @@
         update allowed modules for unpickling and prevent metadata fetches during
         unpickling.
 
+        * item.py: Implement podcast and deleted songs filtering
+
 
 2007-03-11 Jörg Lehmann  <joerg@luga.de>
 

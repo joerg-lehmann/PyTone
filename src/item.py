@@ -143,20 +143,45 @@ class searchfilter(filter):
 
 class tagfilter(filter):
 
-    """ filters only items of given tag """
+    """ filters only items of given tag,
+    
+    if tag_id is not None, use this id to query the database, otherwise use tag_name """
 
-    def __init__(self, tag_id, tag_name, inverted=False):
-        name = "%s%s=%s" % (_("Tag"), inverted and "!" or "", tag_name)
+    def __init__(self, tag_name, tag_id=None, inverted=False):
+        self.tag_name = tag_name
         self.tag_id = tag_id
         self.inverted = inverted
-        filter.__init__(self, name, indexname="tag", indexid=tag_id)
+        name = "%s%s=%s" % (_("Tag"), inverted and "!" or "", tag_name)
+        filter.__init__(self, name, indexname="tag", indexid=tag_name)
 
     def __repr__(self):
-        return "tag%s=%s" % (self.inverted and "!" or "", self.tag_id)
+        return "tag%s=%s" % (self.inverted and "!" or "", self.tag_name)
 
     def SQL_WHERE_string(self):
-        return ( "songs.id %sIN (SELECT taggings.song_id FROM taggings WHERE taggings.tag_id = %d)" % 
-                 (self.inverted and "NOT " or "", self.tag_id) )
+        if self.tag_id:
+            return ( "songs.id %sIN (SELECT taggings.song_id FROM taggings WHERE taggings.tag_id = %d)" % 
+                     (self.inverted and "NOT " or "", self.tag_id) )
+        else:
+            return ( "songs.id %sIN (SELECT taggings.song_id FROM taggings, tags WHERE taggings.tag_id = tags.id and tags.name=?)" % 
+                     (self.inverted and "NOT " or "") )
+
+    def SQL_args(self):
+        if not self.tag_id:
+           return [self.tag_name]
+
+
+class podcastfilter(tagfilter):
+    def __init__(self, inverted=False):
+        tagfilter.__init__(self, "G:Podcast", inverted=inverted)
+        # hide filter
+        self.name = None
+
+
+class deletedfilter(tagfilter):
+    def __init__(self, inverted=False):
+        tagfilter.__init__(self, "S:Deleted", inverted=inverted)
+        # hide filter
+        self.name = None
 
 
 class ratingfilter(filter):
@@ -913,6 +938,26 @@ class compilations(albums):
         self.name = _("Compilations")
 
 
+class podcasts(albums):
+    def __init__(self, songdbid, filters):
+        filters = filters.removed(podcastfilter)
+        filters = filters.added(podcastfilter())
+        albums.__init__(self, songdbid, filters)
+        self.id = "podcasts"
+        self.name = _("Podcasts")
+
+
+class deleted(albums):
+    def __init__(self, songdbid, filters):
+        filters = filters.removed(deletedfilter)
+        filters = filters.added(deletedfilter())
+        import log
+        log.debug(str(filters))
+        albums.__init__(self, songdbid, filters)
+        self.id = "deleted"
+        self.name = _("Deleted songs")
+
+
 class tags(totaldiritem):
 
     """ all tags in the corresponding database """
@@ -1068,7 +1113,7 @@ class basedir(totaldiritem):
 
     """ base dir of database view"""
 
-    def __init__(self, songdbids, filters=filters(()), rootdir=False):
+    def __init__(self, songdbids, afilters=None, rootdir=False):
         # XXX: as a really dirty hack, we cache the result of getdatabasestats for
         # all databases because we cannot call this request safely later on
         # (we might be handling another request which calls the basedir constructor)
@@ -1088,7 +1133,12 @@ class basedir(totaldiritem):
             self.type = "virtual"
             self.basedir = None
         self.id = "basedir"
-        self.filters = filters # .added(tagfilter(19, "a"))
+        if afilters is None:
+            # add default filters
+            self.filters = filters((podcastfilter(inverted=True),
+                                    deletedfilter(inverted=True)))
+        else:
+            self.filters = afilters
         self.rootdir = rootdir
         self.maxnr = 100
         self.nrartists = None
@@ -1103,6 +1153,8 @@ class basedir(totaldiritem):
             self.virtdirs.append(filesystemdir(self.songdbid, self.basedir, self.basedir))
         self.virtdirs.append(songs(self.songdbid, filters=self.filters))
         self.virtdirs.append(albums(self.songdbid, filters=self.filters))
+        self.virtdirs.append(podcasts(self.songdbid, filters=self.filters))
+        self.virtdirs.append(deleted(self.songdbid, filters=self.filters))
 
         for filter in self.filters:
             if isinstance(filter, tagfilter) and 0:
@@ -1119,7 +1171,6 @@ class basedir(totaldiritem):
         self.virtdirs.append(lastplayedsongs(self.songdbid, filters=self.filters))
         self.virtdirs.append(lastaddedsongs(self.songdbid, filters=self.filters))
         self.virtdirs.append(randomsongs(self.songdbid, self.maxnr, filters=self.filters))
-        # if not self.filters:
         self.virtdirs.append(playlists(self.songdbid, filters=self.filters))
         if len(self.songdbids) > 1:
             self.virtdirs.extend([basedir([songdbid], self.filters) for songdbid in self.songdbids])
@@ -1201,9 +1252,9 @@ class index(basedir):
 class tag(index):
     def __init__(self, songdbid, id, name, nfilters):
         if nfilters is not None:
-            nfilters = nfilters.added(tagfilter(id, name))
+            nfilters = nfilters.added(tagfilter(name, tag_id=id))
         else:
-            nfilters = filters((tagfilter(id, name),))
+            nfilters = filters((tagfilter(name, tag_id=id),))
         index.__init__(self, [songdbid], _("Tag:"), name, nfilters)
         self.id = id
 
