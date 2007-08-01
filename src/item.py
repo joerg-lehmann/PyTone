@@ -369,6 +369,10 @@ class song(item):
         self.song_metadata = None
 
     def __getattr__(self, attr):
+        # we refuse to fetch the song metadata if an "internal" method name is queried.
+        # Thus, we do not interfere with pickling of song instances, etc.
+        if attr.startswith("__"):
+            raise AttributeError
         if not self.song_metadata:
             self.song_metadata = hub.request(requests.getsong_metadata(self.songdbid, self.id))
         # return metadata if we have been able to fetch it, otherwise return None
