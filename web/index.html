@@ -62,8 +62,8 @@
  <li>display of information for currently selected song:
     <ul>
       <li>ID3 tag</li>
-      <li>length</li>
-      <li>times played</li>
+      <li>length, bitrate, sample rate, BPM, ReplayGain information, part of a compilation, podcast</li>
+      <li>times played and skipped</li>
       <li>last played</li>
       <li>song rating (1 to 5 stars)</li>
     </ul>
@@ -94,20 +94,31 @@
 
 <dl>
 
-<dt>2007/08/XX</dt>
+<dt>2007/08/01</dt>
 
-<dd>Version 3.0.0 released. This major release features a complete rewrite of
-the database code, which is now based on SQLite, in order to improve speed and
-functionality. A much more comprehensive subset of song metadata is now stored
-including song lyrics, ReplayGain information, skip count, parts of a
-compilation, disk number, songs bpm, sample- and bitrate. The tagging of songs
-and the corresponding filtering has been introduced.
+<dd>Version 3.0.0 released, celebrating the national holiday of Switzerland, my
+adopted country. This major release features a complete rewrite of the database
+code, which is now based on SQLite, for improved speed and functionality. A
+much more comprehensive subset of song metadata is now stored including song
+lyrics, ReplayGain information, skip count, parts of a compilation, disk
+number, songs bpm, sample- and bitrate. The tagging of songs and the
+corresponding filtering has been introduced.
 
-<br><b>Due to lack of resources on my side, there is and will be no converter
-from the old database format. </b>
+<br><b>Upgrade notes:</b>
 
-<br> Please be aware of the status as double-0 version and report any bugs you
-find!</dd>
+The following config file options have been removed:
+playlistdir (in the general section), and playlistload (in the keybindings.general section),
+dbenvdir, basename and the tags_* options (in the database sections). New options
+are postprocessors (in the database sections), which replaces the tags_* options by allowing
+to specify a whitespace-separated list of metadata postprocessors, and toggledelete (in the
+keybindings.filelistwindow) section.
+
+<br>
+Note that due to lack of resources on my side, there is and will be <b>no
+converter from the old database format</b>. 
+
+<br> Please be aware of the status as 0.0 version - there will almost certainly
+be a couple of loose ends and bugs - and report any bugs you find!</dd>
 
 <dt>2006/08/12</dt>
 
@@ -567,8 +578,6 @@ should thus contain </p>
 # minimal ~/.pytone/pytonerc defining the root of your music collection
 [database.main]
 musicbasedir=/root/of/your/music/collection
-# use new database layout
-basename=
 </pre>
 
 <h2><a name="usage"></a>Usage</h2>
@@ -606,6 +615,7 @@ $ ./pytone --help
   directory (including subdirs)</td></tr>
   <tr><td><tt>ALT+Enter</tt></td><td>immediately play song</td></tr>
   <tr><td><tt>u</tt></td><td>update ID3 information for song/directory</td></tr>
+  <tr><td><tt>D</tt></td><td>delete / undelete currently selected song/directory</td></tr>
   <tr><td><tt>TAB</tt></td><td>switch to playlist window</td></tr>
   <tr><td><tt>ALT+&lt;character&gt;</tt></td><td>Quick search: jump to next entry that begins with character</td></tr>
   <tr><td><tt>CTRL-S</tt>/<tt>/</tt></td><td>Search in list</td></tr>

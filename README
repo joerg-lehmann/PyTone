@@ -15,9 +15,8 @@ Features
 
      * concise curses based GUI
      * simple song selection
-          + using an arbitrary number of music databases with hierarchical 
-            (artist/album/songs, genre/artist/album/songs, decades/artist/albums/songs,
-            or rating/artist/albums/songs) navigation,
+          + using an arbitrary number of music databases with hierarchical
+            (artist/album/songs, some tags/artist/album/songs) navigation,
           + from list of top and last played songs,
           + from list of most recently added songs,
           + random song list,
@@ -37,8 +36,9 @@ Features
           + mpg321 or (the non-free) mpg123 based external player
      * display of information for currently selected song:
           + ID3 tag
-          + length
-          + times played
+          + length, bitrate, sample rate, BPM, ReplayGain information, part
+            of a compilation, podcast
+          + times played and skipped
           + last played
           + song rating (1 to 5 stars)
      * plays currently selected song on second player (if your computer
@@ -120,8 +120,6 @@ Configuration
      # minimal ~/.pytone/pytonerc defining the root of your music collection
      [database.main]
      musicbasedir=/root/of/your/music/collection
-     # use new database layout
-     basename=
 
 Usage
 
@@ -163,6 +161,8 @@ Key bindings
    r                            insert random selection of selected directory
                                 (including subdirs)
    u                            update ID3 information for song/directory
+   D                            delete / undelete currently selected
+                                song/directory
    ALT+Enter                    immediately play song
    TAB                          switch to playlist window
    ALT+<character>              Quicksearch: jump to next entry that begins 
