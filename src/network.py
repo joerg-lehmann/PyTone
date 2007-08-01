@@ -24,7 +24,7 @@ import events, hub
 import log
 
 # for unpickling
-import item, metadata, requests, services, services.player, services.playlist
+import item, metadata, requests, services, services.player, services.playlist, copy_reg, __builtin__
 
 _EVENT = "EVENT"
 _REQUEST = "REQUEST"
@@ -38,8 +38,7 @@ _SENDFILE = "SENDFILE"
 
 
 def find_global(module, klass):
-
-    if module in ("events", "requests"):
+    if module in ("events", "requests", "metadata", "copy_reg", "__builtin__"):
         pass
     elif module=="item" and klass=="song":
         pass
@@ -243,8 +242,9 @@ class clientnetworkreceiver(threading.Thread):
 	    type, bytes = line.split()
 	    bytes = int(bytes)
 	    objstring = self.rfile.read(bytes+2)[:-2]
+	    log.debug("client receive: %s bytes" % len(objstring))
 	    obj = loads(objstring)
-	    log.debug("client receive: type=%s object=%s" % (type, `obj`))
+	    log.debug("client receive: type=%s object=%s" % (type, repr(obj)))
 	    return (type, obj)
 	except:
 	    return (None, None)
@@ -285,9 +285,10 @@ class clientchannel(threading.Thread):
 	self.done = False
 	threading.Thread.__init__(self)
 	self.setDaemon(1)
+        log.debug("Network clientchannel initialized")
 
     def _sendobject(self, type, obj):
-        log.debug("client send: type=%s object=%s" % (type, `obj`))
+        log.debug("client send: type=%s object=%s" % (type, obj))
         try:
             objstring = cPickle.dumps(obj, cPickle.HIGHEST_PROTOCOL)
         except Exception, e:
@@ -327,11 +328,13 @@ class clientchannel(threading.Thread):
 	    elif isinstance(item, hub.requestresponse):
 		# send request including id
 		rid = id(item)
+                log.debug("Sending request (id=%d)" % rid)
 		self._sendobject(_REQUEST, (rid, item.request))
 		self.pendingrequests[rid] = item
 	    else: # input from networkreceiver: tuple (type, obj)
 		type, obj = item
 		if type==_EVENT:
+                    log.debug("Received event from networkreceiver")
 		    try:
 			for subscribedevent, handler in self.subscriptions:
 			    if isinstance(obj, subscribedevent):
@@ -340,6 +343,7 @@ class clientchannel(threading.Thread):
 			pass
 		elif type==_RESULT:
 		    rid, obj = obj
+                    log.debug("Received request result (id=%d) from networkreceiver" % rid)
 		    item = self.pendingrequests[rid]
 		    item.result = obj
 		    item.ready.set()
@@ -376,6 +380,7 @@ class sender:
     def __init__(self, socket):
         self.socket = socket
 	self.wfile = self.socket.makefile("wb")
+        log.debug("Network sender initialized")
     
     def sendevent(self, event):
 	objstring = cPickle.dumps(event, 1)
