@@ -1,3 +1,8 @@
+2007-08-02 Jörg Lehmann  <joerg@luga.de>
+
+        * item.py: Fix tag filtering.
+
+
 2007-08-01 Jörg Lehmann  <joerg@luga.de>
 
         * Version 3.0.0 released.

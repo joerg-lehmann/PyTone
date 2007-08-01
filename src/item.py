@@ -167,7 +167,9 @@ class tagfilter(filter):
 
     def SQL_args(self):
         if not self.tag_id:
-           return [self.tag_name]
+            return [self.tag_name]
+        else:
+            return []
 
 
 class podcastfilter(tagfilter):
