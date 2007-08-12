@@ -273,7 +273,16 @@ class songdb(service.service):
     # resetting db stats
 
     def _clearstats(self):
-        pass
+        self._txn_begin()
+        try:
+            self.cur.execute("DELETE FROM playstats")
+            self.cur.execute("UPDATE songs SET playcount = 0, skipcount = 0, date_lastplayed = NULL ")
+
+        except:
+            self._txn_abort()
+            raise
+        else:
+            self._txn_commit()
 
     #
     # methods for adding, updating and deleting songs
