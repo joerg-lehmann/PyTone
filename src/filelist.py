@@ -82,7 +82,7 @@ class filelist(slist.slist):
 
     def focus_on(self, searchstring):
         # remove any previous focus
-        if isinstance(self.dir[-1], item.search):
+        if isinstance(self.dir[-1], item.focus_on):
             self.dirup()
         self.shistory.append((self.dir, self.selected, self.top))
         songdbid = self.dir[-1].songdbid
@@ -91,7 +91,7 @@ class filelist(slist.slist):
             filters = self.dir[-1].filters
         except AttributeError:
             filters = None
-        self.dir = self.dir + [item.search(songdbid, searchstring, filters)]
+        self.dir = self.dir + [item.focus_on(songdbid, searchstring, filters)]
         self.readdir()
 
     def selectionpath(self):

@@ -1182,8 +1182,6 @@ class basedir(totaldiritem):
         self.virtdirs.append(randomsongs(self.songdbid, self.maxnr, filters=self.filters))
         if not self.filters.contains(searchfilter):
             self.virtdirs.append(playlists(self.songdbid, filters=self.filters))
-        if not self.filters.contains(searchfilter):
-            self.virtdirs.append(search(self.songdbid, "here", nfilters=self.filters))
         if len(self.songdbids) > 1:
             self.virtdirs.extend([basedir([songdbid], self.filters) for songdbid in self.songdbids])
 
@@ -1302,7 +1300,7 @@ class playedsongs(index):
         return _mergefilters([[self.name, "", "", ""]], self.filters[:-1])
 
 
-class search(index):
+class focus_on(index):
 
     """ songs filtered by search string """
 
