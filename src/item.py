@@ -863,6 +863,9 @@ class lastplayedsongs(diritem):
     def getcontentsrecursiverandom(self):
         return hub.request(requests.getlastplayedsongs(self.songdbid, filters=self.filters, random=True))
 
+    def getinfo(self):
+        return _mergefilters([[self.name, "", "", ""]], self.filters[:-1])
+
 
 class topplayedsongs(diritem):
 
@@ -889,6 +892,9 @@ class topplayedsongs(diritem):
 
     def getcontentsrecursiverandom(self):
         return hub.request(requests.getsongs(self.songdbid, sort=self.order, filters=self.filters, random=True))
+
+    def getinfo(self):
+        return _mergefilters([[self.name, "", "", ""]], self.filters[:-1])
 
 
 class lastaddedsongs(diritem):
