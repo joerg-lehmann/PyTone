@@ -87,6 +87,7 @@ descriptions = {
           "insertrandomlist":  (_("random add dir"), _("add random contents of dir to playlist")),
           "search":            (_("search"), _("search entry")),
           "repeatsearch":      (_("repeat search"), _("repeat last search")),
+          "focus":             (_("focus"), _("focus by search string")),
           "rescan":            (_("rescan"), _("rescan/update id3 info for selection")),
           "toggledelete":      (_("(un)delete"), _("delete/undelete selection ")),
           },

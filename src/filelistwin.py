@@ -106,6 +106,10 @@ class filelistwin(window.window):
         hub.notify(events.selectionchanged(self.items.getselected()))
         self.update()
 
+    def focus_on_handler(self, searchstring, key):
+        if key == ord("\n") and searchstring:
+           self.items.focus_on(searchstring)
+
     def isclickonstring(self, y, x):
         """ check whether a click was on a string or not """
         while x < self.ix+self.iw:
@@ -163,13 +167,17 @@ class filelistwin(window.window):
                 hub.notify(events.activateplaylist())
             elif key in self.keybindings["insertrandomlist"] and self.items.isdirselected():
                 self.items.randominsertrecursiveselection()
+            elif key in self.keybindings["repeatsearch"]:
+                if self.searchstring:
+                    self.items.selectbyregexp(self.searchstring, includeselected=False)
             elif key in self.keybindings["search"]:
                 hub.notify(events.requestinput(_("Search"),
                                                       "",
                                                       self.searchhandler))
-            elif key in self.keybindings["repeatsearch"]:
-                if self.searchstring:
-                    self.items.selectbyregexp(self.searchstring, includeselected=False)
+            elif key in self.keybindings["focus"]:
+                hub.notify(events.requestinput(_("Focus on"),
+                                                 "",
+                                                 self.focus_on_handler))
             elif key in self.keybindings["rescan"]:
                 self.items.rescanselection(force=True)
                 self.items.selectrelative(+1)

@@ -123,9 +123,9 @@ class playlistfilter(hiddenfilter):
         return [self.playlist_id]
 
 
-class playedsongsfilter(hiddenfilter):
+class playedsongsfilter(filter):
     def __init__(self):
-        hiddenfilter.__init__(self, None, None)
+        filter.__init__(self, _("Played songs"), "playedsongs", "true")
 
     def SQL_WHERE_string(self):
         return "songs.playcount > 0"
@@ -137,6 +137,7 @@ class searchfilter(filter):
         filter.__init__(self, "Search: %s" % searchstring, None, searchstring)
 
     def SQL_WHERE_string(self):
+        #return "(songs.title LIKE ?)"
         return "(songs.title LIKE ?) OR (albums.name LIKE ?) OR (artists.name LIKE ?)"
 
     def SQL_args(self):
@@ -844,7 +845,7 @@ class lastplayedsongs(diritem):
     def __init__(self, songdbid, filters):
         self.songdbid = songdbid
         self.id = "lastplayedsongs"
-        self.filters = filters
+        self.filters = filters.added(playedsongsfilter())
         self.name = _("Last played songs")
 
     class _orderclass:
@@ -1169,27 +1170,20 @@ class basedir(totaldiritem):
         self.virtdirs.append(podcasts(self.songdbid, filters=self.filters))
         self.virtdirs.append(deleted(self.songdbid, filters=self.filters))
 
-        for filter in self.filters:
-            if isinstance(filter, tagfilter) and 0:
-                break
-        else:
-            self.virtdirs.append(tags(self.songdbid, self.songdbids, filters=self.filters))
-
-        for filter in self.filters:
-            if isinstance(filter, ratingfilter):
-                break
-        else:
+        if not self.filters.contains(searchfilter):
+             self.virtdirs.append(tags(self.songdbid, self.songdbids, filters=self.filters))
+        if not self.filters.contains(ratingfilter):
             self.virtdirs.append(ratings(self.songdbid, self.songdbids, filters=self.filters))
-        for filter in self.filters:
-            if isinstance(filter, playedsongsfilter):
-                break
-        else:
+        if not self.filters.contains(playedsongsfilter):
             self.virtdirs.append(topplayedsongs(self.songdbid, filters=self.filters))
             self.virtdirs.append(lastplayedsongs(self.songdbid, filters=self.filters))
             self.virtdirs.append(playedsongs(self.songdbid, nfilters=self.filters))
         self.virtdirs.append(lastaddedsongs(self.songdbid, filters=self.filters))
         self.virtdirs.append(randomsongs(self.songdbid, self.maxnr, filters=self.filters))
-        self.virtdirs.append(playlists(self.songdbid, filters=self.filters))
+        if not self.filters.contains(searchfilter):
+            self.virtdirs.append(playlists(self.songdbid, filters=self.filters))
+        if not self.filters.contains(searchfilter):
+            self.virtdirs.append(search(self.songdbid, "here", nfilters=self.filters))
         if len(self.songdbids) > 1:
             self.virtdirs.extend([basedir([songdbid], self.filters) for songdbid in self.songdbids])
 
@@ -1301,5 +1295,22 @@ class playedsongs(index):
         else:
             nfilters = filters((playedsongsfilter(),))
         index.__init__(self, [songdbid], _("Played songs:"), "[%s]" % _("Played songs"), nfilters)
+        self.name = _("Played songs")
         self.id = "playedsongs"
+
+    def getinfo(self):
+        return _mergefilters([[self.name, "", "", ""]], self.filters[:-1])
+
+
+class search(index):
+
+    """ songs filtered by search string """
+
+    def __init__(self, songdbid, searchstring, nfilters):
+        if nfilters is not None:
+            nfilters = nfilters.added(searchfilter(searchstring))
+        else:
+            nfilters = filters((searchfilter(searchstring),))
+        index.__init__(self, [songdbid], _("Search:"), searchstring, nfilters)
+        self.id = "search: %s" % searchstring
 

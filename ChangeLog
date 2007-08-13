@@ -1,7 +1,12 @@
 2007-08-13 Jörg Lehmann  <joerg@luga.de>
 
-        * src/item.py: Implement played songs filter, which shows a virtual directory
+        * item.py: Implement played songs filter, which shows a virtual directory
         of all songs which have been played at least once.
+
+        * filelistwin.py, filelist.py, item.py, config.py: Implement focus on
+        search string, which displays a virtual directory of entries matching
+        the given search string (i.e., artist/album/title being similar to
+        this searchs string)
 
 
 2007-08-12 Jörg Lehmann  <joerg@luga.de>

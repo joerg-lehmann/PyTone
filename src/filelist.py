@@ -80,6 +80,20 @@ class filelist(slist.slist):
             self._updatetop()
             self._notifyselectionchanged()
 
+    def focus_on(self, searchstring):
+        # remove any previous focus
+        if isinstance(self.dir[-1], item.search):
+            self.dirup()
+        self.shistory.append((self.dir, self.selected, self.top))
+        songdbid = self.dir[-1].songdbid
+        # if filters apply, use them
+        try:
+            filters = self.dir[-1].filters
+        except AttributeError:
+            filters = None
+        self.dir = self.dir + [item.search(songdbid, searchstring, filters)]
+        self.readdir()
+
     def selectionpath(self):
         return self.dir[-1].getheader(self.getselected())
 

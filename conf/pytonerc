@@ -669,6 +669,7 @@ rescan            = u U
 toggledelete      = D
 search            = / ctrl-s
 repeatsearch      = ctrl-g
+focus             = f
 
 [keybindings.playlistwindow]
 # additional keybindings when playlist window is active

@@ -678,6 +678,7 @@ class keybindings(configsection):
         toggledelete = configkeys("D")
         search = configkeys("/ ctrl-s")
         repeatsearch = configkeys("ctrl-g")
+        focus = configkeys("f")
 
     class playlistwindow(configsection):
         selectnext = configkeys("KEY_DOWN j")
