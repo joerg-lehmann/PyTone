@@ -53,6 +53,7 @@ class hiddenfilter(filter):
     def __init__(self, indexname, indexid):
         filter.__init__(self, None, indexname, indexid)
 
+
 class urlfilter(hiddenfilter):
     def __init__(self, url):
         self.url = url
@@ -63,6 +64,7 @@ class urlfilter(hiddenfilter):
 
     def SQL_args(self):
         return [self.url]
+
 
 class compilationfilter(hiddenfilter):
     def __init__(self, iscompilation):
@@ -1178,8 +1180,13 @@ class basedir(totaldiritem):
                 break
         else:
             self.virtdirs.append(ratings(self.songdbid, self.songdbids, filters=self.filters))
-        self.virtdirs.append(topplayedsongs(self.songdbid, filters=self.filters))
-        self.virtdirs.append(lastplayedsongs(self.songdbid, filters=self.filters))
+        for filter in self.filters:
+            if isinstance(filter, playedsongsfilter):
+                break
+        else:
+            self.virtdirs.append(topplayedsongs(self.songdbid, filters=self.filters))
+            self.virtdirs.append(lastplayedsongs(self.songdbid, filters=self.filters))
+            self.virtdirs.append(playedsongs(self.songdbid, nfilters=self.filters))
         self.virtdirs.append(lastaddedsongs(self.songdbid, filters=self.filters))
         self.virtdirs.append(randomsongs(self.songdbid, self.maxnr, filters=self.filters))
         self.virtdirs.append(playlists(self.songdbid, filters=self.filters))
@@ -1282,3 +1289,17 @@ class rating(index):
             description = "*" * r
         index.__init__(self, [songdbid], _("Rating:"), description, nfilters)
         self.id = r
+
+
+class playedsongs(index):
+
+    """ songs played at least once """
+
+    def __init__(self, songdbid, nfilters):
+        if nfilters is not None:
+            nfilters = nfilters.added(playedsongsfilter())
+        else:
+            nfilters = filters((playedsongsfilter(),))
+        index.__init__(self, [songdbid], _("Played songs:"), "[%s]" % _("Played songs"), nfilters)
+        self.id = "playedsongs"
+

@@ -1,3 +1,9 @@
+2007-08-13 Jörg Lehmann  <joerg@luga.de>
+
+        * src/item.py: Implement played songs filter, which shows a virtual directory
+        of all songs which have been played at least once.
+
+
 2007-08-12 Jörg Lehmann  <joerg@luga.de>
 
         * services/songdbs/sqlite.py: Implement clearstats.
