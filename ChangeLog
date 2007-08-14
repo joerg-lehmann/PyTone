@@ -1,3 +1,8 @@
+2007-08-14 Jörg Lehmann  <joerg@luga.de>
+
+        * mainscreen.py: Reenable lyrics display.
+
+
 2007-08-13 Jörg Lehmann  <joerg@luga.de>
 
         * item.py: Implement played songs filter, which shows a virtual directory

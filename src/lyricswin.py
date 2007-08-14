@@ -44,7 +44,7 @@ class lyricswin(messagewin.messagewin):
         self.clear()
         try:
             for lno, line in enumerate(self.lyrics[0][2].split("\n")[self.first:self.first+self.ih]):
-                line = encoding.encode(line).center(self.iw)
+                line = encoding.encode(line).strip().center(self.iw)
                 self.addnstr(self.iy+lno, self.ix, line, self.iw, self.colors.content)
         except IndexError:
             pass
