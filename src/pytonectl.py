@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: ISO-8859-1 -*-
 
-# Copyright (C) 2003, 2004 Jörg Lehmann <joerg@luga.de>
+# Copyright (C) 2003, 2004, 2007 Jörg Lehmann <joerg@luga.de>
 #
 # This file is part of PyTone (http://www.luga.de/pytone/)
 #

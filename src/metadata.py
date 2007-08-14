@@ -1,6 +1,6 @@
 # -*- coding: ISO-8859-1 -*-
 
-# Copyright (C) 2005, 2006 Jörg Lehmann <joerg@luga.de>
+# Copyright (C) 2005, 2006, 2007 Jörg Lehmann <joerg@luga.de>
 #
 # Ogg Vorbis interface by Byron Ellacott <bje@apnic.net>.
 #
