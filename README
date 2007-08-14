@@ -165,9 +165,11 @@ Key bindings
                                 song/directory
    ALT+Enter                    immediately play song
    TAB                          switch to playlist window
-   ALT+<character>              Quicksearch: jump to next entry that begins 
+   ALT+<character>              Quicksearch: jump to next entry that begins
                                 with character
    CTRL-S//                     Search in list
+   f                            Focus on songs matching approximately a search
+                                string
 
    In playlist window (lower right quarter half of screen)
 
@@ -208,6 +210,7 @@ Key bindings
    !                            show message log
    %                            show statistical information about database(s)
    =                            show information about selected item
+   L                            show lyrics of selected song
    CTRL-V                       toggle information shown in item info window
    F10                          toggle UI layout (one/two column)
    CTRL-X CTRL-X                exit program (the keypresses have to be 
