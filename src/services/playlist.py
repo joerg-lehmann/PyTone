@@ -444,7 +444,7 @@ class playlist(service.service):
             if not nextitem:
                 if self.autoplaymode == "random":
                     # add some randomly selected song to the end of the playlist
-                    randomsongs = hub.request(requests.getsongs(None, random=True))
+                    randomsongs = hub.request(requests.getsongs("main", random=True))
                     if randomsongs:
                         self._addsongs(randomsongs[0:1])
                         nextitem = self._playnext()

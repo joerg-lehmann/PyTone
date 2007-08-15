@@ -1,3 +1,10 @@
+2007-08-15 Jörg Lehmann  <joerg@luga.de>
+
+        * services/songdb.py: Request songs from database with id == "maiN"
+        instead of None to prevent a lockup (thanks to Kurt Gysin <pytoner_ml
+        at oberon dot on-the-web dot ch> for reporting this problem).
+
+
 2007-08-14 Jörg Lehmann  <joerg@luga.de>
 
         * Version 3.0.1 released.
