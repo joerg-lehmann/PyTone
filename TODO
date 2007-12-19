@@ -24,6 +24,8 @@ USER WISHLIST:
 - enhance crossfading such that pauses between songs can be inserted 
   (Rene Maurer <rm@cumparsita.ch>)
 - put number of artists in title (Dag Wieers)
+- use mutagen also for Ogg Vorbis (David E. Thiel)
+
 
 - General:
   o timer interface
