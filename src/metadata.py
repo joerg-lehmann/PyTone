@@ -491,15 +491,21 @@ def read_vorbis_metadata(md, path):
             # REPLAYGAIN_ALBUM_PEAK=1.21822226
             try:
                 profile, type = name[11:].split("_")
-                basename = "replaygain_%s_" % profile.tolower()
+                basename = "replaygain_%s_" % profile.lower()
                 if type == "GAIN":
                    md[basename + "gain"] = float(value.split()[0])
-                   if not md.has_key(basename + "peak" % profile):
-                        md[basename + "peak"] = 1.0
+                   try:
+                       if md[basename + "peak"] is None:
+                           md[basename + "peak"] = 1.0
+                   except AttributeError:
+                       md[basename + "peak"] = 1.0
                 if type == "PEAK":
                    md[basename + "peak"] = float(value)
-                   if not md.has_key(basename + "gain"):
-                        md[basename + "gain"] = 0.0
+                   try:
+                       if md[basename + "gain"] is None:
+                           md[basename + "gain"] = 1.0
+                   except AttributeError:
+                       md[basename + "gain"] = 0.0
             except (ValueError, IndexError):
                 pass
 

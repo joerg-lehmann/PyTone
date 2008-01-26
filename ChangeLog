@@ -1,3 +1,9 @@
+2008-01-26 Jörg Lehmann  <joerg@luga.de>
+
+        * metadata.py: Fix a bug in the Ogg Vorbis replaygain handling (Thanks
+        to Philipp Jocham <philipp dot jocham at gmx dot net> for the patch).
+
+
 2007-08-15 Jörg Lehmann  <joerg@luga.de>
 
         * services/songdb.py: Request songs from database with id == "maiN"

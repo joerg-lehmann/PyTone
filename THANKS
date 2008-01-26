@@ -29,6 +29,8 @@ Damjan Georgeivski <penguinista@mail.net.mk>
         for locating a bug that I was not able to find
 Harald Görl <goerl@luga.de>
         for suggesting the name PyTone
+Philipp Jocham <philipp.jocham@gmx.net>
+        for a small fix in the Ogg Vorbis metadata handling
 David Kågedal <davidk@lysator.liu.se>
         for a suggesting a simple workaround I could not come up with
 Bill Kearney <wkearney99@hotmail.com>
