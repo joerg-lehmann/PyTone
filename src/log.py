@@ -23,6 +23,7 @@ import sys
 import threading
 import time
 import traceback
+import codecs
 
 _DEBUG   = 0
 _INFO    = 1
@@ -49,7 +50,7 @@ def initdebugfile(debugfilename):
     """ direct debugging output to debugfilename """
     global debugfile
     if debugfilename:
-        debugfile = open(debugfilename, "w", 1)
+        debugfile = codecs.open(debugfilename, "w", "utf-8")
 
 # log buffer consisting of tuples (loglevel, time, logmessage)
 items = []

@@ -30,7 +30,8 @@ Damjan Georgeivski <penguinista@mail.net.mk>
 Harald Görl <goerl@luga.de>
         for suggesting the name PyTone
 Philipp Jocham <philipp.jocham@gmx.net>
-        for a small fix in the Ogg Vorbis metadata handling
+        for a small fix in the Ogg Vorbis metadata handling and a patch for
+        a nasty bug in the song update function
 David Kågedal <davidk@lysator.liu.se>
         for a suggesting a simple workaround I could not come up with
 Bill Kearney <wkearney99@hotmail.com>

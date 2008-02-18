@@ -25,7 +25,10 @@ import sys
 import random
 import time
 
-from pysqlite2 import dbapi2 as sqlite
+try:
+    import sqlite3 as sqlite
+except ImportError:
+    from pysqlite2 import dbapi2 as sqlite
 
 import events, hub, requests
 import errors
@@ -492,7 +495,7 @@ class songdb(service.service):
                     song.artist_id = None
             if oldsong.album_artist != song.album_artist:
                 if song.album_artist:
-                    song.artist_id, newartist = self._queryregisterindex("artists", ["name"], [song.album_artist])
+                    song.album_artist_id, newartist = self._queryregisterindex("artists", ["name"], [song.album_artist])
                     changedartists |= newartist
                     if song.album:
                         song.album_id, newalbum = self._queryregisterindex("albums", ["artist_id", "name"], 
