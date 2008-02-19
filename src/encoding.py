@@ -1,4 +1,5 @@
 import sys
+import locale
 
 _fallbacklocalecharset = "iso-8859-1"
 
