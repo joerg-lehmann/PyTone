@@ -1,5 +1,11 @@
 2008-02-18 Jörg Lehmann  <joerg@luga.de>
 
+        * src/encoding.py: Add missing import (Thanks
+        to Philipp Jocham <philipp dot jocham at gmx dot net> for the patch).
+
+
+2008-02-18 Jörg Lehmann  <joerg@luga.de>
+
         * services/songdbs/sqlite.py: Fix a bug in the _song_update function (Thanks
         to Philipp Jocham <philipp dot jocham at gmx dot net> for the patch).
 
