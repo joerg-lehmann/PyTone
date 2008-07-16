@@ -2,6 +2,7 @@
 - check David Bowie Let's Dance
 - make removeaccents work again: howto use unicode.translate
 - allow tagging of no artists dir
+- check collation (Á vs A, etc.)
 
 TOCHECK:
 - what happens to mpg123 when pytone crashes
