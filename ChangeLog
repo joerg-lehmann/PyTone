@@ -1,3 +1,9 @@
+2008-07-16 Jörg Lehmann  <joerg@luga.de>
+
+	* config.py: Allow "pulse" in driver arguments for players (Thanks to
+	Eliot Blennerhassett <eliot atblennerhassett dot gen dot nz>).
+
+
 2008-02-18 Jörg Lehmann  <joerg@luga.de>
 
         * src/encoding.py: Add missing import (Thanks
