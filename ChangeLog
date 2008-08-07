@@ -1,5 +1,10 @@
 2008-08-07 Jörg Lehmann  <joerg@luga.de>
 
+        * config.py: Also allow "alsa05" driver.
+
+        * bufferedao.c: Adapt to PEP 353 (Thanks to Philipp Jocham <philipp dot
+        jocham at gmx dot net> for the patch).
+
         * services/players/mpg123.py: Make player working again after previous
         internal API changes (Thanks to Philipp Jocham <philipp dot jocham at
         gmx dot net> for the patch).

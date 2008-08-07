@@ -217,8 +217,8 @@ bind = localhost
 # type = internal: internal player (output with libao)
 #
 # options:
-#   driver:              "alsa", "alsa09", "arts", "esd", "oss", "sun", "macosx", "macosxau" or "pulse"
-#   device:              path of dsp used for output (for oss, sun and alsa09 driver)
+#   driver:              "alsa", "alsa09", "alsa05", "arts", "esd", "oss", "sun", "macosx", "macosxau" or "pulse"
+#   device:              path of dsp used for output (for oss, sun and alsa drivers)
 #   bufsize:             size of audio buffer used by PyTone itself in kBytes
 #                        Note: A large buffer may prevent clicking but
 #                        leads to a delayed response for instance to play next

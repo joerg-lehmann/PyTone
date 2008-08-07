@@ -26,6 +26,12 @@
 #include <errno.h>
 #include <assert.h>
 
+#if PY_VERSION_HEX < 0x02050000 && !defined(PY_SSIZE_T_MIN)
+typedef int Py_ssize_t;
+#define PY_SSIZE_T_MAX INT_MAX
+#define PY_SSIZE_T_MIN INT_MIN
+#endif
+
 #define NRITEMS() ((self->in >= self->out) ? self->in-self->out : self->in+self->buffersize-self->out)
 
 /* debug and error log functions */
@@ -72,7 +78,7 @@ typedef struct {
 static ao_option *
 py_options_to_ao_options(PyObject *py_options)
 {
-    int pos = 0;
+    Py_ssize_t pos = 0;
     PyObject *key, *val;
     ao_option *head = NULL;
     int ret;
@@ -82,7 +88,7 @@ py_options_to_ao_options(PyObject *py_options)
         return NULL;
     }
 
-    while ( PyDict_Next(py_options, &pos, &key, &val) > 0 ) {
+    while ( PyDict_Next(py_options, &pos, &key, &val) ) {
         if (!PyString_Check(key) || !PyString_Check(val)) {
             PyErr_SetString(PyExc_TypeError, "keys in options may only be strings");
             ao_free_options(head);
@@ -166,7 +172,7 @@ bufferedao_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 
     /* ... and possibly contained options */
     self->options = NULL;
-    if (py_options && PyDict_Size(py_options) > 0) {
+    if (py_options && PyDict_Size(py_options) ) {
         /* In the case of an empty dictionary, py_options_to_ao_options would return NULL.
          * Thus, we should (and need) not call it in this case */
 

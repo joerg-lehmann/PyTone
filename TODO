@@ -3,6 +3,7 @@
 - make removeaccents work again: howto use unicode.translate
 - allow tagging of no artists dir
 - check collation (Á vs A, etc.)
+- check XMMS and remote player (do they still work?)
 
 TOCHECK:
 - what happens to mpg123 when pytone crashes
