@@ -1,7 +1,14 @@
+2008-08-07 Jörg Lehmann  <joerg@luga.de>
+
+        * services/players/mpg123.py: Make player working again after previous
+        internal API changes (Thanks to Philipp Jocham <philipp dot jocham at
+        gmx dot net> for the patch).
+
+
 2008-07-16 Jörg Lehmann  <joerg@luga.de>
 
-	* config.py: Allow "pulse" in driver arguments for players (Thanks to
-	Eliot Blennerhassett <eliot atblennerhassett dot gen dot nz>).
+        * config.py: Allow "pulse" in driver arguments for players (Thanks to
+        Eliot Blennerhassett <eliot atblennerhassett dot gen dot nz>).
 
 
 2008-02-18 Jörg Lehmann  <joerg@luga.de>
@@ -97,27 +104,27 @@
 
 2006-09-04 Jörg Lehmann  <joerg@luga.de>
 
-	* Use platform byte order for ao devices.
+        * Use platform byte order for ao devices.
 
 
 2006-08-28 Jörg Lehmann  <joerg@luga.de>
 
-	* Merge changes from Rothsee version: 
-	- Set correct version for new databases
-	- Output correct versions during db upgrade
+        * Merge changes from Rothsee version: 
+        - Set correct version for new databases
+        - Output correct versions during db upgrade
 
 
 2006-08-20 Jörg Lehmann  <joerg@luga.de>
 
-	* Database version 6: Store bitrate, samplerate, vbr, size, tracknumber, trackcount,
-	disknumber, diskccount, and replaygain information in database.
+        * Database version 6: Store bitrate, samplerate, vbr, size, tracknumber, trackcount,
+        disknumber, diskccount, and replaygain information in database.
 
-	* item.py: Display song information as suggested by Dag Wieers
-	<dag at wieers dot com>.
+        * item.py: Display song information as suggested by Dag Wieers
+        <dag at wieers dot com>.
 
-	* metadata.py: Add replaygain support to eyeD3 decoder
+        * metadata.py: Add replaygain support to eyeD3 decoder
 
-	* services/players/internal.py: Take disk number into account.
+        * services/players/internal.py: Take disk number into account.
 
 
 2006-08-15 Jörg Lehmann  <joerg@luga.de>
@@ -141,2323 +148,2323 @@
 
 2006-08-08 Jörg Lehmann  <joerg@luga.de>
 
-	* Make keybindings for rating of currently playing songs configurable
-	via playerratecurrentsong1, ... playerratecurrentsong5 in the
-	keybindings.general section of the pytonerc file (thanks to Alexander
-	Wirt <formorer at formorer dot de> for suggesting this).
+        * Make keybindings for rating of currently playing songs configurable
+        via playerratecurrentsong1, ... playerratecurrentsong5 in the
+        keybindings.general section of the pytonerc file (thanks to Alexander
+        Wirt <formorer at formorer dot de> for suggesting this).
 
 
 2005-12-05 Jörg Lehmann  <joerg@luga.de>
 
-	* services/player.py: Start player only after the playlist service has
-	been started since playlist requests may already be issued during the
-	player startup. This fixes an long-standing problem reported by several
-	people on the mailing list.
+        * services/player.py: Start player only after the playlist service has
+        been started since playlist requests may already be issued during the
+        player startup. This fixes an long-standing problem reported by several
+        people on the mailing list.
 
 
 2005-11-07 Jörg Lehmann  <joerg@luga.de>
 
-	* filelist.py: Update top after changing back into a directory as the 
-	window size may have changed in the meantime (thanks to Martin Fenelon
-	<fenm at freeuk dot com> for reporting this problem).
+        * filelist.py: Update top after changing back into a directory as the 
+        window size may have changed in the meantime (thanks to Martin Fenelon
+        <fenm at freeuk dot com> for reporting this problem).
 
 
 2005-09-19 Jörg Lehmann  <joerg@luga.de>
 
-	* mainscreen.py: Call correct getmaxyx method fixing problem with
-	small terminals during startup (thanks to Dag Wieers
-	<dag at wieers dot com> for reporting this problem).
+        * mainscreen.py: Call correct getmaxyx method fixing problem with
+        small terminals during startup (thanks to Dag Wieers
+        <dag at wieers dot com> for reporting this problem).
 
-	* services/player.py: Move closing of audiodevice right before
-	blocking process() call (hopefully fixing a problem reported
-	by Dag Wieers <dag at wieers dot com>).
+        * services/player.py: Move closing of audiodevice right before
+        blocking process() call (hopefully fixing a problem reported
+        by Dag Wieers <dag at wieers dot com>).
 
 
 2005-09-13 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.3.0 released.
+        * Version 2.3.0 released.
 
 
 2005-09-11 Jörg Lehmann  <joerg@luga.de>
 
-	* plugings/osdtitle.py, plugins/termtitle.py: Apply
-	patch by Dag Wieers <dag at wieers dot com> which adds
-	checking for no song being played.
+        * plugings/osdtitle.py, plugins/termtitle.py: Apply
+        patch by Dag Wieers <dag at wieers dot com> which adds
+        checking for no song being played.
 
 
 2005-09-08 Jörg Lehmann  <joerg@luga.de>
 
-	* services/songdbs/local.py: Rewrite db upgrade code to allow
-	non-atomic upgrade, as well. Prompt the user before an upgrade to
-	ask whether a non-atomic or atomic upgrade has to be performed.
+        * services/songdbs/local.py: Rewrite db upgrade code to allow
+        non-atomic upgrade, as well. Prompt the user before an upgrade to
+        ask whether a non-atomic or atomic upgrade has to be performed.
 
 
 2005-08-24 Jörg Lehmann  <joerg@luga.de>
 
-	* Check earlier for dbfile != "db".
+        * Check earlier for dbfile != "db".
 
-	* item.py: Fix filters handling in songs class.
+        * item.py: Fix filters handling in songs class.
 
 
 2005-08-23 Jörg Lehmann  <joerg@luga.de>
 
-	* Add error reporting to bufferedao extension module.
+        * Add error reporting to bufferedao extension module.
 
 
 2005-08-22 Jörg Lehmann  <joerg@luga.de>
 
-	* Disabled automatic closing of help window by default.
+        * Disabled automatic closing of help window by default.
 
-	* Added changeable play speed support (many thanks to Richard A. Smith
-	<smithbone at gmail dot com> for providing the patch).
+        * Added changeable play speed support (many thanks to Richard A. Smith
+        <smithbone at gmail dot com> for providing the patch).
 
 
 2005-08-21 Jörg Lehmann  <joerg@luga.de>
 
-	* Merged item-rework branch, which contains a new filter code.
-	The new code makes the unfiltered case a special case of the filtered
-	one. As a result, more than one filter can be applied, e.g., filtering
-	for all songs in a certain genre of a given decade and with a given
-	rating is now possible. Furthermore, every index now contains a
-	(nearly) full directory hierarchy, thus allowing things like showing
-	the top-played songs of a certain genre.
+        * Merged item-rework branch, which contains a new filter code.
+        The new code makes the unfiltered case a special case of the filtered
+        one. As a result, more than one filter can be applied, e.g., filtering
+        for all songs in a certain genre of a given decade and with a given
+        rating is now possible. Furthermore, every index now contains a
+        (nearly) full directory hierarchy, thus allowing things like showing
+        the top-played songs of a certain genre.
 
 
 2005-08-19 Jörg Lehmann  <joerg@luga.de>
 
-	* Get rid of multi-file database layout:
-	   - convert old layout automatically
-	   - leave configuration file switches basename and dbfile intact but
-	     warn the user when they are non-empty
-	   - in a next step, we will set the default value of the basename
-	     switch to an empty value (when presumably all databases have been
-	     converted)
-	   - finally as a final step, we remove the switches and require
-	     that the users change their config files
+        * Get rid of multi-file database layout:
+           - convert old layout automatically
+           - leave configuration file switches basename and dbfile intact but
+             warn the user when they are non-empty
+           - in a next step, we will set the default value of the basename
+             switch to an empty value (when presumably all databases have been
+             converted)
+           - finally as a final step, we remove the switches and require
+             that the users change their config files
 
-	* Database version 5: do not longer index by years but by decades
-	which removes many special code paths at various places in the db
-	code.
+        * Database version 5: do not longer index by years but by decades
+        which removes many special code paths at various places in the db
+        code.
 
 
 2005-08-11 Jörg Lehmann  <joerg@luga.de>
 
-	* bufferedao.c: New C extension module corresponding to
-	services/players/interal/buffereddevice with an ao device. The
-	advantage of the C module is that it does not have to rely on holding
-	the GIL when doing the output, which should help preventing sound
-	dropouts.
+        * bufferedao.c: New C extension module corresponding to
+        services/players/interal/buffereddevice with an ao device. The
+        advantage of the C module is that it does not have to rely on holding
+        the GIL when doing the output, which should help preventing sound
+        dropouts.
 
-	* services/players/internal.py: Make use of new extension module
-	bufferedao.
+        * services/players/internal.py: Make use of new extension module
+        bufferedao.
 
 
 2005-08-10 Jörg Lehmann  <joerg@luga.de>
 
-	* services/songdbs/internal.py: Checkpoint database regularly during
-	registering of songs to prevent oversized transaction logs.
+        * services/songdbs/internal.py: Checkpoint database regularly during
+        registering of songs to prevent oversized transaction logs.
 
-	* services/songdbs/internal.py: Replace quadratic in number of songs
-	algorithm by a linear in time version to avoid huge system loads
-	at the end of the song registering process.
+        * services/songdbs/internal.py: Replace quadratic in number of songs
+        algorithm by a linear in time version to avoid huge system loads
+        at the end of the song registering process.
 
-	* services/players/internal.py: Do not open audiodevice without need.
+        * services/players/internal.py: Do not open audiodevice without need.
 
 
 2005-08-09 Jörg Lehmann  <joerg@luga.de>
 
-	* help.py, helpwin.py, statusbar.py: Introduced getkeyname function
-	which has a fallback solution for unnamed keys (thanks to Troels
-	Vognsen <bashfalcon at gmail dot com> for reporting this problem).
+        * help.py, helpwin.py, statusbar.py: Introduced getkeyname function
+        which has a fallback solution for unnamed keys (thanks to Troels
+        Vognsen <bashfalcon at gmail dot com> for reporting this problem).
 
 
 2005-08-03 Jörg Lehmann  <joerg@luga.de>
 
-	* Normalize all paths in config files.
+        * Normalize all paths in config files.
 
-	* Rework dbstats system.
+        * Rework dbstats system.
 
 
 2005-08-02 Jörg Lehmann  <joerg@luga.de>
 
-	* services/songdb.py. Measure cache size not by number
-	of stored requests but by the number of objects the requests
-	refer to.
+        * services/songdb.py. Measure cache size not by number
+        of stored requests but by the number of objects the requests
+        refer to.
 
-	* services/songdb.py: rename resultcache -> requestcache.
+        * services/songdb.py: rename resultcache -> requestcache.
 
-	* conf/pytonerc, config.py, services/songdb.py: Add new section
-	database with currently only one option requestcachesize, which
-	allows one to configure the maximal number of objects contained
-	in the cache.
+        * conf/pytonerc, config.py, services/songdb.py: Add new section
+        database with currently only one option requestcachesize, which
+        allows one to configure the maximal number of objects contained
+        in the cache.
 
-	* item.py: Create genres/ratings/etc. instances only once to
-	permit the caching of the requests involving them.
+        * item.py: Create genres/ratings/etc. instances only once to
+        permit the caching of the requests involving them.
 
-	* statswin.py, config.py, conf/pytonerc: New window for
-	statistical information about databases and the request cache
-	(accessible via "%").
+        * statswin.py, config.py, conf/pytonerc: New window for
+        statistical information about databases and the request cache
+        (accessible via "%").
 
-	* Various updates in German PyTone.po.
-
-
-2005-07-16 Jörg Lehmann  <joerg@luga.de>
-
-	* plugin.py: Use thread-local channel in threadedplugin to make it
-	actually a threaded plugin.
-
-	* log.py: Add time and current thread to debugging output and prune
-	common path from module name.
+        * Various updates in German PyTone.po.
 
 
 2005-07-16 Jörg Lehmann  <joerg@luga.de>
 
-	* filelist.py. Update window contents in filelistjumptosong().
+        * plugin.py: Use thread-local channel in threadedplugin to make it
+        actually a threaded plugin.
 
-	* plugin.py. Daemonize threaded plugins, in order to prevent a blocking of misbehaved plugins 
-	on shutdown.
+        * log.py: Add time and current thread to debugging output and prune
+        common path from module name.
 
-	* Initial checkin into Subversion repository.
+
+2005-07-16 Jörg Lehmann  <joerg@luga.de>
+
+        * filelist.py. Update window contents in filelistjumptosong().
+
+        * plugin.py. Daemonize threaded plugins, in order to prevent a blocking of misbehaved plugins 
+        on shutdown.
+
+        * Initial checkin into Subversion repository.
 
 
 2005-06-30 Jörg Lehmann  <joerg@luga.de>
 
-	* plugin.py: Use init() method instead of start(), which has a
-	different meaning for threads. The plugins currently distributed
-	with PyTone have been changed in this regard.
+        * plugin.py: Use init() method instead of start(), which has a
+        different meaning for threads. The plugins currently distributed
+        with PyTone have been changed in this regard.
 
-	* plugins/audioscrobbler/scrobbler.py: Fix typos in backlog code.
+        * plugins/audioscrobbler/scrobbler.py: Fix typos in backlog code.
 
 
 2005-06-28 Jörg Lehmann  <joerg@luga.de>
 
-	* config.py: Be more liberal concerning the accepted section names
-	(patch by Dag Wieers <dag at wieers dot com>).
+        * config.py: Be more liberal concerning the accepted section names
+        (patch by Dag Wieers <dag at wieers dot com>).
 
 
 2005-06-20 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.2.4 released.
+        * Version 2.2.4 released.
 
-	* window.py: Include a workaround by Dag Wieers <dag at wieers dot com>
-	which prevents flickering when switching between the filelist and database
-	windows.
+        * window.py: Include a workaround by Dag Wieers <dag at wieers dot com>
+        which prevents flickering when switching between the filelist and database
+        windows.
 
-	* plugins: Include audioscrobbler plugin contributed by Nicolas
-	Évrard <nicoe at altern dot org>).
+        * plugins: Include audioscrobbler plugin contributed by Nicolas
+        Évrard <nicoe at altern dot org>).
 
-	* config.py: Rename listen to bind in network section.
+        * config.py: Rename listen to bind in network section.
 
 
 2005-06-06 Jörg Lehmann  <joerg@luga.de>
 
-	* Rewrite plugin loader to use imp module: Use imp module to specify
-	plugin search path and log errors instead of aborting
+        * Rewrite plugin loader to use imp module: Use imp module to specify
+        plugin search path and log errors instead of aborting
 
-	* mainscreen.py: Use getmaxyx() code provided by Dag Wieers <dag at
-	wieers dot com>.
+        * mainscreen.py: Use getmaxyx() code provided by Dag Wieers <dag at
+        wieers dot com>.
 
 
 2005-06-04 Jörg Lehmann  <joerg@luga.de>
 
-	* events.py: Renamed attribute songs -> items in playlistchanged
-	event.
+        * events.py: Renamed attribute songs -> items in playlistchanged
+        event.
 
 
 2005-05-28 Jörg Lehmann  <joerg@luga.de>
 
-	* item.py: Import _genrandomchoice function needed for random
-	selections of filesystem directories from services.songdb, where
-	it was moved to some time ago (thanks to Dag Wieers <dag at wieers
-	dot com> for reporting this issue).
+        * item.py: Import _genrandomchoice function needed for random
+        selections of filesystem directories from services.songdb, where
+        it was moved to some time ago (thanks to Dag Wieers <dag at wieers
+        dot com> for reporting this issue).
 
 
 2005-05-22 Jörg Lehmann  <joerg@luga.de>
 
-	* mainscreen.py: Force minimal height and width of window.
+        * mainscreen.py: Force minimal height and width of window.
 
 
 2005-05-18 Jörg Lehmann  <joerg@luga.de>
 
-	* iteminfowin.py: Fix some small bugs in the songchanged event
-	handler.
-	
-	* iteminfowin.py: Allow toggeling between different states: show
-	information about either the currently selected song or the song
-	being played on the configured players. 
+        * iteminfowin.py: Fix some small bugs in the songchanged event
+        handler.
+        
+        * iteminfowin.py: Allow toggeling between different states: show
+        information about either the currently selected song or the song
+        being played on the configured players. 
 
-	* config.py: Add new option toggleiteminfowindow in
-	keybindings.general section.
+        * config.py: Add new option toggleiteminfowindow in
+        keybindings.general section.
 
-	
+        
 2005-05-17 Jörg Lehmann  <joerg@luga.de>
 
-	* requests.py, services/songdb.py: Handle getlastplayedsongs as
-	other requests by just supplying another wrapper function.
+        * requests.py, services/songdb.py: Handle getlastplayedsongs as
+        other requests by just supplying another wrapper function.
 
-	* playerwin.py: Do not close playerinfo file every time (thanks
-	to Dag Wieers <dag at wieers dot com> for the patch).
+        * playerwin.py: Do not close playerinfo file every time (thanks
+        to Dag Wieers <dag at wieers dot com> for the patch).
 
-	* item.py: Zero-pad seconds (thanks to Dag Wieers <dag at wieers
-	dot com> for the patch).
+        * item.py: Zero-pad seconds (thanks to Dag Wieers <dag at wieers
+        dot com> for the patch).
 
-	* Add xterm plugin contributed by <dag at wieers dot com>, which
-	sets the title of an xterm window according to the currently
-	playing song.
+        * Add xterm plugin contributed by <dag at wieers dot com>, which
+        sets the title of an xterm window according to the currently
+        playing song.
 
 
 2005-05-11 Jörg Lehmann  <joerg@luga.de>
 
-	* playlistwin.py: Check for playstarttime not being None before
-	referencing it (thanks to Stefan Wimmer <swimmer at xs4all dot nl>
-	for reporting this problem).
+        * playlistwin.py: Check for playstarttime not being None before
+        referencing it (thanks to Stefan Wimmer <swimmer at xs4all dot nl>
+        for reporting this problem).
 
-	* services/playlist.py: Make immediate play of song working again
-	(thanks to Dag Wieers <dag at wieers dot com> for reporting this
-	problem).
+        * services/playlist.py: Make immediate play of song working again
+        (thanks to Dag Wieers <dag at wieers dot com> for reporting this
+        problem).
 
 
 2005-05-10 Jörg Lehmann  <joerg@luga.de>
 
-	* config.py: replace all occurrences of server/port by networklocation
+        * config.py: replace all occurrences of server/port by networklocation
 
-	* Make remote databases work again.
+        * Make remote databases work again.
 
-	* Remote players should at least partially work again.
+        * Remote players should at least partially work again.
 
 
 2005-04-27 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.2.3 released.
+        * Version 2.2.3 released.
 
 
 2005-04-26 Jörg Lehmann  <joerg@luga.de>
 
-	* Deactivate playlist window before initializing the playlist to
-	prevent issuing a wrong selectionchanged event (fixing a problem
-	reported by Stuart Pook <Stuart dot Pook at infres dot enst dot fr>).
+        * Deactivate playlist window before initializing the playlist to
+        prevent issuing a wrong selectionchanged event (fixing a problem
+        reported by Stuart Pook <Stuart dot Pook at infres dot enst dot fr>).
 
 
 2005-04-25 Jörg Lehmann  <joerg@luga.de>
 
-	* services/players/internal.py: Prevent sound device from being
-	reopened when an already stopped player is being stopped again
-	(thanks to Stuart Pook <Stuart dot Pook at infres dot enst dot fr>
-	for pointing out this problem).
+        * services/players/internal.py: Prevent sound device from being
+        reopened when an already stopped player is being stopped again
+        (thanks to Stuart Pook <Stuart dot Pook at infres dot enst dot fr>
+        for pointing out this problem).
 
-	* services/players/internal.py: Daemonize bufferedaudiodevice
-	again.
-	
+        * services/players/internal.py: Daemonize bufferedaudiodevice
+        again.
+        
 
 2005-04-21 Jörg Lehmann  <joerg@luga.de>
 
-	* network.py: Ignore empty lines in _receiveobject instead of
-	reporting an error.
+        * network.py: Ignore empty lines in _receiveobject instead of
+        reporting an error.
 
-	* services/playlist.py: Make going back to previous song work
-	again (thanks to Johannes Segitz <johannes at segitz dot de> for
-	reporting this bug).
+        * services/playlist.py: Make going back to previous song work
+        again (thanks to Johannes Segitz <johannes at segitz dot de> for
+        reporting this bug).
 
 
 2005-04-20 Jörg Lehmann  <joerg@luga.de>
 
-	* Ignore invalid database definitions unless there is at least one
-	valid database.
+        * Ignore invalid database definitions unless there is at least one
+        valid database.
 
 
 2005-03-30 Jörg Lehmann  <joerg@luga.de>
 
-	* iteminfowin.py: Fix secondary player for songs in the playlist
-	window (thanks to Stefan Wimmer <swimmer at xs4all dot nl> for
-	reporting this problem).
+        * iteminfowin.py: Fix secondary player for songs in the playlist
+        window (thanks to Stefan Wimmer <swimmer at xs4all dot nl> for
+        reporting this problem).
 
 
 2005-03-23 Jörg Lehmann  <joerg@luga.de>
 
-	* iteminfowin.py, item.py: Fix wrong window size of item info window.
+        * iteminfowin.py, item.py: Fix wrong window size of item info window.
 
-	* slist.py: Fix crash occuring when deleting the contents of the
-	playlist (thanks to Stefan Wimmer <swimmer at xs4all dot nl> for
-	reporting this problem).
-	
+        * slist.py: Fix crash occuring when deleting the contents of the
+        playlist (thanks to Stefan Wimmer <swimmer at xs4all dot nl> for
+        reporting this problem).
+        
 
 2005-03-16 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.2.2 released.
+        * Version 2.2.2 released.
 
 
 2005-03-12 Jörg Lehmann  <joerg@luga.de>
 
-	* services/players/mpg123.py: Implement seeking.
+        * services/players/mpg123.py: Implement seeking.
 
 
 2005-03-08 Jörg Lehmann  <joerg@luga.de>
 
-	* events.py: Make checkpointdb a dbevent in order to let the
-	songdbmanager pass it to the databases (many thanks to Tomas Menzl
-	<xmenzl at aldebaran dot feld dot cvut dot cz> for pointing out
-	this problem).
+        * events.py: Make checkpointdb a dbevent in order to let the
+        songdbmanager pass it to the databases (many thanks to Tomas Menzl
+        <xmenzl at aldebaran dot feld dot cvut dot cz> for pointing out
+        this problem).
 
-	* services/songdbs/local.py: Send sendeventin event to global hub
-	instead of to songdbhub to make it actually work. Use repeat
-	interval instead of sending every time a new sendeventin event.
+        * services/songdbs/local.py: Send sendeventin event to global hub
+        instead of to songdbhub to make it actually work. Use repeat
+        interval instead of sending every time a new sendeventin event.
 
-	* item.py: Add new item method getid, which returns a unique
-	id for the item in the current context (used in slist.set method)
+        * item.py: Add new item method getid, which returns a unique
+        id for the item in the current context (used in slist.set method)
 
-	* services/playlist.py: Add getid method to playlistitem (for
-	use in slist.set method).
+        * services/playlist.py: Add getid method to playlistitem (for
+        use in slist.set method).
 
-	* slist.py: Use getid method to identify the previously selected
-	item in set method.
+        * slist.py: Use getid method to identify the previously selected
+        item in set method.
 
-	* services/playlist.py: Cleanup variable names: song -> item.
+        * services/playlist.py: Cleanup variable names: song -> item.
 
 
 2005-03-07 Jörg Lehmann  <joerg@luga.de>
 
-	* services/player.py: Process incoming events twice to be able
-	to rely on block argument of channel. Also block when waiting
-	for a new song to appear in the playlist, since any arbitrary
-	events unblocks the player.
+        * services/player.py: Process incoming events twice to be able
+        to rely on block argument of channel. Also block when waiting
+        for a new song to appear in the playlist, since any arbitrary
+        events unblocks the player.
 
-	* services/songdbs/local.py: Use active transaction as an indication
-	for a busy db.
+        * services/songdbs/local.py: Use active transaction as an indication
+        for a busy db.
 
-	* filelist.py: Also react on new playlists.
+        * filelist.py: Also react on new playlists.
 
 
 2005-03-06 Jörg Lehmann  <joerg@luga.de>
 
-	* services/songdbs/local.py: Delete log files when checkpointing
-	dbenv preventing huge disk space usage during song registering
-	(Ochsenschlegel bugfix).
+        * services/songdbs/local.py: Delete log files when checkpointing
+        dbenv preventing huge disk space usage during song registering
+        (Ochsenschlegel bugfix).
 
 
 2005-03-03 Jörg Lehmann  <joerg@luga.de>
 
-	* services/players/internal.py. Also request new song when not
-	crossfading to make autoplay == False work in this case
-	(thanks to Tomas Menzl <xmenzl at aldebaran dot feld dot cvut dot
-	cz> for providing a patch).
+        * services/players/internal.py. Also request new song when not
+        crossfading to make autoplay == False work in this case
+        (thanks to Tomas Menzl <xmenzl at aldebaran dot feld dot cvut dot
+        cz> for providing a patch).
 
-	* events, services/playlist.py: New event playlistplaysong which
-	allows one to tell the playlist to immediately play a specific song.
+        * events, services/playlist.py: New event playlistplaysong which
+        allows one to tell the playlist to immediately play a specific song.
 
-	* playlist.py: Use playlistplaysong instead of playlistaddsongstop
-	when the user requests the immediate playback of a song in the
-	playlist (as suggested by Tomas Menzl <xmenzl at aldebaran dot
-	feld dot cvut dot cz>), leading to a more mainstream behaviour of
-	PyTone in that regard. ;-)
+        * playlist.py: Use playlistplaysong instead of playlistaddsongstop
+        when the user requests the immediate playback of a song in the
+        playlist (as suggested by Tomas Menzl <xmenzl at aldebaran dot
+        feld dot cvut dot cz>), leading to a more mainstream behaviour of
+        PyTone in that regard. ;-)
 
-	* playlist.py: playlistaddsongstop now correctly updates the information
-	about the currently playing song.
+        * playlist.py: playlistaddsongstop now correctly updates the information
+        about the currently playing song.
 
-	* playlist.py: Keep information about played songs after
-	restarting PyTone.
+        * playlist.py: Keep information about played songs after
+        restarting PyTone.
 
-	* helper.py: Write exception to stdout since we have closed stderr.
+        * helper.py: Write exception to stdout since we have closed stderr.
 
-	* services/timer.py: Do not daemonize and switch to new timeout option
-	of channel.process.
+        * services/timer.py: Do not daemonize and switch to new timeout option
+        of channel.process.
 
-	* services/players/internal.py: Do not daemonize bufferedaudiodev buf
-	shut it down properly.
+        * services/players/internal.py: Do not daemonize bufferedaudiodev buf
+        shut it down properly.
 
 
 2005-03-01 Jörg Lehmann  <joerg@luga.de>
 
-	* hub.py: Add optional timeout to process method of channel.
+        * hub.py: Add optional timeout to process method of channel.
 
-	* services/player.py: Make use of new timeout option.
+        * services/player.py: Make use of new timeout option.
 
-	* event.py: Renamed playerforward -> playernext
+        * event.py: Renamed playerforward -> playernext
 
-	* decoder.py, services/player.py, services/players/internal.py:
-	Enable seeking in songs (many thanks to Tomas Menzl <xmenzl at
-	aldebaran dot feld dot cvut dot cz> for providing a patch).
+        * decoder.py, services/player.py, services/players/internal.py:
+        Enable seeking in songs (many thanks to Tomas Menzl <xmenzl at
+        aldebaran dot feld dot cvut dot cz> for providing a patch).
 
-	* requests.py: Add sort member variable to getsongsinplaylists
-	request, fixing a crash when rescanning, querying a random
-	selection, etc. of all songs in playlists (thanks to Tomas Menzl
-	<xmenzl at aldebaran dot feld dot cvut dot cz> for reporting this
-	problem).
+        * requests.py: Add sort member variable to getsongsinplaylists
+        request, fixing a crash when rescanning, querying a random
+        selection, etc. of all songs in playlists (thanks to Tomas Menzl
+        <xmenzl at aldebaran dot feld dot cvut dot cz> for reporting this
+        problem).
 
 
 2005-02-27 Jörg Lehmann  <joerg@luga.de>
 
-	* filelist.py: Some cleanups.
+        * filelist.py: Some cleanups.
 
-	* playlist.py: Ditto.
+        * playlist.py: Ditto.
 
-	* events.py: New event filelistjumptosong, which directs the filelist
-	to jump to a given song in the directory hierarchy.
+        * events.py: New event filelistjumptosong, which directs the filelist
+        to jump to a given song in the directory hierarchy.
 
-	* config.py. New keybinding "filelistjumptoselectedsong" for
-	playlistwindow (by default KEY_RIGHT is used).
+        * config.py. New keybinding "filelistjumptoselectedsong" for
+        playlistwindow (by default KEY_RIGHT is used).
 
-	* config.py: New option "skipsinglealbums" in filelistwindow
-	section, which when turned on, tells PyTone to skip the album and
-	go directly to the songs when there is only one album of a given
-	artist.
+        * config.py: New option "skipsinglealbums" in filelistwindow
+        section, which when turned on, tells PyTone to skip the album and
+        go directly to the songs when there is only one album of a given
+        artist.
 
 
 2005-02-26 Jörg Lehmann  <joerg@luga.de>
 
-	* dbitem.py: Remove __class__ comparison from __cmp__ method of dbitem
-	class
+        * dbitem.py: Remove __class__ comparison from __cmp__ method of dbitem
+        class
 
-	* services/songdb.py: Avoid repeated songs when randomly selecting
-	songs out of a short list.
+        * services/songdb.py: Avoid repeated songs when randomly selecting
+        songs out of a short list.
 
 
 2005-02-12 Jörg Lehmann  <joerg@luga.de>
 
-	* services/playlist.py: Cleanup and fix some minor bugs.
+        * services/playlist.py: Cleanup and fix some minor bugs.
 
 
 2005-02-09 Jörg Lehmann  <joerg@luga.de>
 
-	* setup.py: (Ab-)use scripts directive for installing pytone
-	and pytonectl shell scripts.
+        * setup.py: (Ab-)use scripts directive for installing pytone
+        and pytonectl shell scripts.
 
-	* log.py: Make debugfile initialization manual to allow the use of
-	the log module in the config module (thanks to Brian Lenihan
-	<brian_l at mac dot com> for proposing this).
+        * log.py: Make debugfile initialization manual to allow the use of
+        the log module in the config module (thanks to Brian Lenihan
+        <brian_l at mac dot com> for proposing this).
 
-	* config.py: Fix --rebuild command line switch.
+        * config.py: Fix --rebuild command line switch.
 
-	* services/players/mpg123.py: Be more relaxed when initializing
-	the player and when parsing the "@F" lines to make mpg123 work
-	again (thanks to Brian Lenihan <brian_l at mac dot com> for
-	providing a patch).
+        * services/players/mpg123.py: Be more relaxed when initializing
+        the player and when parsing the "@F" lines to make mpg123 work
+        again (thanks to Brian Lenihan <brian_l at mac dot com> for
+        providing a patch).
 
-	* conf/pytonerc: Add sample command line for mpg123 player.
+        * conf/pytonerc: Add sample command line for mpg123 player.
 
-	* dbitem.py: Do not assume that all exceptions derive from the
-	Exception base class (fixing the scanning problems reported by
-	Alexander Wirt <formorer at formorer dot de> and Jack Bakeman
-	<jbakeman at indra dot com>).
+        * dbitem.py: Do not assume that all exceptions derive from the
+        Exception base class (fixing the scanning problems reported by
+        Alexander Wirt <formorer at formorer dot de> and Jack Bakeman
+        <jbakeman at indra dot com>).
 
 
 2005-02-08 Jörg Lehmann  <joerg@luga.de>
 
-	* config.py: Use correct copyright date when printing usage
-	summary.
+        * config.py: Use correct copyright date when printing usage
+        summary.
 
 
 2005-02-07 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.2.1 released.
+        * Version 2.2.1 released.
 
-	* services/playlist.py: Also notify database of not fully
-	played song when stopping the player manually.
+        * services/playlist.py: Also notify database of not fully
+        played song when stopping the player manually.
 
-	* services/songdb.py: Improve random choice logic.
+        * services/songdb.py: Improve random choice logic.
 
-	* services/songdb.py: Store copy of request and not request
-	itself in cache.
+        * services/songdb.py: Store copy of request and not request
+        itself in cache.
 
-	* config.py: Add more checks for database options: prevent
-	sharing of basenames or dbenvdirs of several databases.
+        * config.py: Add more checks for database options: prevent
+        sharing of basenames or dbenvdirs of several databases.
 
 
 2005-02-06 Jörg Lehmann  <joerg@luga.de>
 
-	* log.py: New function debug_traceback which records a traceback
-	when in debugging mode.
+        * log.py: New function debug_traceback which records a traceback
+        when in debugging mode.
 
-	* dbitem.py: Ignore (but report when in debugging mode) errors
-	when parsing the song metadata (thanks to Jack Bakeman <jbakeman
-	at indra dot com>, Sascha <spx at gmx dot net>, and Alexander Wirt
-	<formorer at formorer dot de> for reporting that problem).
+        * dbitem.py: Ignore (but report when in debugging mode) errors
+        when parsing the song metadata (thanks to Jack Bakeman <jbakeman
+        at indra dot com>, Sascha <spx at gmx dot net>, and Alexander Wirt
+        <formorer at formorer dot de> for reporting that problem).
 
-	* metadata.py: fix fallback code for length calculation.
+        * metadata.py: fix fallback code for length calculation.
 
 
 2005-02-03 Jörg Lehmann  <joerg@luga.de>
 
-	* service.py: New module containing a base class for
-	services which contains a main loop doing exception handling
-	and error reporting.
+        * service.py: New module containing a base class for
+        services which contains a main loop doing exception handling
+        and error reporting.
 
-	* plugin.py: Use new service class.
+        * plugin.py: Use new service class.
 
-	* services/songdb.py: Use new service class.
+        * services/songdb.py: Use new service class.
 
-	* services/songdbs/local.py: Use new service class.
+        * services/songdbs/local.py: Use new service class.
 
-	* services/player.py: Use new service class.
+        * services/player.py: Use new service class.
 
-	* services/playlist.py: Use new service class.
+        * services/playlist.py: Use new service class.
 
 
 2005-02-01 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.2.0 released.
+        * Version 2.2.0 released.
 
 
 2005-01-25 Jörg Lehmann  <joerg@luga.de>
 
-	* filelistwin.py: Clear searchstring when search has been aborted
-	by pressing ESC.
+        * filelistwin.py: Clear searchstring when search has been aborted
+        by pressing ESC.
 
 
 2005-01-24 Jörg Lehmann  <joerg@luga.de>
 
-	* metadata.py: Also import MP3Info module when using the eyeD3
-	module, since one helper function is also needed when using the
-	latter module.
+        * metadata.py: Also import MP3Info module when using the eyeD3
+        module, since one helper function is also needed when using the
+        latter module.
 
 2005-01-23 Jörg Lehmann  <joerg@luga.de>
 
-	* services/songdb.py: Do not sort the intermediate results when
-	querying multiple databases. While this yields an improved caching
-	behaviour, we are not allowed to do that, because the caller
-	supplied compare function cannot be used for unwrapped items.
+        * services/songdb.py: Do not sort the intermediate results when
+        querying multiple databases. While this yields an improved caching
+        behaviour, we are not allowed to do that, because the caller
+        supplied compare function cannot be used for unwrapped items.
 
-	* pytone.py: Redirect stdout to /dev/null in order to prevent ALSA
-	buffer underrun messages from spoiling the user interface.
+        * pytone.py: Redirect stdout to /dev/null in order to prevent ALSA
+        buffer underrun messages from spoiling the user interface.
 
 
 2005-01-22 Jörg Lehmann  <joerg@luga.de>
 
-	* item.py: Remove bogus cmpitem method of rating class.
+        * item.py: Remove bogus cmpitem method of rating class.
 
-	* metadata.py: New module containing the song metadata interfaces.
+        * metadata.py: New module containing the song metadata interfaces.
 
-	* Add _some_ initial support for FLAC files via pyflac (not stable
-	yet and thus currently unsupported!)
+        * Add _some_ initial support for FLAC files via pyflac (not stable
+        yet and thus currently unsupported!)
 
 
 2005-01-17 Jörg Lehmann  <joerg@luga.de>
 
-	* pcm/pcm.c: add new function upsample which allows to create
-	a pseudo-stereo stream from a mono stream
+        * pcm/pcm.c: add new function upsample which allows to create
+        a pseudo-stereo stream from a mono stream
 
-	* decoder.py: Handle mono ogg files correctly (fixing an error
-	reported by Uwe Bielz <u.bielz at wad dot org>).
+        * decoder.py: Handle mono ogg files correctly (fixing an error
+        reported by Uwe Bielz <u.bielz at wad dot org>).
 
-	* item.py: Be more robust when displaying playing time of song.
+        * item.py: Be more robust when displaying playing time of song.
 
 
 2005-01-16 Jörg Lehmann  <joerg@luga.de>
 
-	* events.py: registerplaylists now expects lists of playlists
-	instead of list of paths (analogous to registersongs).
+        * events.py: registerplaylists now expects lists of playlists
+        instead of list of paths (analogous to registersongs).
 
-	* events.py, services/songdbs/local.py. new events delplaylist and updateplaylist
-	for deletion and update of playlists
+        * events.py, services/songdbs/local.py. new events delplaylist and updateplaylist
+        for deletion and update of playlists
 
-	* services/songdbs/local.py: Also update (and delete non longer
-	existing) playlists when reregistering all songs (as suggested by
-	Stefan Wimmer <swimmer at xs4all dot nl>).
+        * services/songdbs/local.py: Also update (and delete non longer
+        existing) playlists when reregistering all songs (as suggested by
+        Stefan Wimmer <swimmer at xs4all dot nl>).
 
 
 2005-01-09 Jörg Lehmann  <joerg@luga.de>
 
-	* Plugin architecture (based upon the prototype by Nicolas Évrard
-	<nicoe at altern dot org>).
+        * Plugin architecture (based upon the prototype by Nicolas Évrard
+        <nicoe at altern dot org>).
 
 
 2004-12-31 Jörg Lehmann  <joerg@luga.de>
 
-	* item.py: Case-insensitive sort in filelist window.
+        * item.py: Case-insensitive sort in filelist window.
 
 2004-12-19 Jörg Lehmann  <joerg@luga.de>
 
-	* Include path of song in detailed information about currently selected
-	item.
+        * Include path of song in detailed information about currently selected
+        item.
 
-	* services/players/internal.py: Flush song queue and audio device
-	when a new song is requested while the player is paused.
+        * services/players/internal.py: Flush song queue and audio device
+        when a new song is requested while the player is paused.
 
 
 2004-12-12 Jörg Lehmann  <joerg@luga.de>
 
-	* config.py: Add support for config subsection templates. It is now possible
-	to define an arbitrary number of databases.
+        * config.py: Add support for config subsection templates. It is now possible
+        to define an arbitrary number of databases.
 
 
 2004-11-29 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.1.3 released.
+        * Version 2.1.3 released.
 
-	* item.py: Replace superfluous database requests, which led to an
-	unnecessarily sluggish UI during the database rebuild.
+        * item.py: Replace superfluous database requests, which led to an
+        unnecessarily sluggish UI during the database rebuild.
 
-	* filelist.py: Ensure that only dbitem.song and not item.song instances
-	are sent to the database when rescanning songs. Also send songs to
-	the correct database (if the selected directory contains songs from
-	various databases).
+        * filelist.py: Ensure that only dbitem.song and not item.song instances
+        are sent to the database when rescanning songs. Also send songs to
+        the correct database (if the selected directory contains songs from
+        various databases).
 
 
 2004-11-27 Jörg Lehmann  <joerg@luga.de>
 
-	* Add French translation (many thanks to Nicolas Évrard
-	<nicoe at altern dot org>).
+        * Add French translation (many thanks to Nicolas Évrard
+        <nicoe at altern dot org>).
 
-	* services/playlist.py: Convert songs to playlistitems, when
-	loading a playlist. Fix appending of these items, as well. (Thanks
-	to Stefan Wimmer <swimmer at xs4all dot nl> for reporting this
-	bug).
+        * services/playlist.py: Convert songs to playlistitems, when
+        loading a playlist. Fix appending of these items, as well. (Thanks
+        to Stefan Wimmer <swimmer at xs4all dot nl> for reporting this
+        bug).
 
-	* change all helper.debug calls to log.debug and move the corresponding
-	debug file code into the log module.
+        * change all helper.debug calls to log.debug and move the corresponding
+        debug file code into the log module.
 
 
 2004-11-24 Jörg Lehmann  <joerg@luga.de>
 
-	* item.py: Reduce precision for longer last played times.
+        * item.py: Reduce precision for longer last played times.
 
 
 2004-11-20 Jörg Lehmann  <joerg@luga.de>
 
-	* hub.py: renamed hub-> _defaulthub, _hub -> hub.
+        * hub.py: renamed hub-> _defaulthub, _hub -> hub.
 
-	* hub.py: Add module level functions notify, request and
-	newchannel to provide easy access to the default hub.
+        * hub.py: Add module level functions notify, request and
+        newchannel to provide easy access to the default hub.
 
-	* Replace all calls of hub methods with new hub module
-	functions making the code more readable.
+        * Replace all calls of hub methods with new hub module
+        functions making the code more readable.
 
 
 2004-11-18 Jörg Lehmann  <joerg@luga.de>
 
-	* services/songdbs/local.py: Make playlists work again (thanks to
-	Maurizio Panniello <maurizio at iac dot es> for reporting and
-	locating this problem).
+        * services/songdbs/local.py: Make playlists work again (thanks to
+        Maurizio Panniello <maurizio at iac dot es> for reporting and
+        locating this problem).
 
 
 2004-11-15 Jörg Lehmann  <joerg@luga.de>
 
-	* Renamed services/players/xmms.py in services/players/xmmsplayer.py to
-	prevent a name conflict with the pyxmms module.
+        * Renamed services/players/xmms.py in services/players/xmmsplayer.py to
+        prevent a name conflict with the pyxmms module.
 
-	* services/players/xmmsplayer.py: Replace xmms by xmms.control to
-	make this module work with the latest versions of pyxmms (thanks
-	to Mario Rodríguez <mrodriguezc at gmail dot com> for reporting
-	this problem).
+        * services/players/xmmsplayer.py: Replace xmms by xmms.control to
+        make this module work with the latest versions of pyxmms (thanks
+        to Mario Rodríguez <mrodriguezc at gmail dot com> for reporting
+        this problem).
 
-	* services/songdbs/local.py: When reregistering a song which is
-	already in the database, do not replace it completely (thereby
-	deleting its rating, etc.) but only update the song metadata.
-	(closing Debian bug #269711).
+        * services/songdbs/local.py: When reregistering a song which is
+        already in the database, do not replace it completely (thereby
+        deleting its rating, etc.) but only update the song metadata.
+        (closing Debian bug #269711).
 
 
 2004-11-08 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.1.2 released.
+        * Version 2.1.2 released.
 
-	* pytonerc: Fix typo in addsongtoplaylist and showiteminfolong options
-	(thanks to Toma¸ Ficko <tomaz at gmx dot net> for reporting these bugs).
+        * pytonerc: Fix typo in addsongtoplaylist and showiteminfolong options
+        (thanks to Toma¸ Ficko <tomaz at gmx dot net> for reporting these bugs).
 
-	* services/songdbs/local.py: Fix error occuring when requesting
-	artists, albums or songs with unknown decade (thanks to Toma¸
-	Ficko <tomaz at gmx dot net> for sending a patch).
+        * services/songdbs/local.py: Fix error occuring when requesting
+        artists, albums or songs with unknown decade (thanks to Toma¸
+        Ficko <tomaz at gmx dot net> for sending a patch).
 
-	* services/songdbs/local.py: Manually remove unneeded log files
-	because automatic removal is only supported by the newest bsddb
-	versions, fixing Debian bug #273370 (thanks to Toma¸ Ficko <tomaz
-	at gmx dot net> for sending a patch).
+        * services/songdbs/local.py: Manually remove unneeded log files
+        because automatic removal is only supported by the newest bsddb
+        versions, fixing Debian bug #273370 (thanks to Toma¸ Ficko <tomaz
+        at gmx dot net> for sending a patch).
 
 
 2004-11-07 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.1.1 released.
+        * Version 2.1.1 released.
 
-	* services/songdbs/local.py: Enable the songautoregisterer to
-	do the rescanning of songs by itself in order to take load
-	of the database thread.
+        * services/songdbs/local.py: Enable the songautoregisterer to
+        do the rescanning of songs by itself in order to take load
+        of the database thread.
 
-	* services/songdbs/local.py: When registering songs, also update
-	information of song which have alread been in database.  In
-	particular, delete songs which are no longer existent
-	(Implementing a suggestion by some anonymous user).
+        * services/songdbs/local.py: When registering songs, also update
+        information of song which have alread been in database.  In
+        particular, delete songs which are no longer existent
+        (Implementing a suggestion by some anonymous user).
 
-	* filelist.py: Call the song registerer when updating the songs in
-	the basedir of a database to prevent blocking of the UI thread.
+        * filelist.py: Call the song registerer when updating the songs in
+        the basedir of a database to prevent blocking of the UI thread.
 
 
 2004-09-25 Jörg Lehmann  <joerg@luga.de>
 
-	* item.py: Fix calculating of hours and minutes of last played
-	time (thanks to Zoltan Szalontai <szazol at e98 dothu> for finding
-	this bug).
+        * item.py: Fix calculating of hours and minutes of last played
+        time (thanks to Zoltan Szalontai <szazol at e98 dothu> for finding
+        this bug).
 
 
 2004-09-12 Jörg Lehmann  <joerg@luga.de>
 
-	* dbitem.py: Update path information when rescanning song. When
-	updating the songs in a database, a relocation in a different
-	musicbasedir is now taken into amount correctly.
+        * dbitem.py: Update path information when rescanning song. When
+        updating the songs in a database, a relocation in a different
+        musicbasedir is now taken into amount correctly.
 
 
 2004-08-20 Jörg Lehmann  <joerg@luga.de>
 
-	* Never issue a requestnextsong request for second player. (Fixing
-	a problem occured during the last Rothsee-Party).
+        * Never issue a requestnextsong request for second player. (Fixing
+        a problem occured during the last Rothsee-Party).
 
-	* Associate a playlist (or explicitly none) to every player.
+        * Associate a playlist (or explicitly none) to every player.
 
-	* requests.py: requestnextsong now requires a playlistid instead of
-	a playerid.
+        * requests.py: requestnextsong now requires a playlistid instead of
+        a playerid.
 
-	* services/songdbs/local.py: Checkpoint database after each
-	database update step to prevent even more oversized log files.
+        * services/songdbs/local.py: Checkpoint database after each
+        database update step to prevent even more oversized log files.
 
-	* dbitem.py: Only store last 10 playing times.
+        * dbitem.py: Only store last 10 playing times.
 
 
 2004-08-16 Jörg Lehmann  <joerg@luga.de>
 
-	* services/songdbs/local.py: Treat case of musicbasedir ending
-	with a slash correctly (fixing a problem reported by Alexander
-	Wirt <formorer at formorer dot de>).
+        * services/songdbs/local.py: Treat case of musicbasedir ending
+        with a slash correctly (fixing a problem reported by Alexander
+        Wirt <formorer at formorer dot de>).
 
 
 2004-08-11 Jörg Lehmann  <joerg@luga.de>
 
-	* services/playlist.py: Fix wrong playlistitem constructor
-	signature in playlistaddsongtop (thanks to Andreas Poisel
-	<a.poisel at acat dot cc> for reporting this bug).
+        * services/playlist.py: Fix wrong playlistitem constructor
+        signature in playlistaddsongtop (thanks to Andreas Poisel
+        <a.poisel at acat dot cc> for reporting this bug).
 
 
 2004-08-09 Jörg Lehmann  <joerg@luga.de>
 
-	* Also accept "MP3" etc. as extension of MP3 files.
+        * Also accept "MP3" etc. as extension of MP3 files.
 
-	* New window which show more detailed information about currently
-	selected item.
+        * New window which show more detailed information about currently
+        selected item.
 
 
 2004-08-03 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.1.0 released.
+        * Version 2.1.0 released.
 
-	* dbitem.py: Really use length of MP3 file if no ID3 tag
-	is present (when using eyeD3 module).
+        * dbitem.py: Really use length of MP3 file if no ID3 tag
+        is present (when using eyeD3 module).
 
-	* services/playlist.py: Reset playingsong to None only using
-	the playbackinfochanged event.
+        * services/playlist.py: Reset playingsong to None only using
+        the playbackinfochanged event.
 
-	* services/playlist.py: React on changes in the song database.
+        * services/playlist.py: React on changes in the song database.
 
 
 2004-08-02 Jörg Lehmann  <joerg@luga.de>
 
-	* dbitem.py: Try harder to get reasonable length information
-	for MP3 file.
+        * dbitem.py: Try harder to get reasonable length information
+        for MP3 file.
 
-	* dbitem.py: Add adddict and safe options to format method of
-	song.
+        * dbitem.py: Add adddict and safe options to format method of
+        song.
 
-	* dbitem.py: Store list of last played times.
+        * dbitem.py: Store list of last played times.
 
-	* Consider song as not having been played if it has been aborted
-	very early (currently during the first 10 seconds) (closing Debian
-	bug #218283).
+        * Consider song as not having been played if it has been aborted
+        very early (currently during the first 10 seconds) (closing Debian
+        bug #218283).
 
-	* playlist.py: Do not set playingsong by using the playbackinfochanged
-	event of the player since this leads to race conditions.
+        * playlist.py: Do not set playingsong by using the playbackinfochanged
+        event of the player since this leads to race conditions.
 
 
 2004-07-27 Jörg Lehmann  <joerg@luga.de>
 
-	* item.py : Show songs in filtered artist.
+        * item.py : Show songs in filtered artist.
 
-	* filelistwin.py: Implement incremental searching (as suggested by
-	Stuart Pook <Stuart dot Pook at infres dot enst dot fr>).
+        * filelistwin.py: Implement incremental searching (as suggested by
+        Stuart Pook <Stuart dot Pook at infres dot enst dot fr>).
 
-	* config.py: New key binding "repeatsearch" in filelist window
-	 which allows the user to specify a key for the repetition of the
-	 last search (as suggested by Falko Rütten <falko.ruetten at
-	 cmdline dot net>).
+        * config.py: New key binding "repeatsearch" in filelist window
+         which allows the user to specify a key for the repetition of the
+         last search (as suggested by Falko Rütten <falko.ruetten at
+         cmdline dot net>).
 
-	* config.py: New option songchangecommand in general section which allows
-	to specify a command executed when the playback of a new song starts.
+        * config.py: New option songchangecommand in general section which allows
+        to specify a command executed when the playback of a new song starts.
 
 
 2004-07-26 Jörg Lehmann  <joerg@luga.de>
 
-	* New configuration options in database sections which allow the user
-	to turn on and off various tag transformation and to specify the
-	regular expression used for obtaining track nr and title from the song
-	filename.
+        * New configuration options in database sections which allow the user
+        to turn on and off various tag transformation and to specify the
+        regular expression used for obtaining track nr and title from the song
+        filename.
 
-	* services/songdbs/local.py: Even further simplify artist and
-	album index machinery now that ratings are no longer stored
-	directly in this items but only in songs.
+        * services/songdbs/local.py: Even further simplify artist and
+        album index machinery now that ratings are no longer stored
+        directly in this items but only in songs.
 
 
 2004-07-25 Jörg Lehmann  <joerg@luga.de>
 
-	* Implemented play previous song (as requested by Sebastian
-	Schwerdhoefer and Han Boetes, George J. De Bruin, and Sam Rowe)
+        * Implemented play previous song (as requested by Sebastian
+        Schwerdhoefer and Han Boetes, George J. De Bruin, and Sam Rowe)
 
-	* pytonerc: New config option stepsize in mixer section, which
-	allows the user to change the step size (in percent) of the mixer
-	(requested by Krzysztof Zych <kzych at manta dot univ dot gda dot
-	pl>).
+        * pytonerc: New config option stepsize in mixer section, which
+        allows the user to change the step size (in percent) of the mixer
+        (requested by Krzysztof Zych <kzych at manta dot univ dot gda dot
+        pl>).
 
-	* mixerwin.py: Make volume bar as wide as possible when
-	type=statusbar (requested by Krzysztof Zych <kzych at manta dot
-	univ dot gda dot pl>).
+        * mixerwin.py: Make volume bar as wide as possible when
+        type=statusbar (requested by Krzysztof Zych <kzych at manta dot
+        univ dot gda dot pl>).
 
 
 2004-07-24 Jörg Lehmann  <joerg@luga.de>
 
-	* dbitem.py: Remove genres and years attributes of artist and album.
+        * dbitem.py: Remove genres and years attributes of artist and album.
 
-	* dbitem.py: New index rating.
+        * dbitem.py: New index rating.
 
-	* services/songdbs/local.py: Generalize index machinery to enable
-	simplified addition of new index.
+        * services/songdbs/local.py: Generalize index machinery to enable
+        simplified addition of new index.
 
-	* item.py: Generalize filtereditem for a simplified addition of
-	a new index.
+        * item.py: Generalize filtereditem for a simplified addition of
+        a new index.
 
-	* Do no longer store artist and album rating but instead a rating
-	source in the song.
+        * Do no longer store artist and album rating but instead a rating
+        source in the song.
 
-	* Allow the user to filter songs by their rating (as suggested by
-	Thomas Klein-Hitpass <thomas at projekt-barrierefrei dot de>).
+        * Allow the user to filter songs by their rating (as suggested by
+        Thomas Klein-Hitpass <thomas at projekt-barrierefrei dot de>).
 
-	* Database version 4.
+        * Database version 4.
 
 
 2004-07-22 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.0.14 released.
+        * Version 2.0.14 released.
 
-	* Make player progress bar more readable on mono devices (thanks
-	to Krzysztof Zych <kzych at manta dot univ dot gda dot pl>).
+        * Make player progress bar more readable on mono devices (thanks
+        to Krzysztof Zych <kzych at manta dot univ dot gda dot pl>).
 
 
 2004-07-19 Jörg Lehmann  <joerg@luga.de>
 
-	* Replace "PyX" by "PyTone" in license headers (thanks to
-	Krzysztof Zych <kzych at manta dot univ dot gda dot pl> for
-	pointing this out).
+        * Replace "PyX" by "PyTone" in license headers (thanks to
+        Krzysztof Zych <kzych at manta dot univ dot gda dot pl> for
+        pointing this out).
 
-	* Add polish translation (many thanks to Krzysztof Zych <kzych at
-	manta dot univ dot gda dot pl>).
+        * Add polish translation (many thanks to Krzysztof Zych <kzych at
+        manta dot univ dot gda dot pl>).
 
-	* dbitem.py: Update eyeD3 integration based on contributions by
-	Krzysztof Zych <kzych at manta dot univ dot gda dot pl>.
+        * dbitem.py: Update eyeD3 integration based on contributions by
+        Krzysztof Zych <kzych at manta dot univ dot gda dot pl>.
 
-	* item.py: Make last played song list sorted again.
+        * item.py: Make last played song list sorted again.
 
-	* services/songdbs/locale.py: Some fixes in database upgrade code.
+        * services/songdbs/locale.py: Some fixes in database upgrade code.
 
 
 2004-07-18 Jörg Lehmann  <joerg@luga.de>
 
-	* services/songdbs/locale.py: Really make use of transactional
-	subsystem.
+        * services/songdbs/locale.py: Really make use of transactional
+        subsystem.
 
-	* services/songdbs/locale.py: Move dbitem.song creation to
-	songautoregisterer thread to greatly improve the usability during
-	the song registering process.
+        * services/songdbs/locale.py: Move dbitem.song creation to
+        songautoregisterer thread to greatly improve the usability during
+        the song registering process.
 
-	* dbitem.py: Added support for the eyeD3 module, which parses MP3
-	files much faster as the current version of the MP3Info module.
+        * dbitem.py: Added support for the eyeD3 module, which parses MP3
+        files much faster as the current version of the MP3Info module.
 
 
 2004-07-15 Jörg Lehmann  <joerg@luga.de>
 
-	* Handle SIGTERM gracefully by sending a quit signal to all
-	running threads.
+        * Handle SIGTERM gracefully by sending a quit signal to all
+        running threads.
 
 
 2004-07-13 Jörg Lehmann  <joerg@luga.de>
 
-	* hub.py: Explicitly use list as underlying queue to make the
-	PriorityQueue class work with Python 2.4 (thanks to Krzysztof Zych
-	<kzych at manta dot univ dot gda dot pl> for reporting this
-	problem).
+        * hub.py: Explicitly use list as underlying queue to make the
+        PriorityQueue class work with Python 2.4 (thanks to Krzysztof Zych
+        <kzych at manta dot univ dot gda dot pl> for reporting this
+        problem).
 
 
 2004-07-08 Jörg Lehmann  <joerg@luga.de>
 
-	* pytone.py: Catch errors during service creation to be able to shut down
-	all already running services
+        * pytone.py: Catch errors during service creation to be able to shut down
+        all already running services
 
-	* services/playlist.py: Be careful when loading a dumped playlist which
-	has ids incompatible with the global _counter variable.
+        * services/playlist.py: Be careful when loading a dumped playlist which
+        has ids incompatible with the global _counter variable.
 
-	* playlist.py: Issue selectionchanged event in _recenter and in
-	playlistchanged method if necessary. This should fix a longstanding bug where
-	the item info window showed the wrong playlist item.
+        * playlist.py: Issue selectionchanged event in _recenter and in
+        playlistchanged method if necessary. This should fix a longstanding bug where
+        the item info window showed the wrong playlist item.
 
 
 2004-07-07 Jörg Lehmann  <joerg@luga.de>
 
-	* Allow only songs located under basedir in databases.
+        * Allow only songs located under basedir in databases.
 
-	* Do not delete currently playing song when backspace is pressed.
+        * Do not delete currently playing song when backspace is pressed.
 
-	* decoder.py: Replace samplerate by outrate in calculation of
-	playing time since the data has already been resampled to outrate.
+        * decoder.py: Replace samplerate by outrate in calculation of
+        playing time since the data has already been resampled to outrate.
 
 
 2004-07-06 Jörg Lehmann  <joerg@luga.de>
 
-	* Removed some unnecessary selectionchanged notifications.
+        * Removed some unnecessary selectionchanged notifications.
 
-	* dbitem.py: Finally switched from path as id to relative path as
-	id. This should facilitate moving songs from one base directory to
-	the other.
+        * dbitem.py: Finally switched from path as id to relative path as
+        id. This should facilitate moving songs from one base directory to
+        the other.
 
-	* Database version 3.
+        * Database version 3.
 
-	* Use artist and album from relative path as fallback if no id3
-	information is present and the relative path (with respect to
-	the musicbasedir) consists of exactly two directories.
+        * Use artist and album from relative path as fallback if no id3
+        information is present and the relative path (with respect to
+        the musicbasedir) consists of exactly two directories.
 
 
 2004-07-01  Jörg Lehmann  <joerg@luga.de>
 
-	* services/songdbs/local.py: Don't index song in
-	_queryregistersong, if it is already registered in database.
+        * services/songdbs/local.py: Don't index song in
+        _queryregistersong, if it is already registered in database.
 
-	* services/songdbs/local.py: Use transaction system when writing
-	to the database (addressing the problems of Debian bug #245503).
+        * services/songdbs/local.py: Use transaction system when writing
+        to the database (addressing the problems of Debian bug #245503).
 
-	* pytone.py: Set locale to setting defined by the user's environment
-	variables.
+        * pytone.py: Set locale to setting defined by the user's environment
+        variables.
 
-	* inputwin.py: Allow the user to input all printable characters
-	according to the locale set (as suggested by Stuart Pook <Stuart
-	dot Pook at infres dot enst dot fr>).
+        * inputwin.py: Allow the user to input all printable characters
+        according to the locale set (as suggested by Stuart Pook <Stuart
+        dot Pook at infres dot enst dot fr>).
 
-	* filelistwin.py: Empty search string repeats last search (as
-	suggested by Stuart Pook <Stuart dot Pook at infres dot enst dot
-	fr>).
+        * filelistwin.py: Empty search string repeats last search (as
+        suggested by Stuart Pook <Stuart dot Pook at infres dot enst dot
+        fr>).
 
-	* slist.py: New method for regular expression search.
+        * slist.py: New method for regular expression search.
 
-	* filelistwin.py: Search strings are now interpreted as regular
-	expressions.
+        * filelistwin.py: Search strings are now interpreted as regular
+        expressions.
 
 
 2004-06-29  Jörg Lehmann  <joerg@luga.de>
 
-	* Make timer a service, which runs in an independent thread
+        * Make timer a service, which runs in an independent thread
 
-	* services/songdbs/local.py: Turn on transaction and log subsystem
-	and checkpoint log regularly.
+        * services/songdbs/local.py: Turn on transaction and log subsystem
+        and checkpoint log regularly.
 
 
 2004-06-25  Jörg Lehmann  <joerg@luga.de>
 
-	* mixerwin.py: Do not fail if neither ossaudiodev nor oss module
-	is present (thanks to Linus Sjöberg <lsjoberg at aland dot net>)
+        * mixerwin.py: Do not fail if neither ossaudiodev nor oss module
+        is present (thanks to Linus Sjöberg <lsjoberg at aland dot net>)
 
 
 2004-06-21  Jörg Lehmann  <joerg@luga.de>
 
-	* dbitem.py: Catch error when no id3 tag is present in an MP3
-	file (fix contributed by Toma¸ Ficko <tomaz at gmx dot net>).
+        * dbitem.py: Catch error when no id3 tag is present in an MP3
+        file (fix contributed by Toma¸ Ficko <tomaz at gmx dot net>).
 
-	* MP3Info.py: New version (thanks to Toma¸ Ficko <tomaz at gmx dot
-	net> for providing me with the update). Included is a patch which
-	should fix the length detection for VBR MP3 files (hopefully
-	fixing a problem reported some time ago by George J. De Bruin
-	<SoundChaser at myrealbox dot com>).
+        * MP3Info.py: New version (thanks to Toma¸ Ficko <tomaz at gmx dot
+        net> for providing me with the update). Included is a patch which
+        should fix the length detection for VBR MP3 files (hopefully
+        fixing a problem reported some time ago by George J. De Bruin
+        <SoundChaser at myrealbox dot com>).
 
 
 2004-06-13  Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.0.13 released.
+        * Version 2.0.13 released.
 
 
 2004-06-10  Jörg Lehmann  <joerg@luga.de>
 
-	* conf/pytonerc: Update description of autoregisterer option
-	in the database sections (fixing Debian bug #245528).
+        * conf/pytonerc: Update description of autoregisterer option
+        in the database sections (fixing Debian bug #245528).
 
-	* conf/pytonerc: New option dbfile in database sections which allows
-	to store the database in one single file (instead of multiple ones,
-	when using the old basename option)
+        * conf/pytonerc: New option dbfile in database sections which allows
+        to store the database in one single file (instead of multiple ones,
+        when using the old basename option)
 
-	* services/songdbs/local.py: support storing of databases in a
-	single file.
+        * services/songdbs/local.py: support storing of databases in a
+        single file.
 
 
 2004-04-22  Jörg Lehmann  <joerg@luga.de>
 
-	* Do not process global keybindings when input window is active
-	(thanks to Andreas Poisel <a.poisel at acat dot cc> for reporting
-	this problem).
+        * Do not process global keybindings when input window is active
+        (thanks to Andreas Poisel <a.poisel at acat dot cc> for reporting
+        this problem).
 
-	* pytonectl.py: Rewrite to allow for requests and not only events.
+        * pytonectl.py: Rewrite to allow for requests and not only events.
 
-	* pytonectl.py: Add getplayerinfo function, which prints a string
-	with information about the currently playing song (as suggested by
-	Alexander Wirt <formorer at formorer dot de>).
+        * pytonectl.py: Add getplayerinfo function, which prints a string
+        with information about the currently playing song (as suggested by
+        Alexander Wirt <formorer at formorer dot de>).
 
 
 2004-04-21  Jörg Lehmann  <joerg@luga.de>
 
-	* pytonectl: Print error message instead of traceback when
-	connection to server fails (as suggested by Alexander Wirt
-	<formorer at formorer dot de>).
+        * pytonectl: Print error message instead of traceback when
+        connection to server fails (as suggested by Alexander Wirt
+        <formorer at formorer dot de>).
 
 
 2004-04-17  Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.0.12 released.
+        * Version 2.0.12 released.
 
-	* Fixed selection by mouse in playlist window.
+        * Fixed selection by mouse in playlist window.
 
 
 2004-04-12  Jörg Lehmann  <joerg@luga.de>
 
-	* When dumpfile is set, we use it to store the playlist state not
-	only when a crash occurs but also on PyTone's exit.
+        * When dumpfile is set, we use it to store the playlist state not
+        only when a crash occurs but also on PyTone's exit.
 
-	* pytonerc: Added option songformat to playerwindow and
-	playlistwindow sections of config file which allow the user to
-	specify an arbitrary format strings for title of player window and
-	entries in playlist window.
+        * pytonerc: Added option songformat to playerwindow and
+        playlistwindow sections of config file which allow the user to
+        specify an arbitrary format strings for title of player window and
+        entries in playlist window.
 
 
 2004-04-11  Jörg Lehmann  <joerg@luga.de>
 
-	* Added new layout which consists only of one column.
+        * Added new layout which consists only of one column.
 
-	* pytonerc: New option togglelayout in keybindings.general
-	section.
+        * pytonerc: New option togglelayout in keybindings.general
+        section.
 
-	* Added example configuration files for different layouts.
+        * Added example configuration files for different layouts.
 
-	* pytonerc: New option layout in general section, new option
-	activetitle in filelistwindow and playlistwindow sections.
+        * pytonerc: New option layout in general section, new option
+        activetitle in filelistwindow and playlistwindow sections.
 
-	* services/players/internal.py: Fix problem preventing
-	automatic crossfading.
+        * services/players/internal.py: Fix problem preventing
+        automatic crossfading.
 
 
 2004-04-09  Jörg Lehmann  <joerg@luga.de>
 
-	* decoder.py: Use length information of mad decoder instead
-	of the one stored in the database to further improve
-	the behaviour when using VBR files.
+        * decoder.py: Use length information of mad decoder instead
+        of the one stored in the database to further improve
+        the behaviour when using VBR files.
 
-	* Window borders are know configurable.
+        * Window borders are know configurable.
 
-	* pytonerc: new option border in filelistwindow, playlistwindow,
-	iteminfowindow, and playerwindow sections.
+        * pytonerc: new option border in filelistwindow, playlistwindow,
+        iteminfowindow, and playerwindow sections.
 
 
 2004-04-05  Jörg Lehmann  <joerg@luga.de>
 
-	* dbitem.py: Use the TLEN id3 tag when existent for the length of an
-	MP3 file. Hopefully, this improves the behaviour when using
-	VBR files.
+        * dbitem.py: Use the TLEN id3 tag when existent for the length of an
+        MP3 file. Hopefully, this improves the behaviour when using
+        VBR files.
 
-	* pytonerc: Added vi-like navigation keys to standard config (as
-	suggested by Andreas Poisel <a.poisel at acat dot cc>).
+        * pytonerc: Added vi-like navigation keys to standard config (as
+        suggested by Andreas Poisel <a.poisel at acat dot cc>).
 
 
 2004-04-04  Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.0.11 released.
+        * Version 2.0.11 released.
 
 
 2004-04-03  Jörg Lehmann  <joerg@luga.de>
 
-	* config.py: Add aooptions configuration option string that allows
-	the user to change all options provided by the ao library
-	(as suggested by Stuart Pook <Stuart dot Pook at infres dot enst
-	dot fr>).
+        * config.py: Add aooptions configuration option string that allows
+        the user to change all options provided by the ao library
+        (as suggested by Stuart Pook <Stuart dot Pook at infres dot enst
+        dot fr>).
 
 
 2003-03-28 Jörg Lehmann  <joerg@luga.de>
 
-	* services/songdbs/local.py: automatically update to new
-	database version if necessary.
+        * services/songdbs/local.py: automatically update to new
+        database version if necessary.
 
-	* Close audio device when no songs are left in playlist
-	(fixing a bug reported by Stuart Pook <Stuart dot Pook at infres
-	dot enst dot fr>).
+        * Close audio device when no songs are left in playlist
+        (fixing a bug reported by Stuart Pook <Stuart dot Pook at infres
+        dot enst dot fr>).
 
-	* Remove alsa_buf_size option again as it was not working
-	as expected.
+        * Remove alsa_buf_size option again as it was not working
+        as expected.
 
 
 2003-03-22 Jörg Lehmann  <joerg@luga.de>
 
-	* services/songdbs/local.py: store version number of database
-	schema in database.
+        * services/songdbs/local.py: store version number of database
+        schema in database.
 
-	* Do no longer identify albums by artist+album but only by album
-	name (as suggested by Stuart Pook <Stuart dot Pook at infres dot
-	enst dot fr>). Albums with the same name thus get automatically
-	merged in the albums list.
+        * Do no longer identify albums by artist+album but only by album
+        name (as suggested by Stuart Pook <Stuart dot Pook at infres dot
+        enst dot fr>). Albums with the same name thus get automatically
+        merged in the albums list.
 
 
 2003-03-18 Jörg Lehmann  <joerg@luga.de>
 
-	* Prevent race condition by starting song auto registerer
-	only after the database thread has been started.
+        * Prevent race condition by starting song auto registerer
+        only after the database thread has been started.
 
 
 2003-03-17 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.0.10 released.
+        * Version 2.0.10 released.
 
-	* Added alsa_buf_size option to player sections of config file,
-	which allows one to specify the internal buffer size of the alsa
-	device (partly implementing a suggestion by Stuart Pook <Stuart
-	dot Pook at infres dot enst dot fr>).
+        * Added alsa_buf_size option to player sections of config file,
+        which allows one to specify the internal buffer size of the alsa
+        device (partly implementing a suggestion by Stuart Pook <Stuart
+        dot Pook at infres dot enst dot fr>).
 
-	* Added sections logwindow and colors.logwindow to config file.
+        * Added sections logwindow and colors.logwindow to config file.
 
-	* Mark song as unplayed again when it is stopped (as suggested by
-	George J. De Bruin <SoundChaser at myrealbox dot com>).
+        * Mark song as unplayed again when it is stopped (as suggested by
+        George J. De Bruin <SoundChaser at myrealbox dot com>).
 
 
 2003-03-15 Jörg Lehmann  <joerg@luga.de>
 
-	* Keep audio device only open, when it is really needed, i.e.,
-	close it when the player is stopped or paused (as suggested by
-	<Stuart dot Pook at infres dot enst dot fr>).
+        * Keep audio device only open, when it is really needed, i.e.,
+        close it when the player is stopped or paused (as suggested by
+        <Stuart dot Pook at infres dot enst dot fr>).
 
-	* Log problems during audio device initialisation to message log.
+        * Log problems during audio device initialisation to message log.
 
 
 2003-03-14 Jörg Lehmann  <joerg@luga.de>
 
-	* Disable mixer functionality when an error occured during mixer
-	initialisation.
+        * Disable mixer functionality when an error occured during mixer
+        initialisation.
 
-	* Add message log functionality.
+        * Add message log functionality.
 
-	* Do not use "=" for the top border of an active windows anymore.
+        * Do not use "=" for the top border of an active windows anymore.
 
 
 2003-03-13 Jörg Lehmann  <joerg@luga.de>
 
-	* pytone.py: Initialize players after databases to prevent a race
-	condition when autoplaymode=random (thanks to Niels Drost
-	<ndrost@cs dot vu dot nl> for reporting this bug).
+        * pytone.py: Initialize players after databases to prevent a race
+        condition when autoplaymode=random (thanks to Niels Drost
+        <ndrost@cs dot vu dot nl> for reporting this bug).
 
-	* Handle virtual directories at top of filelist window correctly
-	when inserting new artists in the database (fixing a bug reported
-	by Niels Drost <ndrost@cs dot vu dot nl>).
+        * Handle virtual directories at top of filelist window correctly
+        when inserting new artists in the database (fixing a bug reported
+        by Niels Drost <ndrost@cs dot vu dot nl>).
 
-	* config.py: Fix wrong behaviour with foreground colour black
-	(thanks to Stuart Pook <Stuart.Pook@infres.enst.fr> for
-	reporting this problem).
-
-
-2003-02-18 Jörg Lehmann  <joerg@luga.de>
-
-	* Check for old database type did require Python 2.2 and above.
-
-	* Include cursext extension module in distribution.
-
-	* Check path names in m3u files for zero-bytes to handle a (very
-	rare) corner case (reported by Douglas Bagnall <douglas at
-	paradise dot net dot nz>.
+        * config.py: Fix wrong behaviour with foreground colour black
+        (thanks to Stuart Pook <Stuart.Pook@infres.enst.fr> for
+        reporting this problem).
 
 
 2003-02-18 Jörg Lehmann  <joerg@luga.de>
 
-	* Include po files in distribution.
+        * Check for old database type did require Python 2.2 and above.
+
+        * Include cursext extension module in distribution.
+
+        * Check path names in m3u files for zero-bytes to handle a (very
+        rare) corner case (reported by Douglas Bagnall <douglas at
+        paradise dot net dot nz>.
+
+
+2003-02-18 Jörg Lehmann  <joerg@luga.de>
+
+        * Include po files in distribution.
 
 
 2003-02-15 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.0.9 released.
+        * Version 2.0.9 released.
 
-	* filelistwin.py and playlistwin.py: Move cursor to the right
-	position in order to make it more easy for users of Braille
-	displays to track the current position/selection (thanks to
-	Stéphane Doyon <s.doyon at videotron dot ca>).
+        * filelistwin.py and playlistwin.py: Move cursor to the right
+        position in order to make it more easy for users of Braille
+        displays to track the current position/selection (thanks to
+        Stéphane Doyon <s.doyon at videotron dot ca>).
 
-	* config.py and services/players/internal.py: New config option
-	crossfading in [players.*] sections, which allows the user to turn
-	off the crossfading of songs (suggested by Niels Drost <ndrost@cs
-	dot vu dot nl>).
+        * config.py and services/players/internal.py: New config option
+        crossfading in [players.*] sections, which allows the user to turn
+        off the crossfading of songs (suggested by Niels Drost <ndrost@cs
+        dot vu dot nl>).
 
-	* services/songdbs/local.py: Store playing time with each song
-	in lastplayed list to later on permit merging of lists coming
-	from different databases. Upon upgrade, the last played song
-	list will be deleted!
+        * services/songdbs/local.py: Store playing time with each song
+        in lastplayed list to later on permit merging of lists coming
+        from different databases. Upon upgrade, the last played song
+        list will be deleted!
 
 
 2003-02-14 Jörg Lehmann  <joerg@luga.de>
 
-	* services/playlist.py: Upon deletion of played songs, the played and total
-	times info of the playlist have not been adapted.
+        * services/playlist.py: Upon deletion of played songs, the played and total
+        times info of the playlist have not been adapted.
 
-	* playlistwin.py: When given the focus to the playlist window, we
-	now recenter the displayed list and select the currently playing
-	song.
+        * playlistwin.py: When given the focus to the playlist window, we
+        now recenter the displayed list and select the currently playing
+        song.
 
-	* Disable logging functionality of bsddb.
+        * Disable logging functionality of bsddb.
 
-	* When updating the song database, we delete songs which are no longer
-	accesible.
+        * When updating the song database, we delete songs which are no longer
+        accesible.
 
-	* services/songdbs/local.py: Be more aggresive, when scanning for
-	new songs.
+        * services/songdbs/local.py: Be more aggresive, when scanning for
+        new songs.
 
 
 2003-02-12 Jörg Lehmann  <joerg@luga.de>
 
-	* dbitem.py: Try to determine the "correct" character set for the reencoding
-	of the unicode strings contained in the tags of Ogg Vorbis files
-	(thanks to Michal Cihar <michal at cihar dot com> for the patch).
+        * dbitem.py: Try to determine the "correct" character set for the reencoding
+        of the unicode strings contained in the tags of Ogg Vorbis files
+        (thanks to Michal Cihar <michal at cihar dot com> for the patch).
 
 
 2003-02-08 Jörg Lehmann  <joerg@luga.de>
 
-	* Better curses initialisation (thanks to Johannes Mockenhaupt <jmockenhaupt
-	at gmx dot net>)
+        * Better curses initialisation (thanks to Johannes Mockenhaupt <jmockenhaupt
+        at gmx dot net>)
 
-	* Add an extension module which provides support for transparent
-	terminals also for "older" Python versions (thanks to Johannes Mockenhaupt
-	<jmockenhaupt at gmx dot net>).
+        * Add an extension module which provides support for transparent
+        terminals also for "older" Python versions (thanks to Johannes Mockenhaupt
+        <jmockenhaupt at gmx dot net>).
 
-	* pytone.py: Initialize players before everything else to prevent a hang of
-	PyTone when a problem occured at this stage.
+        * pytone.py: Initialize players before everything else to prevent a hang of
+        PyTone when a problem occured at this stage.
 
-	* services/player.py: Be more verbose on player initialization problems.
+        * services/player.py: Be more verbose on player initialization problems.
 
 
 2003-02-07 Jörg Lehmann  <joerg@luga.de>
 
-	* services/playlist.py: Remove extraneous _checksong call in _addsongs method.
+        * services/playlist.py: Remove extraneous _checksong call in _addsongs method.
 
-	* services/playlist.py: Check whether song is already contained in a local
-	database. If yes, do not create a new entry in the primary database.
-	The disadvantage of this behaviour is that the playing information is
-	no longer collected centrally.
+        * services/playlist.py: Check whether song is already contained in a local
+        database. If yes, do not create a new entry in the primary database.
+        The disadvantage of this behaviour is that the playing information is
+        no longer collected centrally.
 
-	* Rescanning songs proceeds now in a separate thread.
+        * Rescanning songs proceeds now in a separate thread.
 
 
 2003-01-31 Jörg Lehmann  <joerg@luga.de>
 
-	* services/players/internal.py: Check for endianness of platform to set
-	correct output format when using the ossaudiodev module, fixing the
-	internal player on PowerPC (thanks to Peter Poeml <poeml at suse
-	dot de> for the patch).
+        * services/players/internal.py: Check for endianness of platform to set
+        correct output format when using the ossaudiodev module, fixing the
+        internal player on PowerPC (thanks to Peter Poeml <poeml at suse
+        dot de> for the patch).
 
-	* setup.py: install italian message catalog
+        * setup.py: install italian message catalog
 
 
 2003-01-18 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.0.8 released.
+        * Version 2.0.8 released.
 
-	* Include Italian localization (many thanks to Davide Alessio
-	<dalessio at softhome dot net>).
+        * Include Italian localization (many thanks to Davide Alessio
+        <dalessio at softhome dot net>).
 
 
 2003-01-11 Jörg Lehmann  <joerg@luga.de>
 
-	* network.py: Do not bail out when pytonectl socket does not exist
-	(thanks to Alexander Wirt <formorer at formorer dot de> for
-	reporting this problem).
+        * network.py: Do not bail out when pytonectl socket does not exist
+        (thanks to Alexander Wirt <formorer at formorer dot de> for
+        reporting this problem).
 
 
 2003-01-06 Jörg Lehmann  <joerg@luga.de>
 
-	* playlist.py: Fix bug occuring when rating a song and no song is
-	selected in playlist. Furthermore, the song info window was not
-	updated.
+        * playlist.py: Fix bug occuring when rating a song and no song is
+        selected in playlist. Furthermore, the song info window was not
+        updated.
 
-	* Added new command rescan in filelist and playlist mode, which allows
-	the user to rescan/update the id3 information of the selected song(s).
+        * Added new command rescan in filelist and playlist mode, which allows
+        the user to rescan/update the id3 information of the selected song(s).
 
 
 2003-01-05 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.0.7 released.
+        * Version 2.0.7 released.
 
-	* Fix incorrect title and sort order when displaying genre and
-	decade filtered items.
+        * Fix incorrect title and sort order when displaying genre and
+        decade filtered items.
 
 
 2003-01-04 Jörg Lehmann  <joerg@luga.de>
 
-	* MP3Info.py: use new version of Vivake Gupta.
+        * MP3Info.py: use new version of Vivake Gupta.
 
-	* dbitem.py: adapt to new version of MP3Info module.
+        * dbitem.py: adapt to new version of MP3Info module.
 
-	* dbitem.py: Extract track number from file names like
-	"03 Songtitle.mp3".
+        * dbitem.py: Extract track number from file names like
+        "03 Songtitle.mp3".
 
 
 2003-01-03 Jörg Lehmann  <joerg@luga.de>
 
-	* config.py: Added new option cachesize in [database.*] sections,
-	which allows to specify the cache size used for the database
-	when using Python 2.3 and above.
+        * config.py: Added new option cachesize in [database.*] sections,
+        which allows to specify the cache size used for the database
+        when using Python 2.3 and above.
 
-	* services/songdbs/songdb.py: Renamed in services/songdbs/local.py
-	to prevent collision with global bsddb.py module.
+        * services/songdbs/songdb.py: Renamed in services/songdbs/local.py
+        to prevent collision with global bsddb.py module.
 
-	* services/songdbs/local.py: Enable use of new bsddb module
-	from Python 2.3 and above.
+        * services/songdbs/local.py: Enable use of new bsddb module
+        from Python 2.3 and above.
 
 
 2003-12-13 Jörg Lehmann  <joerg@luga.de>
 
-	* config.py: Do not process command line and reading of
-	configuration file at module initialisation time, in order to be
-	usable for pytonectl as well (fixing a problem reported by Han
-	Boetes <han at mijncomputer dot nl>).
+        * config.py: Do not process command line and reading of
+        configuration file at module initialisation time, in order to be
+        usable for pytonectl as well (fixing a problem reported by Han
+        Boetes <han at mijncomputer dot nl>).
 
-	* services/player.py: autoplay now also works after having
-	stopped and restarted the player manually (thanks to Han Boetes
-	for pointing me to this long standing annoyance).
+        * services/player.py: autoplay now also works after having
+        stopped and restarted the player manually (thanks to Han Boetes
+        for pointing me to this long standing annoyance).
 
-	* events.py: New event playertogglepause which allows to pause the
-	player, if it is playing, or start playing, if it is paused.
+        * events.py: New event playertogglepause which allows to pause the
+        player, if it is playing, or start playing, if it is paused.
 
-	* pytonectl.py: Add support for the playertogglepause function (as
-	suggested by Han Boetes <han at mijncomputer dot nl>).
+        * pytonectl.py: Add support for the playertogglepause function (as
+        suggested by Han Boetes <han at mijncomputer dot nl>).
 
 
 2003-12-12 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.0.6 released.
+        * Version 2.0.6 released.
 
-	* event.py, player.py: Add new event playerratecurrentsong:
-	rating of the song currently being played on the player.
+        * event.py, player.py: Add new event playerratecurrentsong:
+        rating of the song currently being played on the player.
 
 
 2003-12-11 Jörg Lehmann  <joerg@luga.de>
 
-	* pytonectl.py: Add support for song addition and immediate song
-	play.
+        * pytonectl.py: Add support for song addition and immediate song
+        play.
 
-	* config.py: New option playerinfofile in the general section,
-	which allows to specify a file where the song currently being
-	played on the main player will be written (as suggested by Han
-	Boetes <han at mijncomputer dot nl>).
+        * config.py: New option playerinfofile in the general section,
+        which allows to specify a file where the song currently being
+        played on the main player will be written (as suggested by Han
+        Boetes <han at mijncomputer dot nl>).
 
 
 2003-12-09 Jörg Lehmann  <joerg@luga.de>
 
-	* config.py: Prune removed -n switch from usage/help output.
+        * config.py: Prune removed -n switch from usage/help output.
 
-	* pytonectl.py: New script for the remote control of PyTone (as
-	suggested by Han Boetes <han at mijncomputer dot nl>).
+        * pytonectl.py: New script for the remote control of PyTone (as
+        suggested by Han Boetes <han at mijncomputer dot nl>).
 
-	* config.py: New option in the network section: socketfile.
-	Specifies the name of a UNIX domain socket for the remote control
-	of PyTone, if set to a non-empty value.
-
-
-2003-11-25 Jörg Lehmann  <joerg@luga.de>
-
-	* Version 2.0.5 released.
-
-	* Added missing help texts for functions introduced in version
-	2.0.4 (fixing a bug spotted by Han Boetes <han at mijncomputer dot
-	nl>).
-
-	* Fix a small bug in services.players (thanks to Andreas Poisel <a
-	dot poisel at acat dot cc> for the patch).
-
-	* services/playlist.py: Notify upon playlist changes due to a song being
-	played.
-
-	* Cleanup README file: purge news section.
+        * config.py: New option in the network section: socketfile.
+        Specifies the name of a UNIX domain socket for the remote control
+        of PyTone, if set to a non-empty value.
 
 
 2003-11-25 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.0.4 released.
+        * Version 2.0.5 released.
+
+        * Added missing help texts for functions introduced in version
+        2.0.4 (fixing a bug spotted by Han Boetes <han at mijncomputer dot
+        nl>).
+
+        * Fix a small bug in services.players (thanks to Andreas Poisel <a
+        dot poisel at acat dot cc> for the patch).
+
+        * services/playlist.py: Notify upon playlist changes due to a song being
+        played.
+
+        * Cleanup README file: purge news section.
+
+
+2003-11-25 Jörg Lehmann  <joerg@luga.de>
+
+        * Version 2.0.4 released.
 
 
 2003-11-24 Jörg Lehmann  <joerg@luga.de>
 
-	* Added repeat function for playlist.
+        * Added repeat function for playlist.
 
-	* The playlist mode can now be set initially with the variable
-	initialplaylistmode in the [general] section (instead of
-	autorandomplay) and toggled during runtime by pressing CTRL-T.
+        * The playlist mode can now be set initially with the variable
+        initialplaylistmode in the [general] section (instead of
+        autorandomplay) and toggled during runtime by pressing CTRL-T.
 
 
 2003-11-23 Jörg Lehmann  <joerg@luga.de>
 
-	* More safety checks with respect to Ogg Vorbis support.
+        * More safety checks with respect to Ogg Vorbis support.
 
-	* Do not show Ogg Vorbis files in filesystem directory view, if no
-	Ogg Vorbis support is present.
+        * Do not show Ogg Vorbis files in filesystem directory view, if no
+        Ogg Vorbis support is present.
 
-	* Move update of song played information to services/player.py to
-	be consistent with song.unplay, which will be introduced later.
+        * Move update of song played information to services/player.py to
+        be consistent with song.unplay, which will be introduced later.
 
-	* Rename _nextsong->_playsong in player modules.
+        * Rename _nextsong->_playsong in player modules.
 
 
 2003-11-18 Jörg Lehmann  <joerg@luga.de>
 
-	* services/playlist.py: Replace incorrect use of dbitem.song by item.song in
-	_checksong method.
+        * services/playlist.py: Replace incorrect use of dbitem.song by item.song in
+        _checksong method.
 
-	* add autorandomplay to [general] section of pytonerc, which enables
-	choosing a random song for playing, when playlist is empty
+        * add autorandomplay to [general] section of pytonerc, which enables
+        choosing a random song for playing, when playlist is empty
 
-	* Allow replaying of the current playlist. The corresponding key
-	can be configured in the [keybindings] section of pytonerc via the
-	variable general.playlistreplay (implements Debian wishlist bug
-	#218282)
+        * Allow replaying of the current playlist. The corresponding key
+        can be configured in the [keybindings] section of pytonerc via the
+        variable general.playlistreplay (implements Debian wishlist bug
+        #218282)
 
 
 2003-10-18 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.0.3 released.
+        * Version 2.0.3 released.
 
-	* pytone.py: Prevent mainscreen.dump from being called if the mainscreen
-	constructor did not succeed (reported including a patch in Debian bug 216002
-	by David Kågedal <davidk at lysator dot liu dot se>)
+        * pytone.py: Prevent mainscreen.dump from being called if the mainscreen
+        constructor did not succeed (reported including a patch in Debian bug 216002
+        by David Kågedal <davidk at lysator dot liu dot se>)
 
-	* config.py: Remove command line option "-n/--network". Use a
-	config file instead.
+        * config.py: Remove command line option "-n/--network". Use a
+        config file instead.
 
-	* config.py: Check for empty musicbasedir in the configuration
+        * config.py: Check for empty musicbasedir in the configuration
 
-	* pytonerc: Set musicbasedir to an empty value by default to remind
-	first time users setting this option.
+        * pytonerc: Set musicbasedir to an empty value by default to remind
+        first time users setting this option.
 
 
 2003-10-13 Jörg Lehmann  <joerg@luga.de>
 
-	* item.py: Allow getcontentsrecursive (recursive insert) and implement
-	getcontentsrecursiverandom (random insert) for filesystem directories.
-	Thanks to Martin van Es <martin at mrvanes dot com> for reporting
-	the previous inconsistency in PyTone's behaviour in that regard).
+        * item.py: Allow getcontentsrecursive (recursive insert) and implement
+        getcontentsrecursiverandom (random insert) for filesystem directories.
+        Thanks to Martin van Es <martin at mrvanes dot com> for reporting
+        the previous inconsistency in PyTone's behaviour in that regard).
 
-	* Merge pending fix from last Rothsee party's late night hacking
-	session:
+        * Merge pending fix from last Rothsee party's late night hacking
+        session:
 
-	- requestnextsong gets a playerid argument to distinguish between
-	song requests of different players
+        - requestnextsong gets a playerid argument to distinguish between
+        song requests of different players
 
 
 2003-08-12 Jörg Lehmann  <joerg@luga.de>
 
-	* config.py: Fix wrong behaviour in mono mode, when no mono
-	attribute is given in config file.
+        * config.py: Fix wrong behaviour in mono mode, when no mono
+        attribute is given in config file.
 
-	* inputwin.py: Re-added curses.ascii import, which got lost.
+        * inputwin.py: Re-added curses.ascii import, which got lost.
 
-	* config.py: New option "colorsupport" in section "general".
-	This allows to enable/disable colors both manually and
-	automatically (as before).
+        * config.py: New option "colorsupport" in section "general".
+        This allows to enable/disable colors both manually and
+        automatically (as before).
 
-	* config.py: New option "throttleoutput" in section "general",
-	which allows to specify the number of screen updates skipped when
-	there is still user input.
+        * config.py: New option "throttleoutput" in section "general",
+        which allows to specify the number of screen updates skipped when
+        there is still user input.
 
 
 2003-07-27 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.0.2 released.
+        * Version 2.0.2 released.
 
 
 2003-07-26 Jörg Lehmann  <joerg@luga.de>
 
-	* item.py: Fixed typo in decades.getcontentsrecursive()
+        * item.py: Fixed typo in decades.getcontentsrecursive()
 
-	* Purged unneeded imports and local variables found by pychecker.
+        * Purged unneeded imports and local variables found by pychecker.
 
-	* Streamlined playingsong handling by using playbackinfochanged
-	instead of playlistchanged events.
+        * Streamlined playingsong handling by using playbackinfochanged
+        instead of playlistchanged events.
 
-	* Check for __setstate__ in __getattr__ to enable unpickling of
-	certain wrapper classes for Python 2.3.
+        * Check for __setstate__ in __getattr__ to enable unpickling of
+        certain wrapper classes for Python 2.3.
 
-	* setup.py: Move everything (including pcm module) into pytone module.
+        * setup.py: Move everything (including pcm module) into pytone module.
 
 
 2003-07-25 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.0.1 released.
+        * Version 2.0.1 released.
 
 
 2003-07-24 Jörg Lehmann  <joerg@luga.de>
 
-	* Allow batching of addition of songs to playlist.
+        * Allow batching of addition of songs to playlist.
 
-	* Statusbar for help window
+        * Statusbar for help window
 
-	* Command line switch for database rebuilt.
+        * Command line switch for database rebuilt.
 
-	* Updated THANKS file.
+        * Updated THANKS file.
 
 
 2003-07-23 Jörg Lehmann  <joerg@luga.de>
 
-	* Code cleanups at various places.
+        * Code cleanups at various places.
 
-	* Outstanding issues with playlist functionality have
-	been resolved now.
+        * Outstanding issues with playlist functionality have
+        been resolved now.
 
-	* Do automatic recenter around last song of playlist if
-	no song is being played.
+        * Do automatic recenter around last song of playlist if
+        no song is being played.
 
-	* Add originating module to debugging output.
+        * Add originating module to debugging output.
 
 
 2003-07-20 Jörg Lehmann  <joerg@luga.de>
 
-	* Fix load and save of playlists (thanks to Alexander Wirt
-	  <formorer at formorer.de> for spotting this bug)
+        * Fix load and save of playlists (thanks to Alexander Wirt
+          <formorer at formorer.de> for spotting this bug)
 
-	* Enable support for monochrome terminals again.  Use
-	curses.has_colors() to determine color capabilities, but maybe we
-	eventually have to add a configuration variable for that.
+        * Enable support for monochrome terminals again.  Use
+        curses.has_colors() to determine color capabilities, but maybe we
+        eventually have to add a configuration variable for that.
 
 
 2003-07-19 Jörg Lehmann  <joerg@luga.de>
 
-	* Fix missing os.path.expanduser around config file path
-	(thanks to David Braaten <xiticix47 at hotmail.com>)
+        * Fix missing os.path.expanduser around config file path
+        (thanks to David Braaten <xiticix47 at hotmail.com>)
 
 
 2003-07-18 Jörg Lehmann  <joerg@luga.de>
 
-	* Version 2.0.0 finally released.
+        * Version 2.0.0 finally released.
 
 
 2003-06-08 Jörg Lehmann  <joerg@luga.de>
 
-	* Move service setup from mainscreen.py to pytone.py
+        * Move service setup from mainscreen.py to pytone.py
 
-	* Resurrect playlist functionality.
+        * Resurrect playlist functionality.
 
 
 2003-05-25 Jörg Lehmann  <joerg@luga.de>
 
-	* Renamed:
-	    aoplayer.py -> internal.py,
-	    mpg123player.py -> mpg123.py
-	    xmmsplayer.py -> xmms.py
+        * Renamed:
+            aoplayer.py -> internal.py,
+            mpg123player.py -> mpg123.py
+            xmmsplayer.py -> xmms.py
 
-	* First steps towards playback from remote db: try to
-	access song locally.
+        * First steps towards playback from remote db: try to
+        access song locally.
 
-	* Prevent too many register request from auto registerer.
+        * Prevent too many register request from auto registerer.
 
 
 2003-05-24 Jörg Lehmann  <joerg@luga.de>
 
-	* players/mpg123player.py: Fix bug spotted by
-	 John Plevyak <jplevyak at acm.org>: Adding a new song
-	after all songs had been played, required to stop and
-	restart the player, even though autoplay was enabled.
+        * players/mpg123player.py: Fix bug spotted by
+         John Plevyak <jplevyak at acm.org>: Adding a new song
+        after all songs had been played, required to stop and
+        restart the player, even though autoplay was enabled.
 
 
 2003-05-17 Jörg Lehmann  <joerg@luga.de>
 
-	* Support default background color and try to use
-	curses.use_default_colors, if present. This requires
-	a new version of the Python curses module.
+        * Support default background color and try to use
+        curses.use_default_colors, if present. This requires
+        a new version of the Python curses module.
 
-	* Support ossaudiodev instead of ao interface. Unfortunately,
-	this doesn't work well with the current ossaudiodev module
-	of Python 2.3beta1. On the other hand, I was not able
-	to run the ao module with a debug build of current Python
-	CVS. Probably, ao is buggy.
+        * Support ossaudiodev instead of ao interface. Unfortunately,
+        this doesn't work well with the current ossaudiodev module
+        of Python 2.3beta1. On the other hand, I was not able
+        to run the ao module with a debug build of current Python
+        CVS. Probably, ao is buggy.
 
-	* helpwin.py: Set self.items already in constructor, to
-	prevent possible crash, if one presses a key during
-	the PyTone initialization
+        * helpwin.py: Set self.items already in constructor, to
+        prevent possible crash, if one presses a key during
+        the PyTone initialization
 
-	* songdb.py: Remove unused and dangerous __len__ method,
-	which lead sometimes to a crash during the PyTone shutdown.
+        * songdb.py: Remove unused and dangerous __len__ method,
+        which lead sometimes to a crash during the PyTone shutdown.
 
 
 2003-05-13 Jörg Lehmann  <joerg@luga.de>
 
-	* New db index for playing statistics. Move respective
-	code to songdb.py
+        * New db index for playing statistics. Move respective
+        code to songdb.py
 
-	* Show info about songs which have been added most recently
-	to database.
+        * Show info about songs which have been added most recently
+        to database.
 
 
 2003-05-11 Jörg Lehmann  <joerg@luga.de>
 
-	* item.py: Replaced filtereditem by two, more specialised, classes
-	filtereddecade and filteredgenre.
+        * item.py: Replaced filtereditem by two, more specialised, classes
+        filtereddecade and filteredgenre.
 
-	* iteminfowin.py, item.py: Move code for respective items into a
-	getinfo method.
+        * iteminfowin.py, item.py: Move code for respective items into a
+        getinfo method.
 
-	* songdb.py: More index work, should be almost complete now.
+        * songdb.py: More index work, should be almost complete now.
 
 
 2003-05-10 Jörg Lehmann  <joerg@luga.de>
 
-	* MP3Info.py: change _strip_zero function to
-	  - use faster lstrip, if Python 2.2.2 and above
-	  - cut string after first (non-leading) \0 character,
-	    thereby fixing PyTone crashes reported by a few
-	    users.
+        * MP3Info.py: change _strip_zero function to
+          - use faster lstrip, if Python 2.2.2 and above
+          - cut string after first (non-leading) \0 character,
+            thereby fixing PyTone crashes reported by a few
+            users.
 
-	* slist.py: Fix bug in selectbysearchstring and selectbyletter,
-	reported by John Plevyak <jplevyak at acm.org>.
+        * slist.py: Fix bug in selectbysearchstring and selectbyletter,
+        reported by John Plevyak <jplevyak at acm.org>.
 
 
 2003-05-06  Jörg Lehmann  <joerg@luga.de>
 
-	* mainscreen.py: Catch curses.curs_set exception (reported
-	by roland at steeltorch.com.
+        * mainscreen.py: Catch curses.curs_set exception (reported
+        by roland at steeltorch.com.
 
 
 2003-05-05  Jörg Lehmann  <joerg@luga.de>
 
-	* More database work and tests. Genres now contain indices
-	to albums and songs
+        * More database work and tests. Genres now contain indices
+        to albums and songs
 
-	* album -> albumid at appropriate places
+        * album -> albumid at appropriate places
 
-	* introduced song.id, but not yet used
+        * introduced song.id, but not yet used
 
 
 2003-05-01  Jörg Lehmann  <joerg@luga.de>
 
-	* Integrated and polished some patches by Iñigo Serna
-	<inigoserna at telefonica.net>: Currently playing song gets different colour and
-	stays centred in playlist. Furthermore, some sanity checks of the id3 tags
-	have been included. Finally, as suggested by him, a much nicer scrollbar
-	has been implemented.
+        * Integrated and polished some patches by Iñigo Serna
+        <inigoserna at telefonica.net>: Currently playing song gets different colour and
+        stays centred in playlist. Furthermore, some sanity checks of the id3 tags
+        have been included. Finally, as suggested by him, a much nicer scrollbar
+        has been implemented.
 
-	* Support ossaudiodev module (and old oss module , of course) as
-	suggested by Bill Kearney <wkearney99 at hotmail.com>.
+        * Support ossaudiodev module (and old oss module , of course) as
+        suggested by Bill Kearney <wkearney99 at hotmail.com>.
 
-	* Many fixes for bugs remaining from code restructuring.
+        * Many fixes for bugs remaining from code restructuring.
 
 
 2003-04-19  Jörg Lehmann  <joerg@luga.de>
 
-	* New configuration system is complete now.
+        * New configuration system is complete now.
 
 
 2003-04-18  Jörg Lehmann  <joerg@luga.de>
 
-	* Massive rework of configuration file handling.
-	Now it is possible to use ini-style file configuration files.
-	Exceptions are for the moment the key bindings.
+        * Massive rework of configuration file handling.
+        Now it is possible to use ini-style file configuration files.
+        Exceptions are for the moment the key bindings.
 
 
 2003-04-17  Jörg Lehmann  <joerg@luga.de>
 
-	* Network connectivity now via TCP instead of XML-RPC.
+        * Network connectivity now via TCP instead of XML-RPC.
 
 
 2003-04-13  Jörg Lehmann  <joerg@luga.de>
 
-	* Reworked config file as first step versus a
-	new config syntax. Import of the curses module
-	is no longer necessary (except for the check
-	whether the user has a color or a mono terminal,
-	which often doesn't work, so ...)
+        * Reworked config file as first step versus a
+        new config syntax. Import of the curses module
+        is no longer necessary (except for the check
+        whether the user has a color or a mono terminal,
+        which often doesn't work, so ...)
 
-	* Colors now have to be specified like in mutt
-	"color foreground background" or "mono attribute".
-	Foreground may contain the prefix "bright".
+        * Colors now have to be specified like in mutt
+        "color foreground background" or "mono attribute".
+        Foreground may contain the prefix "bright".
 
-	* Accept command line options for debugging output
-	and network functionality.
+        * Accept command line options for debugging output
+        and network functionality.
 
-	* Implement first rough cut of network functionality
-	via xmlrpc. Remote access to the database is now
-	possible.
+        * Implement first rough cut of network functionality
+        via xmlrpc. Remote access to the database is now
+        possible.
 
 
 2003-04-12  Jörg Lehmann  <joerg@luga.de>
 
-	* Do not show playlist window of xmms (oops, forgot that).
+        * Do not show playlist window of xmms (oops, forgot that).
 
-	* Added list of songs for albums (and root folder)
+        * Added list of songs for albums (and root folder)
 
-	* Released 1.12.2 from the 1.12.1 codebase, fixing a Python 2.2ism.
+        * Released 1.12.2 from the 1.12.1 codebase, fixing a Python 2.2ism.
 
 
 2003-04-06  Jörg Lehmann  <joerg@luga.de>
 
-	* Add immediately played to before last played item of playlist.
+        * Add immediately played to before last played item of playlist.
 
-	* Version 1.12.1 released.
+        * Version 1.12.1 released.
 
-	* New module hub, the former event hub + a simple request hub.
+        * New module hub, the former event hub + a simple request hub.
 
-	* Major rework of database interface based upon new request hub.
-	Database now runs as separate thread.
+        * Major rework of database interface based upon new request hub.
+        Database now runs as separate thread.
 
-	* Requests for new songs now also use new request hub.
+        * Requests for new songs now also use new request hub.
 
 
 2003-04-05  Jörg Lehmann  <joerg@luga.de>
 
-	* Some restructuring in the player code.
+        * Some restructuring in the player code.
 
-	* Implement player pause.
+        * Implement player pause.
 
-	* Flush buffers on player stop.
+        * Flush buffers on player stop.
 
-	* Immediately play selected song via ALT+Return or ALT+Enter.
+        * Immediately play selected song via ALT+Return or ALT+Enter.
 
-	* Implemented shuffle function since it seemed to be very high on
-	the PyTone user's wishlist...
+        * Implemented shuffle function since it seemed to be very high on
+        the PyTone user's wishlist...
 
-	* Try to save state of playlist to dump file, if PyTone crashes.
-	During the next restart, PyTone tries to reconstruct the playlist.
+        * Try to save state of playlist to dump file, if PyTone crashes.
+        During the next restart, PyTone tries to reconstruct the playlist.
 
-	* Be more verbose, if config.basedir and config.songddb are set
-	to incorrect values.
+        * Be more verbose, if config.basedir and config.songddb are set
+        to incorrect values.
 
 
 2003-03-19  Jörg Lehmann  <joerg@luga.de>
 
-	* slist.py: prevent invalid items state.
+        * slist.py: prevent invalid items state.
 
-	* disable long traceback
+        * disable long traceback
 
 
 2003-02-06  Jörg Lehmann  <joerg@luga.de>
 
-	* updatedb.py script.
+        * updatedb.py script.
 
-	* cleanup at various places
+        * cleanup at various places
 
-	* Version 1.12.0 released.
+        * Version 1.12.0 released.
 
 
 2003-02-04  Jörg Lehmann  <joerg@luga.de>
 
-	* pcm.c: Don't free memory allocated by Python!
+        * pcm.c: Don't free memory allocated by Python!
 
 
 2003-02-03  Jörg Lehmann  <joerg@luga.de>
 
-	* All *.py files: specify encoding (for Python 2.3)
+        * All *.py files: specify encoding (for Python 2.3)
 
-	* Remove #!/usr/bin/env python for modules
+        * Remove #!/usr/bin/env python for modules
 
-	* pcm.c: Don't forget to free temporary buffer.
+        * pcm.c: Don't forget to free temporary buffer.
 
 
 2003-01-30  Jörg Lehmann  <joerg@luga.de>
 
-	* playerwin.py: Allow rating of currently playing song (via
-	alt+1, ..., alt+5 -- better suggestions are always welcome).
+        * playerwin.py: Allow rating of currently playing song (via
+        alt+1, ..., alt+5 -- better suggestions are always welcome).
 
 
 2003-01-26  Jörg Lehmann  <joerg@luga.de>
 
-	* Incorporated patch by Byron Ellacott <bje at apnic.net>
-	adding Ogg Vorbis support.
+        * Incorporated patch by Byron Ellacott <bje at apnic.net>
+        adding Ogg Vorbis support.
 
-	* iteminfowin.py. Fix display of song length.
+        * iteminfowin.py. Fix display of song length.
 
-	* pytone.py: Work around Python 2.1 gettext problem.
+        * pytone.py: Work around Python 2.1 gettext problem.
 
-	* THANKS: added Byron Ellacott.
+        * THANKS: added Byron Ellacott.
 
-	* window.py: Don't unnecessarily trim title.
+        * window.py: Don't unnecessarily trim title.
 
-	* config.py, helpwin.py, mixerwin.py: Make automatic
-	disappearing time configurable.
+        * config.py, helpwin.py, mixerwin.py: Make automatic
+        disappearing time configurable.
 
-	* inputwin.py: remove unnecessary import of oss module, which
-	prevents PyTone from working if it is not installed.
+        * inputwin.py: remove unnecessary import of oss module, which
+        prevents PyTone from working if it is not installed.
 
-	* config.py, playlist.py: Make location where playlists are stored
-	configurable.
+        * config.py, playlist.py: Make location where playlists are stored
+        configurable.
 
-	* config.py, slist.py: Make scrolling mechanism configurable `a la
-	Mutt. Also use page up algorithm from mutt. Adapt to window size
-	changes, as well!
+        * config.py, slist.py: Make scrolling mechanism configurable `a la
+        Mutt. Also use page up algorithm from mutt. Adapt to window size
+        changes, as well!
 
-	* config.py, item.py: Make position of virtual directories
-	configurable.
+        * config.py, item.py: Make position of virtual directories
+        configurable.
 
 
 2003-01-21  Jörg Lehmann  <joerg@luga.de>
 
-	* Version 1.11.0 released.
+        * Version 1.11.0 released.
 
 
 2003-01-18  Jörg Lehmann  <joerg@luga.de>
 
-	* new class playbackinfo. All players should work again.
+        * new class playbackinfo. All players should work again.
 
 
 2003-01-16  Jörg Lehmann  <joerg@luga.de>
 
-	* Indices for genres and years. This gives a huge speedup
-	for large databases.
+        * Indices for genres and years. This gives a huge speedup
+        for large databases.
 
-	* item.py: new item method getname().
+        * item.py: new item method getname().
 
 
 2003-01-14  Jörg Lehmann  <joerg@luga.de>
 
-	* Implement song, album and artist rating. Choose song
-	depending on rating upon random song insertion.
+        * Implement song, album and artist rating. Choose song
+        depending on rating upon random song insertion.
 
 
 2003-01-13  Jörg Lehmann  <joerg@luga.de>
 
-	* Implement random recursive insert. Reserve key "r" for
-	this function, giving up the old behaviour.
+        * Implement random recursive insert. Reserve key "r" for
+        this function, giving up the old behaviour.
 
 
 2003-01-12  Jörg Lehmann  <joerg@luga.de>
 
-	* config.py: New option autoregisterer, which allows to
-	enable/disbale the song automatic searching for songs
-	and playlists after the start of PyTone.
+        * config.py: New option autoregisterer, which allows to
+        enable/disbale the song automatic searching for songs
+        and playlists after the start of PyTone.
 
-	* builddb.py: Manually populate song and playlist
-	database.
+        * builddb.py: Manually populate song and playlist
+        database.
 
 
 2003-01-09  Jörg Lehmann  <joerg@luga.de>
 
-	* item.py: New classes decade and decades, which allow
-	to show only songs from a specify decade.
+        * item.py: New classes decade and decades, which allow
+        to show only songs from a specify decade.
 
 
 2003-01-06  Jörg Lehmann  <joerg@luga.de>
 
-	* Some improvements/fixes for old songdb.py. Hopefully,
-	this version is more stable for large databases.
+        * Some improvements/fixes for old songdb.py. Hopefully,
+        this version is more stable for large databases.
 
 
 2003-01-02  Jörg Lehmann  <joerg@luga.de>
 
-	* Implement bsddb3 version of songdb.py. Probably not
-	yet ready for next version.
+        * Implement bsddb3 version of songdb.py. Probably not
+        yet ready for next version.
 
 
 2002-12-30  Jörg Lehmann  <joerg@luga.de>
 
-	* players/madplayer.py: Set sample size to 4096 (instead of 4806,
-	i.e. the size of an mp3 frame). This is much more friendlier to
-	the sound device drivers! Thanks to Damjan Georgeivski
-	<penguinista at mail.net.mk> for pointing this out.
+        * players/madplayer.py: Set sample size to 4096 (instead of 4806,
+        i.e. the size of an mp3 frame). This is much more friendlier to
+        the sound device drivers! Thanks to Damjan Georgeivski
+        <penguinista at mail.net.mk> for pointing this out.
 
 
 2002-12-22  Jörg Lehmann  <joerg@luga.de>
 
-	* Use MP3Info.py from http://www.omniscia.org/~vivake/python
-	instead of old, modified mp3info.py from
-	http://www.dotfunk.com/projects/mp3/. As a consequence, id3v2
-	tags are now supported.
+        * Use MP3Info.py from http://www.omniscia.org/~vivake/python
+        instead of old, modified mp3info.py from
+        http://www.dotfunk.com/projects/mp3/. As a consequence, id3v2
+        tags are now supported.
 
 
 2002-12-21  Jörg Lehmann  <joerg@luga.de>
 
-	* Version 1.10.0 released.
+        * Version 1.10.0 released.
 
-	* madplayer.py: Manual song forward works again.
+        * madplayer.py: Manual song forward works again.
 
 
 2002-12-19  Jörg Lehmann  <joerg@luga.de>
 
-	* players/madplayer.py: Do not crossfade, if two songs follow
-	each other on an album. Kill the gap between the songs instead.
+        * players/madplayer.py: Do not crossfade, if two songs follow
+        each other on an album. Kill the gap between the songs instead.
 
 
 2002-12-15  Jörg Lehmann  <joerg@luga.de>
 
-	* Implement genre list: New database schema, permitting efficient
-	search for items belonging to a given genre. New items: genres,
-	genre and filtereditem. The latter one can be used to display
-	only a subset of the directory hierarchy.
+        * Implement genre list: New database schema, permitting efficient
+        search for items belonging to a given genre. New items: genres,
+        genre and filtereditem. The latter one can be used to display
+        only a subset of the directory hierarchy.
 
 
 2002-12-14  Jörg Lehmann  <joerg@luga.de>
 
-	* More refactoring: merge the two filelist classes. The filesystem
-	view is now provided by a virtual folder in item.py.
+        * More refactoring: merge the two filelist classes. The filesystem
+        view is now provided by a virtual folder in item.py.
 
-	* filelist.py: Implemented jump functions to the random list and
-	the filesystem view.
+        * filelist.py: Implemented jump functions to the random list and
+        the filesystem view.
 
-	* filelist.py: remove generaterandomlist.
+        * filelist.py: remove generaterandomlist.
 
-	* item.py: Refactoring. New method cmpitem of diritem classes.
-	Everything should work now properly.
+        * item.py: Refactoring. New method cmpitem of diritem classes.
+        Everything should work now properly.
 
-	* window.py, mainscreen.py: Reimplemented window resizing, which
-	is now much more robust. However, there are still some crashes
-	of xterm.
+        * window.py, mainscreen.py: Reimplemented window resizing, which
+        is now much more robust. However, there are still some crashes
+        of xterm.
 
-	* config.py: Renamed "selectedsong" -> "selected song", etc. in
-	colors. Added new field "artist/album" and "selected
-	artist/album".
+        * config.py: Renamed "selectedsong" -> "selected song", etc. in
+        colors. Added new field "artist/album" and "selected
+        artist/album".
 
-	* iteminfo.py: Recognise new items.
+        * iteminfo.py: Recognise new items.
 
 
 2002-12-12  Jörg Lehmann  <joerg@luga.de>
 
-	* Refactor filelist code: remove filelistitem, move logic
-	to item, etc.
+        * Refactor filelist code: remove filelistitem, move logic
+        to item, etc.
 
-	* Allow resizing of terminal (not fully complete yet).
+        * Allow resizing of terminal (not fully complete yet).
 
 
 2002-12-11  Jörg Lehmann  <joerg@luga.de>
 
-	* New module  purgedb.py: This module allows
-	to delete no longer existent songs from the database.
+        * New module  purgedb.py: This module allows
+        to delete no longer existent songs from the database.
 
 
 2002-12-10  Jörg Lehmann  <joerg@luga.de>
 
-	* Better formatting of last played time.
+        * Better formatting of last played time.
 
-	* Playlists are now also stored and displayed in
-	database and database view, respectively.
+        * Playlists are now also stored and displayed in
+        database and database view, respectively.
 
-	* Random songs are now also accesible via the
-	main database view.
+        * Random songs are now also accesible via the
+        main database view.
 
 
 2002-12-08  Jörg Lehmann  <joerg@luga.de>
 
-	* Fix recursive insertion of top and last played songs.
+        * Fix recursive insertion of top and last played songs.
 
-	* Directory like items now are able to return their
-	content.
+        * Directory like items now are able to return their
+        content.
 
 
 2002-12-06  Jörg Lehmann  <joerg@luga.de>
 
-	* Sort songs by tracknr if possible. Otherwise
-	use name.
+        * Sort songs by tracknr if possible. Otherwise
+        use name.
 
-	* First implementation of top and last played lists.
+        * First implementation of top and last played lists.
 
-	* Fill up caches after song auto registering.
+        * Fill up caches after song auto registering.
 
 
 2002-11-30  Jörg Lehmann  <joerg@luga.de>
 
-	* Version 1.9.7 released.
+        * Version 1.9.7 released.
 
-	* More color work.
+        * More color work.
 
-	* Limit size of help window (therby preventing a crash occuring
-	for small terminal sizes) and make it scrollable.
+        * Limit size of help window (therby preventing a crash occuring
+        for small terminal sizes) and make it scrollable.
 
 
 2002-11-27  Jörg Lehmann  <joerg@luga.de>
 
-	* Initial support for colors. Customizable via config.py.
+        * Initial support for colors. Customizable via config.py.
 
-	* Enter and insert a directory only if the click has hit the
-	actual string. Otherwise only select the corresponding line.
-	I hope, this is more intuitive then the old behaviour.
-
-
-2002-11-25  Jörg Lehmann  <joerg@luga.de>
-
-	* Customize appearance of mixerwin and inputwin: one
-	can now choose between a popup and a status bar variant.
-
-	* inputwin.py: popup variant adjusts statusbar.
-
-	* mixerwin.py: popup variant adjusts statusbar.
-
-	* pytone.py: Use pytone base dir as base dir for locales.
-	This has to be changed, if we/someone else install the
-	.mo files under their proper location.
+        * Enter and insert a directory only if the click has hit the
+        actual string. Otherwise only select the corresponding line.
+        I hope, this is more intuitive then the old behaviour.
 
 
 2002-11-25  Jörg Lehmann  <joerg@luga.de>
 
-	* New module inputwin for a generic input window (for search
-	strings, filenames, etc).
+        * Customize appearance of mixerwin and inputwin: one
+        can now choose between a popup and a status bar variant.
+
+        * inputwin.py: popup variant adjusts statusbar.
+
+        * mixerwin.py: popup variant adjusts statusbar.
+
+        * pytone.py: Use pytone base dir as base dir for locales.
+        This has to be changed, if we/someone else install the
+        .mo files under their proper location.
+
+
+2002-11-25  Jörg Lehmann  <joerg@luga.de>
+
+        * New module inputwin for a generic input window (for search
+        strings, filenames, etc).
 
 
 2002-11-24  Jörg Lehmann  <joerg@luga.de>
 
-	* More mouse work: Hide mixer and help win on mouse clicks.
+        * More mouse work: Hide mixer and help win on mouse clicks.
 
-	* window.py: walk through all panels in enclose() method
+        * window.py: walk through all panels in enclose() method
 
-	* slist.py: Fix erroneous use of window width instead of height
-	which prevented correct scrolling in list windows.
+        * slist.py: Fix erroneous use of window width instead of height
+        which prevented correct scrolling in list windows.
 
-	* playlist.py: Localize load and save prompts.
+        * playlist.py: Localize load and save prompts.
 
 
 2002-11-23  Jörg Lehmann  <joerg@luga.de>
 
-	* Initial work for mouse support.
+        * Initial work for mouse support.
 
 
 2002-11-03  Jörg Lehmann  <joerg@luga.de>
 
-	* slist.py: Cleanup: remove active flag; use focus of
-	corresponding window instead.
+        * slist.py: Cleanup: remove active flag; use focus of
+        corresponding window instead.
 
-	* filelistwin.py: Activate file list window upon end of search.
-	Search should work again (Thanks to Andy Bourges for reporting
-	this bug).
+        * filelistwin.py: Activate file list window upon end of search.
+        Search should work again (Thanks to Andy Bourges for reporting
+        this bug).
 
-	* player.py: Also sleep in STOP state to prevent unnecessary CPU
-	utilization.
+        * player.py: Also sleep in STOP state to prevent unnecessary CPU
+        utilization.
 
-	* Code cleanup at various places.
+        * Code cleanup at various places.
 
-	* Added MANIFEST.in and updated setup.py: Include AUTHORS,
-	COPYING, ChangeLOG, TODO, and *.mo files.
+        * Added MANIFEST.in and updated setup.py: Include AUTHORS,
+        COPYING, ChangeLOG, TODO, and *.mo files.
 
 
 2002-11-02  Jörg Lehmann  <joerg@luga.de>
 
-	* mixerwin.py: Localize mixer text.
+        * mixerwin.py: Localize mixer text.
 
-	* iteminfowin.py: Fix small bug, occurring if no ID3 tag is
-	present.
+        * iteminfowin.py: Fix small bug, occurring if no ID3 tag is
+        present.
 
-	* helper.py: New function from Python Cookbook: extended
-	traceback.
+        * helper.py: New function from Python Cookbook: extended
+        traceback.
 
-	* pytone.py: Print extended traceback when an uncaught exception
-	is raised.
+        * pytone.py: Print extended traceback when an uncaught exception
+        is raised.
 
-	* iteminfowin.py: Make geometry calculations more clean. Use
-	of spacer now dependent on window width.
+        * iteminfowin.py: Make geometry calculations more clean. Use
+        of spacer now dependent on window width.
 
-	* pytone.py: Removed obsolete reference to hipplayer module.
+        * pytone.py: Removed obsolete reference to hipplayer module.
 
 
 2002-11-01  Jörg Lehmann  <joerg@luga.de>
 
-	* Localization work all over the place.
+        * Localization work all over the place.
 
-	* filelist.py: Fix bug occurring when entering an empty
-	directory (Thanks to Andy Bourges for the bug report).
+        * filelist.py: Fix bug occurring when entering an empty
+        directory (Thanks to Andy Bourges for the bug report).
 
 
 2002-10-27  Jörg Lehmann  <joerg@luga.de>
 
-	* Version 1.9.6
+        * Version 1.9.6
 
-	* New handling of window focus: New event focuschanged instead
-	of old activewinchanged. The actual is granted to the panel
-	which is on top of the panel stack.
+        * New handling of window focus: New event focuschanged instead
+        of old activewinchanged. The actual is granted to the panel
+        which is on top of the panel stack.
 
-	* Help and mixer windows now disappear upon keypress events.
+        * Help and mixer windows now disappear upon keypress events.
 
-	* Moved function descriptions from config.py to new help.py.
-	Later on, we shall localize them via the gettext module.
+        * Moved function descriptions from config.py to new help.py.
+        Later on, we shall localize them via the gettext module.
 
-	* timer.py: Return immediately, if no alarms are pending.
+        * timer.py: Return immediately, if no alarms are pending.
 
 
 2002-10-17  Jörg Lehmann  <joerg@luga.de>
 
-	* timer.py: New timer service, which sends events at specified
-	times.
+        * timer.py: New timer service, which sends events at specified
+        times.
 
-	* events.py: New hidewindow event.
+        * events.py: New hidewindow event.
 
-	* window.py: Allow hiding of window. Also window.top()
+        * window.py: Allow hiding of window. Also window.top()
 
-	* helpwin.py, mixerwin.py: Automatically hide after 5 seconds.
+        * helpwin.py, mixerwin.py: Automatically hide after 5 seconds.
 
 
 2002-10-13  Jörg Lehmann  <joerg@luga.de>
 
-	* songdb.py: Implemented caching of list of all artists (and
-	already existent caching of all songs).
+        * songdb.py: Implemented caching of list of all artists (and
+        already existent caching of all songs).
 
-	* filelist.py: Don't store list content in shistory, anymore.
+        * filelist.py: Don't store list content in shistory, anymore.
 
-	* Implement context sensitivity of help window.
-
-
-2002-10-12  Jörg Lehmann  <joerg@luga.de>
-
-	* Implemented automatic adjustment of statusbar to
-	keybinding.
-
-	* Use curses.panel.
-
-	* First version of help window.
+        * Implement context sensitivity of help window.
 
 
 2002-10-12  Jörg Lehmann  <joerg@luga.de>
 
-	* item.py: Prevent empty artist names
+        * Implemented automatic adjustment of statusbar to
+        keybinding.
+
+        * Use curses.panel.
+
+        * First version of help window.
+
+
+2002-10-12  Jörg Lehmann  <joerg@luga.de>
+
+        * item.py: Prevent empty artist names
 
 
 2002-09-20  Jörg Lehmann  <joerg@luga.de>
 
-	* Version 1.9.5
+        * Version 1.9.5
 
-	* item.py: Try to be a little more intelligent during the
-	capitalization of song, album and artist names. For instance, only
-	force the first character of a word to be a capital one. Prevent
-	empty album and artist names, as well.
+        * item.py: Try to be a little more intelligent during the
+        capitalization of song, album and artist names. For instance, only
+        force the first character of a word to be a capital one. Prevent
+        empty album and artist names, as well.
 
-	* filelist.py and songdb.py: Check for access permission of
-	directories and files.
+        * filelist.py and songdb.py: Check for access permission of
+        directories and files.
 
-	* madplayer.py: Catch exception during mp3file object creation.
+        * madplayer.py: Catch exception during mp3file object creation.
 
 
 2002-09-20  Jörg Lehmann  <joerg@luga.de>
 
-	* All players are now running in a separate thread.
+        * All players are now running in a separate thread.
 
-	* Factored out most of player control logic to player.py.
+        * Factored out most of player control logic to player.py.
 
 
 2002-09-10  Jörg Lehmann  <joerg@luga.de>
 
-	* Implement write lock for song database.
+        * Implement write lock for song database.
 
-	* Automatic registering of songs proceeds now in separate thread.
+        * Automatic registering of songs proceeds now in separate thread.
 
-	* slist.py: Fix incorrect insertion of new items leading to
-	unsorted lists.
+        * slist.py: Fix incorrect insertion of new items leading to
+        unsorted lists.
 
-	* Remove timer events, leading to notable decrease of idle CPU
-	usage.
+        * Remove timer events, leading to notable decrease of idle CPU
+        usage.
 
-	* Add ALT+RightArrow to default key bindings for recursive
-	insertion of songs.
+        * Add ALT+RightArrow to default key bindings for recursive
+        insertion of songs.
 
 
 2002-09-08  Jörg Lehmann  <joerg@luga.de>
 
-	* New event handling: Queue generated events and process them not
-	until an explicit call of a new process method.  This makes event
-	handling in a multithreaded environment much simpler. The new
-	class eventhub collects the eventchannels from the different
-	threads.
+        * New event handling: Queue generated events and process them not
+        until an explicit call of a new process method.  This makes event
+        handling in a multithreaded environment much simpler. The new
+        class eventhub collects the eventchannels from the different
+        threads.
 
-	* madplayer.py: Integrate madplayer class into player class, which
-	is made possible owing to new event handling.
+        * madplayer.py: Integrate madplayer class into player class, which
+        is made possible owing to new event handling.
 
-	* madplayer.py: Generate playbackinfochaned events only if there
-	was really a change.
+        * madplayer.py: Generate playbackinfochaned events only if there
+        was really a change.
 
 
 2002-09-05  Jörg Lehmann  <joerg@luga.de>
 
-	* Version 1.9.4
+        * Version 1.9.4
 
-	* Stopping works again in autoplay mode.
+        * Stopping works again in autoplay mode.
 
 
 2002-08-31  Jörg Lehmann  <joerg@luga.de>
 
-	* filelistwin.py: Corrected quick search key logic.
+        * filelistwin.py: Corrected quick search key logic.
 
-	* Moved handling of global key bindings to pytone.py. Introduced
-	new events to signalize playlist changes.
+        * Moved handling of global key bindings to pytone.py. Introduced
+        new events to signalize playlist changes.
 
-	* playlist.py: Don't save playlist, if name is empty.
+        * playlist.py: Don't save playlist, if name is empty.
 
-	* Implemented autoplay player option permitting automatic start of
-	playing, if playlist is not empty.
+        * Implemented autoplay player option permitting automatic start of
+        playing, if playlist is not empty.
 
-	* More comments in config.db.
+        * More comments in config.db.
 
-	* players/mpg123player.py: Now also works with Python 2.1.  Also
-	fixed error, where playback info was not displayed correctly.
+        * players/mpg123player.py: Now also works with Python 2.1.  Also
+        fixed error, where playback info was not displayed correctly.
 
-	* helper.py: Q&D solution to make debug output configurable.
+        * helper.py: Q&D solution to make debug output configurable.
 
 
 2002-08-30  Jörg Lehmann  <joerg@luga.de>
 
-	* Made key bindings configurable wherever possible.
+        * Made key bindings configurable wherever possible.
 
-	* Added python modules to setup.py to ease creation of
-	distribution.
+        * Added python modules to setup.py to ease creation of
+        distribution.
 
-	* pcm.c: Pad with zeros for crossfading of two buffers with
-	unequal lengths.
+        * pcm.c: Pad with zeros for crossfading of two buffers with
+        unequal lengths.
 
-	* players/madplayer.py: Adapted crossfading logic to change in
-	pcm.c.
+        * players/madplayer.py: Adapted crossfading logic to change in
+        pcm.c.
 
-	* playerwin.py: Corrected minor error, where title of song was
-	show although playing has already finished.
+        * playerwin.py: Corrected minor error, where title of song was
+        show although playing has already finished.
 
 
 2002-08-29  Jörg Lehmann  <joerg@luga.de>
 
-	* Fixed the specification of the libao device. It is now also
-	possible to specify arbitrary options. Added aRts based player
-	sample config to config.py.
+        * Fixed the specification of the libao device. It is now also
+        possible to specify arbitrary options. Added aRts based player
+        sample config to config.py.
 
-	* Added setup.py for building of pcm extension module.
+        * Added setup.py for building of pcm extension module.
 
-	* RightArrow in playlist window now also moves to database window.
+        * RightArrow in playlist window now also moves to database window.
 
 
 2002-08-28  Jörg Lehmann  <joerg@luga.de>
 
-	* Version 1.9.3, aka ready for release
+        * Version 1.9.3, aka ready for release
 
-	* Added license headers to all python files except config.py
+        * Added license headers to all python files except config.py
 
-	* Renamed PyJuke -> PyTone following a suggestion by
-	Harald Görl (goerl at luga.de)
+        * Renamed PyJuke -> PyTone following a suggestion by
+        Harald Görl (goerl at luga.de)
 
 
 2002-08-25  Jörg Lehmann  <joerg@luga.de>
 
-	* Version 1.9.2
+        * Version 1.9.2
 
-	* Added scrollbars and allow to turn them on/off via config.py
+        * Added scrollbars and allow to turn them on/off via config.py
 
-	* Corrected error in madplayer.py, where too many new songs
-	were requested
+        * Corrected error in madplayer.py, where too many new songs
+        were requested
 
-	* madplayer.py: return artist + song title as window title
+        * madplayer.py: return artist + song title as window title
 
-	* madplayer.py: indicate crossfading in title
+        * madplayer.py: indicate crossfading in title
 
-	* madplayer.py: made use of sound device configurable. Still need
-	to abstract device options!
+        * madplayer.py: made use of sound device configurable. Still need
+        to abstract device options!
 
-	* Minor fixes to documentation in index.html
+        * Minor fixes to documentation in index.html
 
-	* Added simple style.css for index.html
+        * Added simple style.css for index.html
 
 
 2002-08-22  Jörg Lehmann  <joerg@luga.de>
 
-	* Version 1.9
+        * Version 1.9
 
-	* Crossfading for internal libmad based player now
-	works
+        * Crossfading for internal libmad based player now
+        works
 
-	* Restructured and documented config.py
+        * Restructured and documented config.py
 
-	* Added README with documentation
+        * Added README with documentation
 
-	* Added ChangeLog, AUTHORS and COPYING
+        * Added ChangeLog, AUTHORS and COPYING
 
-	* Added some licence headers
+        * Added some licence headers
 
 
 2002-08-08  Jörg Lehmann  <joerg@luga.de>
 
-	* Released 1.0 for Rothsee party
+        * Released 1.0 for Rothsee party

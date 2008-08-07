@@ -18,10 +18,15 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import os
+import os.path
 import fcntl
 import re
 import string
 import time
+
+import log
+import services.playlist
+import hub,requests
 
 from services.player import genericplayer
 
@@ -98,11 +103,22 @@ class player(genericplayer):
               bytesperframe, channels, copyrighted, crcprotected, emphasis, bitrate ) = string.split(r[3:])[:11]
             self.framespersecond = 1000.0 / 8 * int(bitrate) / int(bytesperframe)
                     
-    def _playsong(self, song, manual):
+    def _playsong(self, playlistitemorsong, manual):
         """play event.song next"""
-        self.sendmpg123("L %s" % song.path)
+        path = None
+        if isinstance( playlistitemorsong, services.playlist.playlistitem ):
+            url = playlistitemorsong.song.url
+            if url.startswith("file://"):
+                dbstats = hub.request(requests.getdatabasestats(playlistitemorsong.song.songdbid))
+                path = os.path.join(dbstats.basedir, url[7:])
+            else:
+                path = url
+        else:
+            log.warning("mpg123 player: song %s not a playlistitem. Not added!" % repr( playlistitemorsong) )
+            return
+        self.sendmpg123("L %s" % path)
         self.framespersecond = None
-        self.playbackinfo.updatesong(song)
+        self.playbackinfo.updatesong(song, "")
 
     def _playerunpause(self):
         """unpause playing"""
