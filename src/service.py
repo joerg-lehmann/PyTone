@@ -53,7 +53,6 @@ class service(threading.Thread):
             try:
                 self.work()
             except Exception, e:
-                log.error("%s service: caught exception: %s" % (self.name, e))
                 log.debug_traceback()
                 self.resetafterexception()
 
