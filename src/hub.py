@@ -72,8 +72,8 @@ class requestresponse:
 	self.result = None
 	self.ready = threading.Event()
 
-    def __str__(self):
-	return "requestresponse(%s -> %s)" % (`self.request`, `self.result`)
+    def __repr__(self):
+	return "requestresponse(%r -> %r)" % (self.request, self.result)
 
     def waitforcompletion(self):
 	self.ready.wait()
@@ -174,7 +174,7 @@ class channel:
 			# request has been processed
 			try:
 			    item.result = handler(item.request)
-			    log.debug("got result %s for %s" % (`item.result`, `item.request`))
+			    log.debug("got result %r for %r" % (item.result, item.request))
 			    item.ready.set()
 			    break
 			except DenyRequest:

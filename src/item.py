@@ -624,7 +624,7 @@ class artist(diritem):
         self.filters = filters.removed(compilationfilter).added(artistfilter(id))
 
     def __repr__(self):
-        return "artist(%s) in %s (filtered: %s)" % (self.name, self.songdbid, repr(self.filters))
+        return "artist(%s) in %s (filtered: %r)" % (self.name, self.songdbid, self.filters)
 
     def getname(self):
         return "%s/" % self.name
