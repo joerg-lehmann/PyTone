@@ -18,6 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import config
+import encoding
 import messagewin
 import hub, requests
 
@@ -78,6 +79,6 @@ class statswin(messagewin.messagewin):
         y = self.iy
         for lc, rc in lines:
             self.move(y, self.ix)
-            self.addstr(lc.ljust(wc1)[:wc1], self.colors.description)
-            self.addstr(rc.ljust(wc2)[:wc2], self.colors.content)
+            self.addstr(encoding.encode(lc).ljust(wc1)[:wc1], self.colors.description)
+            self.addstr(encoding.encode(rc).ljust(wc2)[:wc2], self.colors.content)
             y += 1

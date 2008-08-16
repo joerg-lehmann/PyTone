@@ -3,6 +3,8 @@
         * services/player.py, services/players/*.py, services/playlist.py:
         Make sending of song_played and song_skipped events more local.
 
+        * statswin.py: Encode output.
+
 
 2008-08-07 Jörg Lehmann  <joerg@luga.de>
 
