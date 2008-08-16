@@ -297,7 +297,7 @@ class player(genericplayer):
             if len(buff) > 0:
                 self.audiodev.play(buff, len(buff))
             else:
-                log.debug("internal player: song ends: %s (0 songs in queue)" % self.decodedsongs[0])
+                log.debug("internal player: song ends: %r (0 songs in queue)" % self.decodedsongs[0])
                 del self.decodedsongs[0]
 
             # reset songtransition mode, but before possibly requesting a new song
@@ -319,30 +319,30 @@ class player(genericplayer):
                                                           self.crossfadingrate)
                     if self.crossfadingratio >= 1:
                         self.crossfadingratio = 0
-                        log.debug("internal player: song ends: %s (1 song in queue)" %
+                        log.debug("internal player: song ends: %r (1 song in queue)" %
                               self.decodedsongs[0])
                         del self.decodedsongs[0]
                 if len(buff1) == 0:
                     buff = buff2
                     self.crossfadingratio = 0
-                    log.debug("internal player: song ends: %s (1 song in queue)" % self.decodedsongs[0])
+                    log.debug("internal player: song ends: %r (1 song in queue)" % self.decodedsongs[0])
                     del self.decodedsongs[0]
                 if len(buff2) == 0:
                     buff = buff1
                     self.crossfadingratio = 0
-                    log.debug("internal player: song ends: %s" % self.decodedsongs[-1])
+                    log.debug("internal player: song ends: %r" % self.decodedsongs[-1])
                     del self.decodedsongs[-1]
                     log.debug("internal player: %d songs in queue" % len(self.decodedsongs))
             elif self.songtransitionmode == "gapkill":
                 # just kill gap between songs
                 buff = self.decodedsongs[0].read(self.SIZE)
                 if len(buff) < self.SIZE:
-                    log.debug("internal player: song ends: %s (1 song in queue)" % self.decodedsongs[0])
+                    log.debug("internal player: song ends: %r (1 song in queue)" % self.decodedsongs[0])
                     del self.decodedsongs[0]
 
                     buff2 = self.decodedsongs[0].read(self.SIZE)
                     if len(buff2) == 0:
-                        log.debug("internal player: song ends: %s" % self.decodedsongs[0])
+                        log.debug("internal player: song ends: %r" % self.decodedsongs[0])
                         del self.decodedsongs[0]
                         log.debug("internal player: %d songs in queue" % len(self.decodedsongs))
                     else:
@@ -375,7 +375,7 @@ class player(genericplayer):
             self.playbackinfo.stopped()
 
     def _playsong(self, song, manual):
-        log.debug("internal player: new song: %s" % song)
+        log.debug("internal player: new song: %r" % song)
 
         if self.ispaused():
             self._flushqueue()

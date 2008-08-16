@@ -158,7 +158,7 @@ class tagfilter(filter):
         filter.__init__(self, name, indexname="tag", indexid=tag_name)
 
     def __repr__(self):
-        return "tag%s=%s" % (self.inverted and "!" or "", self.tag_name)
+        return "tag%r=%r" % (self.inverted and "!" or "", self.tag_name)
 
     def SQL_WHERE_string(self):
         if self.tag_id:
@@ -379,7 +379,7 @@ class song(item):
         self.song_metadata = None
 
     def __repr__(self):
-        return "song(%s) in %s database" % (self.id, self.songdbid)
+        return "song(%r) in %r database" % (self.id, self.songdbid)
 
     # the following two methods have to be defined because we use song as a
     # member of a set in the autoregisterer
@@ -388,8 +388,6 @@ class song(item):
 
     def __eq__(self, other):
         return isinstance(other, song) and self.songdbid == other.songdbid and self.id == other.id
-
-    __str__ = __repr__
 
     def __getstate__(self):
         return (self.songdbid, self.id, self.album_id, self.artist_id, self.album_artist_id, self.date_played)
@@ -624,7 +622,7 @@ class artist(diritem):
         self.filters = filters.removed(compilationfilter).added(artistfilter(id))
 
     def __repr__(self):
-        return "artist(%s) in %s (filtered: %r)" % (self.name, self.songdbid, self.filters)
+        return "artist(%r) in %r (filtered: %r)" % (self.name, self.songdbid, self.filters)
 
     def getname(self):
         return "%s/" % self.name
@@ -670,7 +668,7 @@ class album(diritem):
         self.filters = filters.added(albumfilter(id))
 
     def __repr__(self):
-        return "album(%s) in %s" % (self.id, self.songdbid)
+        return "album(%r) in %r" % (self.id, self.songdbid)
 
     class _orderclass:
         def cmpitem(self, x, y):

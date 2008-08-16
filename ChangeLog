@@ -5,6 +5,10 @@
 
         * statswin.py: Encode output.
 
+        * Use %r in __repr__ and replace __str__ by __repr__ at various places
+        fixing an error with Python 2.5 and above, reported by Eliot
+        Blennerhassett <eliot at blennerhassett dot gen dot nz>.
+
 
 2008-08-07 Jörg Lehmann  <joerg@luga.de>
 

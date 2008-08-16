@@ -228,8 +228,8 @@ class decodedsong:
         try:
             decoder = getdecoder(song.type)
         except:
-            log.error("No decoder for song type '%s' registered "% song.type)
-            raise RuntimeError("No decoder for song type '%s' registered "% song.type)
+            log.error("No decoder for song type '%r' registered "% song.type)
+            raise RuntimeError("No decoder for song type '%r' registered "% song.type)
 
         url = encoding.encode_path(song.url)
         if url.startswith("file://"):

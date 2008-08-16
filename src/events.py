@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 class event:
-    def __str__(self):
+    def __repr__(self):
         return self.__class__.__name__
 
 
@@ -29,8 +29,8 @@ class dbevent(event):
     def __init__(self, songdbid):
         self.songdbid = songdbid
 
-    def __str__(self):
-        return "%s(%s)" % (self.__class__.__name__, self.songdbid)
+    def __repr__(self):
+        return "%r(%r)" % (self.__class__.__name__, self.songdbid)
 
 
 class quit(event):
@@ -42,16 +42,16 @@ class keypressed(event):
     def __init__(self, key):
         self.key = key
 
-    def __str__(self):
-        return "%s(%d)" % (self.__class__.__name__, self.key)
+    def __repr__(self):
+        return "%r(%d)" % (self.__class__.__name__, self.key)
 
 
 class mouseevent(event):
     def __init__(self,  y, x, state):
         self.y, self.x, self.state = y, x, state
 
-    def __str__(self):
-        return "%s(%d, %d, %d)" % (self.__class__.__name__,
+    def __repr__(self):
+        return "%r(%d, %d, %d)" % (self.__class__.__name__,
                                    self.y, self.x, self.state)
 
 
@@ -59,8 +59,8 @@ class selectionchanged(event):
     def __init__(self, item):
         self.item = item
 
-    def __str__(self):
-        return "%s(%s)" % (self.__class__.__name__, repr(self.item))
+    def __repr__(self):
+        return "%r(%r)" % (self.__class__.__name__, self.item)
 
 
 class focuschanged(event):
@@ -86,8 +86,8 @@ class sendeventat(event):
         self.repeat = repeat
         self.replace = replace
 
-    def __str__(self):
-        return "%s(%s, %s, %s)" % (self.__class__.__name__, self.event, self.alarmtime, self.repeat, self.replace)
+    def __repr__(self):
+        return "%r(%r, %r, %r)" % (self.__class__.__name__, self.event, self.alarmtime, self.repeat, self.replace)
 
 
 class sendeventin(event):
@@ -101,8 +101,8 @@ class sendeventin(event):
         self.repeat = repeat
         self.replace = replace
 
-    def __str__(self):
-        return "%s(%s, %s, %s, %s)" % (self.__class__.__name__, self.event, self.alarmtimediff, self.repeat, self.replace)
+    def __repr__(self):
+        return "%r(%r, %r, %r, %r)" % (self.__class__.__name__, self.event, self.alarmtimediff, self.repeat, self.replace)
 
 
 class checkpointdb(dbevent):
@@ -116,8 +116,8 @@ class add_song(dbevent):
         self.songdbid = songdbid
         self.song = song
 
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.song, self.songdbid)
+    def __repr__(self):
+        return "%r(%r)->%r" % (self.__class__.__name__, self.song, self.songdbid)
 
 
 class update_song(dbevent):
@@ -127,8 +127,8 @@ class update_song(dbevent):
         self.songdbid = songdbid
         self.song = song
 
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.song, self.songdbid)
+    def __repr__(self):
+        return "%r(%r)->%r" % (self.__class__.__name__, self.song, self.songdbid)
 
 
 class song_played(dbevent):
@@ -139,8 +139,8 @@ class song_played(dbevent):
         self.song = song
         self.date_played = date_played
 
-    def __str__(self):
-        return "%s(%s, %s)->%s" % (self.__class__.__name__, self.song, self.date_played, self.songdbid)
+    def __repr__(self):
+        return "%r(%r, %r)->%r" % (self.__class__.__name__, self.song, self.date_played, self.songdbid)
 
 
 class song_skipped(dbevent):
@@ -150,8 +150,8 @@ class song_skipped(dbevent):
         self.songdbid = songdbid
         self.song = song
 
-    def __str__(self):
-        return "%s(%s, %s)->%s" % (self.__class__.__name__, self.song, self.songdbid)
+    def __repr__(self):
+        return "%r(%r, %r)->%r" % (self.__class__.__name__, self.song, self.songdbid)
 
 
 class delete_song(dbevent):
@@ -160,8 +160,8 @@ class delete_song(dbevent):
         self.songdbid = songdbid
         self.song = song
 
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.song, self.songdbid)
+    def __repr__(self):
+        return "%r(%r)->%r" % (self.__class__.__name__, self.song, self.songdbid)
 
 
 class add_playlist(dbevent):
@@ -171,8 +171,8 @@ class add_playlist(dbevent):
         self.name = name
         self.songs = songs
 
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.name, self.songs, self.songdbid)
+    def __repr__(self):
+        return "%r(%r)->%r" % (self.__class__.__name__, self.name, self.songs, self.songdbid)
 
 
 class update_playlist(dbevent):
@@ -183,8 +183,8 @@ class update_playlist(dbevent):
         self.name = name
         self.songs = songs
 
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.name, self.songs, self.songdbid)
+    def __repr__(self):
+        return "%r(%r)->%r" % (self.__class__.__name__, self.name, self.songs, self.songdbid)
 
 
 class delete_playlist(dbevent):
@@ -194,8 +194,8 @@ class delete_playlist(dbevent):
         self.songdbid = songdbid
         self.name = name
 
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.name, self.songdbid)
+    def __repr__(self):
+        return "%r(%r)->%r" % (self.__class__.__name__, self.name, self.songdbid)
 
 
 
@@ -209,8 +209,8 @@ class autoregistersongs(dbevent):
         self.songdbid = songdbid
         self.force = force
 
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.force, self.songdbid)
+    def __repr__(self):
+        return "%r(%r)->%r" % (self.__class__.__name__, self.force, self.songdbid)
 
 
 class autoregisterer_rescansongs(dbevent):
@@ -223,8 +223,8 @@ class autoregisterer_rescansongs(dbevent):
         self.songs = songs
         self.force = force
 
-    def __str__(self):
-        return "%s(%s, %s)->%s" % (self.__class__.__name__, self.songs, self.force, self.songdbid)
+    def __repr__(self):
+        return "%r(%r, %r)->%r" % (self.__class__.__name__, self.songs, self.force, self.songdbid)
 
 
 class clearstats(dbevent):
@@ -233,8 +233,8 @@ class clearstats(dbevent):
     def __init__(self, songdbid):
         self.songdbid = songdbid
 
-    def __str__(self):
-        return "%s->%s" % (self.__class__.__name__, self.songdbid)
+    def __repr__(self):
+        return "%r->%r" % (self.__class__.__name__, self.songdbid)
 
 
 class songchanged(event):
@@ -243,8 +243,8 @@ class songchanged(event):
         self.songdbid = songdbid
         self.song = song
 
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.song, self.songdbid)
+    def __repr__(self):
+        return "%r(%r)->%r" % (self.__class__.__name__, self.song, self.songdbid)
 
 
 class songschanged(event):
@@ -252,16 +252,16 @@ class songschanged(event):
     def __init__(self, songdbid):
         self.songdbid = songdbid
 
-    def __str__(self):
-        return "%s->%s" % (self.__class__.__name__, self.songdbid)
+    def __repr__(self):
+        return "%r->%r" % (self.__class__.__name__, self.songdbid)
 
 class artistschanged(event):
     "list of artists in database changed"
     def __init__(self, songdbid):
         self.songdbid = songdbid
 
-    def __str__(self):
-        return "%s->%s" % (self.__class__.__name__, self.songdbid)
+    def __repr__(self):
+        return "%r->%r" % (self.__class__.__name__, self.songdbid)
 
 
 class albumschanged(event):
@@ -269,8 +269,8 @@ class albumschanged(event):
     def __init__(self, songdbid):
         self.songdbid = songdbid
 
-    def __str__(self):
-        return "%s->%s" % (self.__class__.__name__, self.songdbid)
+    def __repr__(self):
+        return "%r->%r" % (self.__class__.__name__, self.songdbid)
 
 
 class tagschanged(event):
@@ -278,8 +278,8 @@ class tagschanged(event):
     def __init__(self, songdbid):
         self.songdbid = songdbid
 
-    def __str__(self):
-        return "%s->%s" % (self.__class__.__name__, self.songdbid)
+    def __repr__(self):
+        return "%r->%r" % (self.__class__.__name__, self.songdbid)
 
 
 class dbplaylistchanged(event):
@@ -287,8 +287,8 @@ class dbplaylistchanged(event):
         self.songdbid = songdbid
         self.playlist = playlist
 
-    def __str__(self):
-        return "%s(%s)->%s" % (self.__class__.__name__, self.playlist, self.songdbid)
+    def __repr__(self):
+        return "%r(%r)->%r" % (self.__class__.__name__, self.playlist, self.songdbid)
 
 
 class playerevent(event):
@@ -297,8 +297,8 @@ class playerevent(event):
     def __init__(self, playerid):
         self.playerid = playerid
 
-    def __str__(self):
-        return "%s(%s)" % (self.__class__.__name__, self.playerid)
+    def __repr__(self):
+        return "%r(%r)" % (self.__class__.__name__, self.playerid)
 
 
 class playerstart(playerevent):
@@ -333,8 +333,8 @@ class playerseekrelative(playerevent):
         self.playerid = playerid
         self.seconds = seconds
 
-    def __str__(self):
-        return "%s(%f->%s)" % (self.__class__.__name__, self.seconds, self.playerid)
+    def __repr__(self):
+        return "%r(%f->%r)" % (self.__class__.__name__, self.seconds, self.playerid)
 
 
 class playerplayfaster(playerevent):
@@ -369,8 +369,8 @@ class playerplaysong(playerevent):
         self.playerid = playerid
         self.playlistitemorsong = playlistitemorsong
 
-    def __str__(self):
-        return "%s(%s->%s)" % (self.__class__.__name__, self.playlistitemorsong, self.playerid)
+    def __repr__(self):
+        return "%r(%r->%r)" % (self.__class__.__name__, self.playlistitemorsong, self.playerid)
 
 
 class playerratecurrentsong(playerevent):
@@ -379,16 +379,16 @@ class playerratecurrentsong(playerevent):
         playerevent.__init__(self, playerid)
         self.rating = rating
 
-    def __str__(self):
-        return "%s(%s,%d)" % (self.__class__.__name__, self.playerid, self.rating)
+    def __repr__(self):
+        return "%r(%r,%d)" % (self.__class__.__name__, self.playerid, self.rating)
 
 
 class playbackinfochanged(event):
     def __init__(self, playbackinfo):
         self.playbackinfo = playbackinfo
 
-    def __str__(self):
-        return "%s(%s)" % (self.__class__.__name__, self.playbackinfo)
+    def __repr__(self):
+        return "%r(%r)" % (self.__class__.__name__, self.playbackinfo)
 
 
 class statusbar_update(event):
@@ -403,8 +403,8 @@ class statusbar_update(event):
         self.pos = pos
         self.content = content
 
-    def __str__(self):
-        return "%s(%s, %s)" % (self.__class__.__name__, self.pos, self.content)
+    def __repr__(self):
+        return "%r(%r, %r)" % (self.__class__.__name__, self.pos, self.content)
 
 
 class statusbar_showmessage(event):
@@ -413,7 +413,7 @@ class statusbar_showmessage(event):
     def __init__(self, message):
         self.message = message
 
-    def __str__(self):
+    def __repr__(self):
         return "%r(%r)" % (self.__class__.__name__, self.content)
 
 
@@ -424,8 +424,8 @@ class requestinput(event):
         self.prompt = prompt
         self.handler = handler
 
-    def __str__(self):
-        return "%s(%s,%s,%s)" % (self.__class__.__name__,
+    def __repr__(self):
+        return "%r(%r,%r,%r)" % (self.__class__.__name__,
                               self.title, self.prompt, self.handler)
 
 
@@ -438,8 +438,8 @@ class playlistaddsongs(playlistevent):
     def __init__(self, songs):
         self.songs = songs
 
-    def __str__(self):
-        return "%s(%s)" % (self.__class__.__name__, self.songs)
+    def __repr__(self):
+        return "%r(%r)" % (self.__class__.__name__, self.songs)
 
 
 class playlistaddsongtop(playlistevent):
@@ -447,32 +447,32 @@ class playlistaddsongtop(playlistevent):
     def __init__(self, song):
         self.song = song
 
-    def __str__(self):
-        return "%s(%s)" % (self.__class__.__name__, self.song)
+    def __repr__(self):
+        return "%r(%r)" % (self.__class__.__name__, self.song)
 
 
 class playlistdeletesong(playlistevent):
     def __init__(self, id):
         self.id = id
 
-    def __str__(self):
-        return "%s(%s)" % (self.__class__.__name__, self.id)
+    def __repr__(self):
+        return "%r(%r)" % (self.__class__.__name__, self.id)
 
 
 class playlistmovesongup(playlistevent):
     def __init__(self, id):
         self.id = id
 
-    def __str__(self):
-        return "%s(%s)" % (self.__class__.__name__, self.id)
+    def __repr__(self):
+        return "%r(%r)" % (self.__class__.__name__, self.id)
 
 
 class playlistmovesongdown(playlistevent):
     def __init__(self, id):
         self.id = id
 
-    def __str__(self):
-        return "%s(%s)" % (self.__class__.__name__, self.id)
+    def __repr__(self):
+        return "%r(%r)" % (self.__class__.__name__, self.id)
 
 
 class playlistsave(playlistevent):
@@ -505,8 +505,8 @@ class playlistplaysong(playlistevent):
     def __init__(self, id):
         self.id = id
 
-    def __str__(self):
-        return "%s(%s)" % (self.__class__.__name__, self.id)
+    def __repr__(self):
+        return "%r(%r)" % (self.__class__.__name__, self.id)
 
 
 class playlistchanged(event):
@@ -517,8 +517,8 @@ class playlistchanged(event):
         self.autoplaymode = autoplaymode
         self.playingitem = playingitem
 
-    def __str__(self):
-        return "%s(%s,%s/%s,%s,%s)" % (self.__class__.__name__,
+    def __repr__(self):
+        return "%r(%r,%r/%r,%r,%r)" % (self.__class__.__name__,
                                        self.items, self.ptime, self.ttime, self.autoplaymode,
                                        self.playingitem)
 
@@ -527,12 +527,12 @@ class filelistjumptosong(event):
     def __init__(self, song):
         self.song = song
 
-    def __str__(self):
-        return "%s(%s)" % (self.__class__.__name__, self.song)
+    def __repr__(self):
+        return "%r(%r)" % (self.__class__.__name__, self.song)
 
 class hidewindow(event):
     def __init__(self, window):
         self.window = window
 
-    def __str__(self):
-        return "%s(%s)" % (self.__class__.__name__, self.window)
+    def __repr__(self):
+        return "%r(%r)" % (self.__class__.__name__, self.window)

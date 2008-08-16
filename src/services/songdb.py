@@ -116,7 +116,7 @@ class songdbmanager(service.service):
             try:
                 metadata.get_metadata_postprocessor(postprocessor_name)
             except:
-                raise RuntimeError("Unkown metadata postprocesor '%s' for database '%s'" % (postprocessor_name, id))
+                raise RuntimeError("Unkown metadata postprocesor '%s' for database '%r'" % (postprocessor_name, id))
 
         self.songdbids.append(id)
         songdb.setName("song database thread (id=%s)" % id)
@@ -131,7 +131,7 @@ class songdbmanager(service.service):
     def cacheresult(requesthandler):
         """ method decorator which caches results of the request """
         def newrequesthandler(self, request):
-            log.debug("dbrequest cache: query for request: %s" % repr(request))
+            log.debug("dbrequest cache: query for request: %r" % request)
             requesthash = hash(request)
             log.debug("dbrequest cache: sucessfully hashed request: %d" % requesthash)
             try:
@@ -140,7 +140,7 @@ class songdbmanager(service.service):
                 # update atime
                 self.requestcache[requesthash][2] = time.time()
                 self.requestcachehits += 1
-                log.debug("dbrequest cache: hit for request: %s" % repr(request))
+                log.debug("dbrequest cache: hit for request: %r" % request)
             except KeyError:
                 # make a copy of request for later storage in cache
                 requestcopy = copy.copy(request)
@@ -157,8 +157,8 @@ class songdbmanager(service.service):
                     for atime, key in cachebytime[-10:]:
                         self.requestcachesize -= self.requestcache[key][3]
                         del self.requestcache[key]
-                log.debug("db request cache miss for request: %s (%d requests and %d objects cached)" %
-                          (repr(request), len(self.requestcache), self.requestcachesize))
+                log.debug("db request cache miss for request: %r (%d requests and %d objects cached)" %
+                          (request, len(self.requestcache), self.requestcachesize))
             return result
         return newrequesthandler
 
@@ -281,7 +281,7 @@ class songdbmanager(service.service):
                         del self.requestcache[key]
                 return
         # otherwise we delete the queries for the correponding database (and all compound queries)
-        log.debug("dbrequest cache: emptying cache for database %s" % event.songdbid)
+        log.debug("dbrequest cache: emptying cache for database %r" % event.songdbid)
         for key, item in self.requestcache.items():
             songdbid = item[1].songdbid
             if songdbid is None or songdbid == event.songdbid:
@@ -295,7 +295,7 @@ class songdbmanager(service.service):
 
     def dbevent(self, event):
         if event.songdbid not in self.songdbids:
-            log.error("songdbmanager: invalid songdbid '%s' for database event" % event.songdbid)
+            log.error("songdbmanager: invalid songdbid '%r' for database event" % event.songdbid)
             return
 
         # first update result cache (to allow the updatecache method
@@ -308,7 +308,7 @@ class songdbmanager(service.service):
 
     def dbrequestsingle(self, request):
         if request.songdbid not in self.songdbids:
-            log.error("songdbmanager: invalid songdbid '%s' for database request" % request.songdbid)
+            log.error("songdbmanager: invalid songdbid '%r' for database request" % request.songdbid)
             return
 
         return self.songdbhub.request(request)
@@ -334,7 +334,7 @@ class songdbmanager(service.service):
                     resulthash[dbsong] = songdbid
             return resulthash.values()
         elif request.songdbid not in self.songdbids:
-            log.error("songdbmanager: invalid songdbid '%s' for database request" % request.songdbid)
+            log.error("songdbmanager: invalid songdbid '%r' for database request" % request.songdbid)
             return
         else:
             return self.songdbhub.request(nrequest)
@@ -353,7 +353,7 @@ class songdbmanager(service.service):
             # sort results
             return resulthash.keys()
         elif request.songdbid not in self.songdbids:
-            log.error("songdbmanager: invalid songdbid '%s' for database request" % request.songdbid)
+            log.error("songdbmanager: invalid songdbid '%r' for database request" % request.songdbid)
         else:
             # use nrequest here instead of request in order to not
             # send sort to database (this fails when
@@ -366,7 +366,7 @@ class songdbmanager(service.service):
         if request.songdbid is None:
             return "Virtual", ""
         elif request.songdbid not in self.songdbids:
-            log.error("songdbmanager: invalid songdbid '%s' for database request" % request.songdbid)
+            log.error("songdbmanager: invalid songdbid '%r' for database request" % request.songdbid)
         else:
             return self.songdbhub.request(request)
 
@@ -374,7 +374,7 @@ class songdbmanager(service.service):
 
     def getnumberofsongs(self, request):
         if request.songdbid is not None and request.songdbid not in self.songdbids:
-            log.error("songdbmanager: invalid songdbid '%s' for database request" % request.songdbid)
+            log.error("songdbmanager: invalid songdbid '%r' for database request" % request.songdbid)
         # XXX use filters in sqlite instead
         if request.songdbid is not None and request.filters is None:
             return self.songdbhub.request(request)
@@ -390,7 +390,7 @@ class songdbmanager(service.service):
         executed directly. Otherwise, the length of the result of listrequest
         is returned. """
         if request.songdbid is not None and request.songdbid not in self.songdbids:
-            log.error("songdbmanager: invalid songdbid '%s' for database request" % request.songdbid)
+            log.error("songdbmanager: invalid songdbid '%r' for database request" % request.songdbid)
         elif request.songdbid is None or request.filters:
             return len(self.dbrequestlist(listrequest(songdbid=request.songdbid, filters=request.filters)))
         else:

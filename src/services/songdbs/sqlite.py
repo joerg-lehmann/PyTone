@@ -235,7 +235,7 @@ class songdb(service.service):
 
     def run(self):
         # self.con = sqlite.connect(":memory:")
-        log.debug("dbfile: '%s'" % self.dbfile)
+        log.debug("dbfile: '%r'" % self.dbfile)
         self.con = sqlite.connect(self.dbfile)
         self.con.row_factory = sqlite.Row
 
@@ -397,11 +397,11 @@ class songdb(service.service):
             # hub.notify(events.songschanged(self.id))
 
             #for r in cur.execute("SELECT id, name FROM artists"):
-            #    log.info("AR: %s %s" % (r["id"], r["name"]))
+            #    log.info("AR: %r %r" % (r["id"], r["name"]))
             #for r in cur.execute("SELECT id, artist_id, name FROM albums"):
-            #    log.info("AL: %s %s %s" % (r["id"], r["artist_id"], r["name"]))
+            #    log.info("AL: %r %r %r" % (r["id"], r["artist_id"], r["name"]))
             #for r in cur.execute("SELECT id, title FROM songs"):
-            #    log.info("S: %s %s" % (r["id"], r["title"]))
+            #    log.info("S: %r %r" % (r["id"], r["title"]))
 
     def _delete_song(self, song):
         """delete song from database"""
