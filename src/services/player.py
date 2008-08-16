@@ -123,29 +123,30 @@ class playbackinfo:
 
     """
 
-    def __init__(self, playerid):
+    def __init__(self, playerid, send_played_skipped_events):
         """ 
 
         playerid:     player which this playbackinfo instance refers to
         state:        player state (STOP, PAUSE, PLAY)
         song:         song currently played (or None, if player is not playing)
-        playlistitem: playlistitem currently played (or None, if player is not playing or no associated playlist)
         time:         position in seconds in the song
         crossfade:    crossfade in progress
+        send_played_skipped_events: should song_played / song_skipped events (still) be send
         """
         self.playerid = playerid
         self.state = STOP
         self.song = None
-        self.playlistitem = None
         self.time = 0
         self.crossfade = False
+        self.send_played_skipped_events = send_played_skipped_events
 
     def __cmp__(self, other):
         return (cmp(self.playerid, other.playerid) or
                 cmp(self.state, other.state) or
                 cmp(self.song, other.song) or
                 cmp(self.time, other.time) or
-                cmp(self.crossfade, other.crossfade))
+                cmp(self.crossfade, other.crossfade) or 
+                cmp(self.send_played_skipped_events, other.send_played_skipped_events))
 
     def __str__(self):
         s = "player %s " % `self.playerid`
@@ -164,10 +165,9 @@ class playbackinfo:
             s = s+ " (crossfading)"
         return s
 
-    def updatesong(self, song, playlistitem):
-        """ update song and playlistitem and reset time """
+    def updatesong(self, song):
+        """ update song and reset time """
         self.song = song
-        self.playlistitem = playlistitem
         self.time = 0
 
     def stopped(self):
@@ -225,7 +225,8 @@ class genericplayer(service.service):
         self.sendplayedevent = False
 
         # the playbackinfo structure describes the current player state
-        self.playbackinfo = playbackinfo(self.id)
+        # If a playlist is attached to the player, we issue song_played and song_skipped events
+        self.playbackinfo = playbackinfo(self.id, playlistid is not None)
 
         # old playbackinfo, used to detect changes of the player state
         self.oplaybackinfo = copy.copy(self.playbackinfo)
@@ -247,11 +248,11 @@ class genericplayer(service.service):
 
     def work(self):
         if self.isplaying():
-            if ( self.playbackinfo.playlistitem and not self.playbackinfo.playlistitem.playingregistered and
+            if ( self.playbackinfo.send_played_skipped_events and
                  self.playbackinfo.song and (self.playbackinfo.song.length < 10 or self.playbackinfo.time > 0.8*self.playbackinfo.song.length) ):
                 song = self.playbackinfo.song
                 hub.notify(events.song_played(song.songdbid, song, time.time()-self.playbackinfo.time))
-                self.playbackinfo.playlistitem.playingregistered = True
+                self.playbackinfo.send_played_skipped_events = False
             self.play()
 
         # request a new song, if none is playing and the player wants to play
@@ -420,11 +421,11 @@ class genericplayer(service.service):
         """immediately play next song"""
         if event.playerid == self.id:
             # mark playing of song as skipped if it belongs to a playlist
-            if self.playbackinfo.playlistitem and self.playbackinfo.song and not self.playbackinfo.playlistitem.playingregistered:
+            if self.playbackinfo.send_played_skipped_events and self.playbackinfo.song:
                 song = self.playbackinfo.song
                 hub.notify(events.song_skipped(song.songdbid, song))
                 # we also prevent this song from being registered as played
-                self.playbackinfo.playlistitem.playingregistered = True
+                self.playbackinfo.send_played_skipped_events = False
             self.requestnextsong(manual=1)
 
     def playerprevious(self, event):

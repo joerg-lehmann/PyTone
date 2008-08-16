@@ -369,7 +369,7 @@ class player(genericplayer):
 
             time = int(max(playingsong.ptime()-self.audiodev.queuelen(), 0))
 
-            self.playbackinfo.updatesong(playingsong.song, playingsong.playlistitem)
+            self.playbackinfo.updatesong(playingsong.song)
             self.playbackinfo.updatetime(time)
         else:
             self.playbackinfo.stopped()

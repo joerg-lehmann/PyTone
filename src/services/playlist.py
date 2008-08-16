@@ -45,8 +45,6 @@ class playlistitem:
         self.song = song
         self.played = played
         self.playstarttime = playstarttime
-        # has the playing of the song registered in the database
-        self.playingregistered = False
         self.id = _counter
         _counter += 1
 

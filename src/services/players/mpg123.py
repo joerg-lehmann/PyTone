@@ -118,7 +118,7 @@ class player(genericplayer):
             return
         self.sendmpg123("L %s" % path)
         self.framespersecond = None
-        self.playbackinfo.updatesong(song, "")
+        self.playbackinfo.updatesong(song)
 
     def _playerunpause(self):
         """unpause playing"""

@@ -1,3 +1,9 @@
+2008-08-16 Jörg Lehmann  <joerg@luga.de>
+
+        * services/player.py, services/players/*.py, services/playlist.py:
+        Make sending of song_played and song_skipped events more local.
+
+
 2008-08-07 Jörg Lehmann  <joerg@luga.de>
 
         * config.py: Also allow "alsa05" driver.
