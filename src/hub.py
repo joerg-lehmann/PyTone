@@ -174,8 +174,6 @@ class channel:
 			# request has been processed
 			try:
 			    item.result = handler(item.request)
-			    log.debug(u"got result for %r" % item.request)
-			    r = repr(item.result)
 			    log.debug(u"got result %r for %r" % (item.result, item.request))
 			    item.ready.set()
 			    break
