@@ -414,7 +414,7 @@ class statusbar_showmessage(event):
         self.message = message
 
     def __repr__(self):
-        return "%r(%r)" % (self.__class__.__name__, self.content)
+        return "%r(%r)" % (self.__class__.__name__, self.message)
 
 
 
