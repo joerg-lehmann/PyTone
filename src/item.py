@@ -1101,7 +1101,7 @@ class filesystemdir(diritem):
                         song = hub.request(requests.autoregisterer_queryregistersong(self.songdbid, path))
                         if song:
                             items.append(song)
-                except (IOError, OSError) : pass
+                except (IOError, OSError): pass
         except OSError:
             return None
         items.sort(cmp=lambda x, y: cmp(x.getname(), y.getname()))
