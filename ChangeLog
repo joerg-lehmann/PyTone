@@ -1,3 +1,9 @@
+2008-11-27 Jörg Lehmann  <joerg@luga.de>
+
+        * pytonectl.py: Encode output (Thanks to Dominik Bruhn <dominik at
+        dbruhn dot de> for the patch).
+
+
 2008-08-16 Jörg Lehmann  <joerg@luga.de>
 
         * services/player.py, services/players/*.py, services/playlist.py:

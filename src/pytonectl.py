@@ -18,7 +18,7 @@
 # along with PyTone; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import os, os.path, sys, getopt
+import os, os.path, sys, getopt, locale
 
 ##############################################################################
 # gettext initialization.
@@ -154,10 +154,14 @@ elif len(args)==1:
             # we have to manually request the song metadata because there the main event and request hub is not correctly
             # initialized
             song_metadata = channel.request(requests.getsong_metadata(playbackinfo.song.songdbid, playbackinfo.song.id))
-            print "%s - %s (%s/%s)" % ( song_metadata.artist,
-                                        song_metadata.title,
-                                        helper.formattime(playbackinfo.time),
-                                        helper.formattime(song_metadata.length))
+           
+            enc = locale.getpreferredencoding() or "ascii"
+
+            s=u"%s - %s (%s/%s)" % (song_metadata.artist,
+                                    song_metadata.title,
+                                    helper.formattime(playbackinfo.time),
+                                    helper.formattime(song_metadata.length))
+            print s.encode(enc)
     else:
         usage()
         sys.exit(2)
