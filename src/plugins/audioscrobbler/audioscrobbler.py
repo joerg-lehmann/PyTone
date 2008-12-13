@@ -63,7 +63,7 @@ class audioscrobblerplugin(plugin.threadedplugin):
         # whatever comes first
         mintime = (song.length <= 480 and int(song.length/2)) or 240
         if ( event.playbackinfo.time >= mintime and song != self.lastSong):
-            log.debug("Audioscrobbler: submitting song '%s'" % song.path)
+            log.debug("Audioscrobbler: submitting song '%s'" % song.id)
             try:
                 self.scrobbler.submit(song)
                 log.debug("Audioscrobbler: submission successful")

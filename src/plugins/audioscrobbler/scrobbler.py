@@ -98,7 +98,7 @@ class Scrobbler(object):
 
     def submit(self, song):
         self.sendInfo(song.artist, song.title, song.album, song.length,
-                             song.lastplayed[-1])
+                             song.date_lastplayed)
 
     def sendInfo(self, artist, title, album, length, debut):
         if self.lastconnected - time.time() > 300:
