@@ -377,6 +377,7 @@ class general(configsection):
     debugfile = configpath("")
     randominsertlength = configfloat("3600")
     colorsupport = configalternatives("auto", ["auto", "on", "off"])
+    mousesupport = configboolean("on")
     layout = configalternatives("twocolumn", ["onecolumn", "twocolumn"])
     throttleoutput = configint("0")
     autoplaymode = configalternatives("off", ["off", "repeat", "random"])

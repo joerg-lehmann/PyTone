@@ -231,8 +231,9 @@ def cursessetup():
     except:
         log.warning("terminal does not support disabling of cursor")
 
-    # enable all mouse events
-    curses.mousemask(curses.ALL_MOUSE_EVENTS)
+    if config.general.mousesupport:
+        # enable all mouse events
+        curses.mousemask(curses.ALL_MOUSE_EVENTS)
 
     # redirect stderr to /dev/null (to prevent spoiling the screen
     # with libalsa messages). This is not really nice but at the moment there

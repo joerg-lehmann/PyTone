@@ -56,6 +56,11 @@ debugfile =
 # which not always works reliably.
 colorsupport = auto
 
+# mousesupport: either on or off
+#
+# Enable mouse support (if available in terminal).
+mousesupport = on
+
 # layout: onecolumn or twocolumn
 #
 # Layout of main PyTone windows
