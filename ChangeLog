@@ -1,3 +1,9 @@
+2008-12-13 Jörg Lehmann  <joerg@luga.de>
+
+        * eventy.py: Fix a couple of __repr__ methods (fixing the skip song
+        functionality).
+
+
 2008-11-27 Jörg Lehmann  <joerg@luga.de>
 
         * pytonectl.py: Encode output (Thanks to Dominik Bruhn <dominik at

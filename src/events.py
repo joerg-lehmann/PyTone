@@ -87,7 +87,7 @@ class sendeventat(event):
         self.replace = replace
 
     def __repr__(self):
-        return "%r(%r, %r, %r)" % (self.__class__.__name__, self.event, self.alarmtime, self.repeat, self.replace)
+        return "%r(%r, %r, %r, %r)" % (self.__class__.__name__, self.event, self.alarmtime, self.repeat, self.replace)
 
 
 class sendeventin(event):
@@ -151,7 +151,7 @@ class song_skipped(dbevent):
         self.song = song
 
     def __repr__(self):
-        return "%r(%r, %r)->%r" % (self.__class__.__name__, self.song, self.songdbid)
+        return "%r(%r)->%r" % (self.__class__.__name__, self.song, self.songdbid)
 
 
 class delete_song(dbevent):
@@ -172,7 +172,7 @@ class add_playlist(dbevent):
         self.songs = songs
 
     def __repr__(self):
-        return "%r(%r)->%r" % (self.__class__.__name__, self.name, self.songs, self.songdbid)
+        return "%r(%r,%r)->%r" % (self.__class__.__name__, self.name, self.songs, self.songdbid)
 
 
 class update_playlist(dbevent):
