@@ -3,6 +3,9 @@
         * eventy.py: Fix a couple of __repr__ methods (fixing the skip song
         functionality).
 
+        * config.py, pytone.py: Make switching on of mouse support a config
+        option (as suggested by Dominik Bruhn <dominik at dbruhn dot de>).
+
 
 2008-11-27 Jörg Lehmann  <joerg@luga.de>
 
@@ -63,7 +66,7 @@
 
 2007-08-15 Jörg Lehmann  <joerg@luga.de>
 
-        * services/songdb.py: Request songs from database with id == "maiN"
+        * services/songdb.py: Request songs from database with id == "main"
         instead of None to prevent a lockup (thanks to Kurt Gysin <pytoner_ml
         at oberon dot on-the-web dot ch> for reporting this problem).
 
