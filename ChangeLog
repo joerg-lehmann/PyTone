@@ -3,6 +3,10 @@
 	* services/songdbs/sqlite.py: Do not force metadata reread when
 	querying songs (as suggested by Tom Diedrich <tom at diedrich2 dot de>).
 
+	* services/songdbs/sqlite.py: Raise DenyRequest in 
+        autoregisterer_queryregistersong method if request is not addressed
+        at this database (thanks to Tom Diedrich <tom at diedrich2 dot de>
+        for the patch).
 
 
 2008-12-13 Jörg Lehmann  <joerg@luga.de>

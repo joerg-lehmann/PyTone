@@ -1158,8 +1158,9 @@ class songautoregisterer(service.service):
             log.info(_("database %r: finished rescanning %d songs") % (self.songdbid, len(event.songs)))
 
     def autoregisterer_queryregistersong(self, request):
-        if self.songdbid == request.songdbid:
-            try:
-                return self._registerorupdatesong(request.path, force=False)
-            except:
-                return None
+        if self.songdbid != request.songdbid:
+            raise hub.DenyRequest
+        try:
+            return self._registerorupdatesong(request.path, force=False)
+        except:
+            return None
