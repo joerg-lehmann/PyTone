@@ -1,3 +1,10 @@
+2009-03-04 Jörg Lehmann  <joerg@luga.de>
+
+	* services/songdbs/sqlite.py: Do not force metadata reread when
+	querying songs (as suggested by Tom Diedrich <tom at diedrich2 dot de>).
+
+
+
 2008-12-13 Jörg Lehmann  <joerg@luga.de>
 
         * eventy.py: Fix a couple of __repr__ methods (fixing the skip song
