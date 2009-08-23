@@ -47,6 +47,16 @@ import locale
 locale.setlocale(locale.LC_ALL, '')
 
 ##############################################################################
+# create .pytone dir in user home
+##############################################################################
+try:
+    os.mkdir(os.path.expanduser("~/.pytone"))
+    log.info(_("created PyTone directory ~/.pytone"))
+except OSError, e:
+    if e.errno!=17:
+        raise
+
+##############################################################################
 # process commandline options and read config file
 ##############################################################################
 
@@ -80,16 +90,6 @@ import services.timer
 
 # sys.setcheckinterval(250)
 
-
-##############################################################################
-# create .pytone dir in user home
-##############################################################################
-try:
-    os.mkdir(os.path.expanduser("~/.pytone"))
-    log.info(_("created PyTone directory ~/.pytone"))
-except OSError, e:
-    if e.errno!=17:
-        raise
 
 ##############################################################################
 # start various services

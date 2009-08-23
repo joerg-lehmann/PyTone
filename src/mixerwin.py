@@ -20,6 +20,7 @@
 import errors
 import re
 import config
+import encoding
 import events, hub
 import log
 import statusbar
@@ -144,7 +145,7 @@ class mixerwin(window.window):
     def update(self):
         self.top()
         window.window.update(self)
-        self.addstr(self.iy, self.ix, _("Volume:"), self.colors.description)
+        self.addstr(self.iy, self.ix, encoding.encode(_("Volume:")), self.colors.description)
         self.addstr(" %3d " % self.level[0], self.colors.content)
  
         percent = self.barlen*self.level[0]/100

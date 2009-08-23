@@ -1,3 +1,24 @@
+2009-08-23 Jörg Lehmann  <joerg@luga.de>
+
+        * mixerwin.py: Encode unicode string (thanks to Michael Hartmann
+        <michael at speicherleck dot de> for reporting this issue).
+
+
+2009-08-22 Jörg Lehmann  <joerg@luga.de>
+
+        * Create .pytone directory earlier in the initilization phase (thanks to
+        Jean Jordaan <jean dot jordaan at gmail dot com> for pointing this out).
+
+
+2009-08-12 Jörg Lehmann  <joerg@luga.de>
+
+        * filelist.py: Use updatedir() instead of readdir() when deleting songs
+        to prevent that the current selection gets lost.
+
+        * playerwin.py: Fix error when trying to rate the currently playing
+        * song while there is no such one.
+
+
 2009-05-31 Jörg Lehmann  <joerg@luga.de>
 
         * Version 3.0.2 released.
@@ -5,10 +26,10 @@
 
 2009-03-04 Jörg Lehmann  <joerg@luga.de>
 
-	* services/songdbs/sqlite.py: Do not force metadata reread when
-	querying songs (as suggested by Tom Diedrich <tom at diedrich2 dot de>).
+        * services/songdbs/sqlite.py: Do not force metadata reread when
+        querying songs (as suggested by Tom Diedrich <tom at diedrich2 dot de>).
 
-	* services/songdbs/sqlite.py: Raise DenyRequest in 
+        * services/songdbs/sqlite.py: Raise DenyRequest in 
         autoregisterer_queryregistersong method if request is not addressed
         at this database (thanks to Tom Diedrich <tom at diedrich2 dot de>
         for the patch).

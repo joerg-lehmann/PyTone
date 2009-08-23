@@ -905,7 +905,7 @@ def checkoptions():
         songdb = database[databasename]
 
         if songdb.type == "local" and songdb.musicbasedir == "":
-            print ( "Please set musicbasedir in the [database.%s] section of the config file pytonerc\n"
+            print ( "Please set musicbasedir in the [database.%s] section of the config file ~/.pytone/pytonerc\n"
                     "to the location of your MP3/Ogg Vorbis files." % databasename )
             sys.exit(2)
 
