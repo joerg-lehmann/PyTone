@@ -1,5 +1,12 @@
 2009-08-23 Jörg Lehmann  <joerg@luga.de>
 
+        * conf/pytonerc: Add notify-send as an example for the song change
+        command which seems to be much more common nowadays (thanks to Michael
+        Hartmann <michael at speicherleck dot de> for pointing this out).
+
+
+2009-08-23 Jörg Lehmann  <joerg@luga.de>
+
         * mixerwin.py: Encode unicode string (thanks to Michael Hartmann
         <michael at speicherleck dot de> for reporting this issue).
 

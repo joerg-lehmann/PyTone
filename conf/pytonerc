@@ -25,6 +25,8 @@ logfile = ~/.pytone/pytone.log
 # playstarthours & Co cannot be used here) is performed.
 songchangecommand =
 
+# use the following (or a variant thereof) if you have installed the notiy-send binary
+# songchangecommand = notify-send PyTone "%(artist)s - %(title)s (%(length)s)"
 # use the following (or a variant thereof) if you have installed the osd_cat binary
 # songchangecommand = echo "%(artist)s - %(title)s (%(length)s)" | osd_cat -p middle -A center -f "-adobe-helvetica-bold-r-normal-*-*-320-*-*-p-*-iso8859-1" -l 1 -
 
