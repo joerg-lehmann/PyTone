@@ -1,3 +1,9 @@
+2009-09-15 Jörg Lehmann  <joerg@luga.de>
+
+        * services/songdbs/sqlite.py: Delete song from database when querying
+        it and it is no longer present on disk.
+
+
 2009-08-23 Jörg Lehmann  <joerg@luga.de>
 
         * conf/pytonerc: Add notify-send as an example for the song change

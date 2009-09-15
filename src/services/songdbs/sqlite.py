@@ -1046,14 +1046,18 @@ class songautoregisterer(service.service):
             # there is exactly one resulting song
             song = songs[0]
             song.song_metadata = self._request(requests.getsong_metadata(self.songdbid, song.id))
-            if force or song.song_metadata.date_updated < os.stat(path).st_mtime:
-                # the song has changed since the last update
-                newsong_metadata = metadata.metadata_from_file(relpath, self.basedir, self.tracknrandtitlere, self.postprocessors)
-                song.song_metadata.update(newsong_metadata)
-                self._notify(events.update_song(self.songdbid, song))
-                log.debug("registerer: song '%r' rescanned" % song_url)
-            else:
-                log.debug("registerer: not scanning unchanged song '%r'" % song_url)
+            try:
+                if force or song.song_metadata.date_updated < os.stat(path).st_mtime:
+                    # the song has changed since the last update
+                    newsong_metadata = metadata.metadata_from_file(relpath, self.basedir, self.tracknrandtitlere, self.postprocessors)
+                    song.song_metadata.update(newsong_metadata)
+                    self._notify(events.update_song(self.songdbid, song))
+                    log.debug("registerer: song '%r' rescanned" % song_url)
+                else:
+                    log.debug("registerer: not scanning unchanged song '%r'" % song_url)
+            except (IOError, RuntimeError):
+                log.debug("registerer: song '%r' can no longer be read. deleting it from db" % song_url)
+                self._notify(events.delete_song(self.songdbid, song))
         else:
             # song was not stored in database
             newsong_metadata = metadata.metadata_from_file(relpath, self.basedir, self.tracknrandtitlere, self.postprocessors)
