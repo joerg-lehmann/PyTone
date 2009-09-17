@@ -1055,7 +1055,7 @@ class songautoregisterer(service.service):
                     log.debug("registerer: song '%r' rescanned" % song_url)
                 else:
                     log.debug("registerer: not scanning unchanged song '%r'" % song_url)
-            except (IOError, RuntimeError):
+            except (IOError, OSError, RuntimeError):
                 log.debug("registerer: song '%r' can no longer be read. deleting it from db" % song_url)
                 self._notify(events.delete_song(self.songdbid, song))
         else:
