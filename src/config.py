@@ -403,6 +403,7 @@ class tag(configsection):
 
 
 class mixer(configsection):
+    type = configalternatives("external", ["external", "internal", "off"])
     device = configpath("/dev/mixer")
     channel = configstring("SOUND_MIXER_PCM")
     stepsize = configint("5")
@@ -914,16 +915,6 @@ def checkoptions():
                 print "dbfile '%s' of database '%s' already in use." % (songdb.dbfile, databasename)
                 sys.exit(2)
             dbfiles.append(songdb.dbfile)
-
-    # check whether oss module is present
-    try:
-        import ossaudiodev
-    except:
-        try:
-            import oss
-        except:
-            mixer.device = ""
-            log.warning("disabling mixer since neither ossaudiodev nor oss module is installed")
 
     # check ao options
     for aooption in player.main.aooptions.split() + player.secondary.aooptions.split():
