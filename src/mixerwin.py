@@ -71,6 +71,8 @@ class internalmixer:
 
     def adjust(self, level_adjust):
         hub.notify(events.player_change_volume_relative(self.playerid, level_adjust))
+        # to make the update smoother, we anticipate the volume change
+        self.volume = max(0, min(1, self.volume + level_adjust/100.))
 
 
 
