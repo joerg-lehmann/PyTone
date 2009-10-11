@@ -1,3 +1,7 @@
+2009-10-11 Jörg Lehmann  <joerg@luga.de>
+
+        * Internal mixer implemented.
+
 2009-09-15 Jörg Lehmann  <joerg@luga.de>
 
         * services/songdbs/sqlite.py: Delete song from database when querying

@@ -27,7 +27,7 @@ import statusbar
 import window
 
 # two simple abstraction classes for the different mixer types from the oss
-# and the ossaudiodev module, respectively.
+# and the ossaudiodev module, as well as the internal mixer
 
 class ossmixer:
     def __init__(self, device, channel):
@@ -38,10 +38,11 @@ class ossmixer:
 
     def get(self):
         return self.mixer.read_channel(self.channel)
-        
-    def set(self, level):
-        self.mixer.write_channel(self.channel, level)
 
+    def adjust(self, level_adjust):
+        oldlevel = self.get()
+        self.mixer.write_channel(self.channel, (max(0, min(oldlevel[0]+level_adjust, 100)),
+                                                max(0, min(oldlevel[1]+level_adjust, 100)) ) )
 
 class ossaudiodevmixer:
     def __init__(self, device, channel):
@@ -50,59 +51,88 @@ class ossaudiodevmixer:
         log.info(_("initialized oss mixer: device %s, channel %s") %
                  (device, channel))
 
-
     def get(self):
         return self.mixer.get(self.channel)
-        
-    def set(self, level):
-        self.mixer.set(self.channel, level)
+
+
+    def adjust(self, level_adjust):
+        oldlevel = self.get()
+        self.mixer.set(self.channel, (max(0, min(oldlevel[0]+level_adjust, 100)),
+                                      max(0, min(oldlevel[1]+level_adjust, 100)) ) )
+
+class internalmixer:
+    def __init__(self, playerid):
+        self.playerid = playerid
+        self.volume = 1
+        log.info(_("initialized internal mixer: player %s") % playerid)
+
+    def get(self):
+        return [self.volume*100, self.volume*100]
+
+    def adjust(self, level_adjust):
+        hub.notify(events.player_change_volume_relative(self.playerid, level_adjust))
+
 
 
 # determine oss module to be used, if any present
 
 try:
     import ossaudiodev as oss
-    mixer = ossaudiodevmixer 
+    externalmixer = ossaudiodevmixer 
 except:
     try:
         import oss
-        mixer = ossmixer
+        externalmixer = ossmixer
     except:
-        mixer = None
+        externalmixer = None
     
 
 class mixerwin(window.window):
 
     def __init__(self, screen, maxh, maxw, channel):
         self.channel = channel
-        self.mixer_device = config.mixer.device
+        if config.mixer.type == "external":
+            if externalmixer is not None:
+                mixer_device = config.mixer.device
+                channelre = re.compile("SOUND_MIXER_[a-zA-Z0-9]")
+                if channelre.match(config.mixer.channel):
+                    mixer_channel = eval("oss.%s" % config.mixer.channel)
+                else:
+                    raise errors.configurationerror("Wrong mixer channel specification: %s" % config.mixer.channel)
+                self.mixer = externalmixer(mixer_device, mixer_channel)
+            else:
+                 self.mixer = internalmixer("main")
+                 log.warning("Could not initialize external mixer, using internal one")
+        elif config.mixer.type == "internal":
+            self.mixer = internalmixer("main")
+        else:
+            self.mixer = None
         self.stepsize = config.mixer.stepsize
 
-        channelre = re.compile("SOUND_MIXER_[a-zA-Z0-9]")
-        if channelre.match(config.mixer.channel):
-            self.mixer_channel = eval("oss.%s" % config.mixer.channel)
+        if self.mixer:
+            self.level = self.mixer.get()
         else:
-            raise errors.configurationerror("Wrong mixer channel specification: %s" % config.mixer.channel)
-        self.mixer = mixer(self.mixer_device, self.mixer_channel)
-        self.level = self.mixer.get()
+            self.level = None
         self.keybindings = config.keybindings.general
 
         # for identification purposes, we only generate this once
         self.hidewindowevent = events.hidewindow(self)
-        
+
         self.hide()
 
-        self.channel.subscribe(events.keypressed, self.keypressed)
-        self.channel.subscribe(events.mouseevent, self.mouseevent)
-        self.channel.subscribe(events.hidewindow, self.hidewindow)
-        self.channel.subscribe(events.focuschanged, self.focuschanged)
+        if self.mixer:
+            self.channel.subscribe(events.keypressed, self.keypressed)
+            self.channel.subscribe(events.mouseevent, self.mouseevent)
+            self.channel.subscribe(events.hidewindow, self.hidewindow)
+            self.channel.subscribe(events.focuschanged, self.focuschanged)
+        if isinstance(self.mixer, internalmixer):
+            self.channel.subscribe(events.player_volume_changed, self.player_volume_changed)
+
 
     def changevolume(self, change):
-        oldlevel = self.mixer.get()
-        self.level= ( max(0, min(oldlevel[0]+change, 100)),
-                      max(0, min(oldlevel[1]+change, 100)) )
-        self.mixer.set(self.level)
-        
+        if self.mixer:
+            self.mixer.adjust(change)
+
     # event handler
 
     def keypressed(self, event):
@@ -142,13 +172,20 @@ class mixerwin(window.window):
 
             hub.notify(events.statusbar_update(0, sbar))
 
+    def player_volume_changed(self, event):
+        if isinstance(self.mixer, internalmixer) and event.playerid==self.mixer.playerid:
+            self.mixer.volume = event.volume
+            if self.hasfocus():
+                self.update()
+
     def update(self):
+        self.level = self.mixer.get()
         self.top()
         window.window.update(self)
         self.addstr(self.iy, self.ix, encoding.encode(_("Volume:")), self.colors.description)
-        self.addstr(" %3d " % self.level[0], self.colors.content)
+        self.addstr(" %3d " % round(self.level[0]), self.colors.content)
  
-        percent = self.barlen*self.level[0]/100
+        percent = int(round(self.barlen*self.level[0]/100))
         self.addstr("#"*percent, self.colors.barhigh)
         self.addstr("#"*(self.barlen-percent), self.colors.bar)
 
@@ -156,7 +193,7 @@ class mixerwin(window.window):
 class popupmixerwin(mixerwin):
 
     """ mixer which appears as a popup at the center of the screen """
-    
+
     def __init__(self, screen, maxh, maxw, channel):
         # calculate size and position
         self.barlen = 20
@@ -169,7 +206,7 @@ class popupmixerwin(mixerwin):
                                screen, h, w, y, x,
                                config.colors.mixerwindow,
                                _("Mixer"))
-                
+
         mixerwin.__init__(self, screen, maxh, maxw, channel)
 
     def resize(self, maxh, maxw):
@@ -178,19 +215,19 @@ class popupmixerwin(mixerwin):
         y = (maxh-h)/2
         x = (maxw-w)/2
         window.window.resize(self, h, w, y, x)
-        
-        
+
+
 class statusbarmixerwin(mixerwin):
 
     """ mixer which appears in the statusbar """
-    
+
     def __init__(self, screen, maxh, maxw, channel):
         # calculate size and position
         self.barlen = max(0, maxw - len(_("Volume:")) - 5)
 
         window.window.__init__(self,
                                screen, 1, maxw, maxh-1, 0, config.colors.mixerwindow)
-                
+
         mixerwin.__init__(self, screen, maxh, maxw, channel)
 
     def resize(self, maxh, maxw):

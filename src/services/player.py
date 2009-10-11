@@ -240,6 +240,7 @@ class genericplayer(service.service):
         self.channel.subscribe(events.playerseekrelative, self.playerseekrelative)
         self.channel.subscribe(events.playerplaysong, self.playerplaysong)
         self.channel.subscribe(events.playerratecurrentsong, self.playerratecurrentsong)
+        self.channel.subscribe(events.player_change_volume_relative, self.player_change_volume_relative)
         self.channel.subscribe(events.playerplayfaster, self.playerplayfaster)
         self.channel.subscribe(events.playerplayslower, self.playerplayslower)
         self.channel.subscribe(events.playerspeedreset, self.playerspeedreset)
@@ -353,6 +354,13 @@ class genericplayer(service.service):
         this method has to be implemented by specialized classes"""
         pass
 
+    def _player_change_volume_relative(self, volume_adj):
+        """change playback volume by volume_adj percent
+
+        this method has to be implemented by specialized classes"""
+        pass
+
+
     def _playerplayfaster(self):
         """Speed up the play rate of the current song
         this method has to be implemented by specialized classes"""
@@ -437,6 +445,11 @@ class genericplayer(service.service):
         """seek by event.seconds in file (relative to current position """
         if event.playerid == self.id:
             self._playerseekrelative(event.seconds)
+
+    def player_change_volume_relative(self, event):
+        """ change volume relative to given setting """
+        if event.playerid == self.id:
+            self._player_change_volume_relative(event.volume_adj)
 
     def playerplayfaster(self, event):
         if event.playerid == self.id:

@@ -336,6 +336,12 @@ class playerseekrelative(playerevent):
     def __repr__(self):
         return "%r(%f->%r)" % (self.__class__.__name__, self.seconds, self.playerid)
 
+class player_change_volume_relative(playerevent):
+    """ change volume of internal player by volume_adj percent"""
+
+    def __init__(self, playerid, volume_adj):
+        self.playerid = playerid
+        self.volume_adj = volume_adj
 
 class playerplayfaster(playerevent):
     """ increase play speed of song on player"""
@@ -389,6 +395,15 @@ class playbackinfochanged(event):
 
     def __repr__(self):
         return "%r(%r)" % (self.__class__.__name__, self.playbackinfo)
+
+class player_volume_changed(event):
+    """ volume of player has been changed """
+    def __init__(self, playerid, volume):
+        self.playerid = playerid
+        self.volume = volume
+
+    def __repr__(self):
+        return "%r(%r,%r)" % (self.__class__.__name__, self.playerid, self.volume)
 
 
 class statusbar_update(event):

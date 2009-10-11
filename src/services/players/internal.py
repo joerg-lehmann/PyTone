@@ -22,6 +22,7 @@ import sys
 import threading
 import time
 
+import hub, events
 import pcm
 import decoder
 from services.player import genericplayer
@@ -113,6 +114,7 @@ class bufferedaudiodev(threading.Thread):
                     log.debug("ao audio device opened")
             except Exception, e:
                 if not errorlogged:
+                    log.debug_traceback()
                     log.error(_('cannot open audio device: error "%s"') % e)
                     errorlogged = True
                 time.sleep(1)
@@ -191,7 +193,6 @@ class decodedsong:
         self.replaygain = self.calculate_replaygain(["track"])
 
         # these method are handled by the decodedsong
-        self.read = self.decodedsong.read
         self.seekrelative = self.decodedsong.seekrelative
         self.playfaster = self.decodedsong.playfaster
         self.playslower = self.decodedsong.playslower
@@ -199,6 +200,13 @@ class decodedsong:
 
     def __repr__(self):
         return "decodedsong(%r)" % repr(self.song)
+
+    def read(self, size):
+        # read decoded pcm stram and adjust for replaygain if necessary
+        buff = self.decodedsong.read(size)
+        if self.replaygain != 1:
+            pcm.scale(buff, self.replaygain)
+        return buff
 
     def succeedsonalbum(self, otherdecodedsong):
         " checks whether otherdeocedsong follows self on the same album "
@@ -248,6 +256,8 @@ class player(genericplayer):
                  crossfading, crossfadingstart, crossfadingduration):
         self.rate = 44100
         self.SIZE = 4096
+        self.volume = 1
+        self._volume_scale = 0.005    # factor for logarthmic volume change
 
         # use C version of buffered audio device if present
         if bufferedao_present:
@@ -292,9 +302,9 @@ class player(genericplayer):
         if len(self.decodedsongs) == 1:
             song = self.decodedsongs[0]
             buff = song.read(self.SIZE)
-            if song.replaygain != 1:
-                pcm.scale(buff, song.replaygain)
             if len(buff) > 0:
+                if self.volume != 1:
+                    pcm.scale(buff, self._volume_scale**(1-self.volume))
                 self.audiodev.play(buff, len(buff))
             else:
                 log.debug("internal player: song ends: %r (0 songs in queue)" % self.decodedsongs[0])
@@ -353,6 +363,8 @@ class player(genericplayer):
                 buff = self.decodedsongs[0].read(self.SIZE)
 
             if len(buff) > 0:
+                if self.volume != 1:
+                    pcm.scale(buff, self._volume_scale**(1-self.volume))
                 self.audiodev.play(buff, len(buff))
 
         # update playbackinfo
@@ -418,6 +430,10 @@ class player(genericplayer):
         song = self.decodedsongs[0]
         song.seekrelative(seconds)
         self.audiodev.flush()
+
+    def _player_change_volume_relative(self, volume_adj):
+        self.volume = max(0, min(1, self.volume + volume_adj/100.0))
+        hub.notify(events.player_volume_changed(self.id, self.volume))
 
     def _playerplayfaster(self):
         if self.decodedsongs:
