@@ -121,11 +121,7 @@ class messagewin(window.window):
             raise hub.TerminateEventProcessing
 
     def focuschanged(self, event):
-        # we either have focus, or we disappear...
-        if not self.hasfocus():
-            # self.hide()
-            pass
-        else:
+        if self.hasfocus():
             sbar = [("PyTone %s" % version.version, config.colors.statusbar.key)]
             sbar += statusbar.separator
             sbar += [(version.copyright, config.colors.statusbar.description)]

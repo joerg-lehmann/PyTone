@@ -88,12 +88,6 @@ class inputwin(window.window):
             self.hide()
             raise hub.TerminateEventProcessing
 
-    def focuschanged(self, event):
-        # we either have focus, or we disappear...
-        pass
-        #if not self.hasfocus():
-        #    self.hide()
-
     def requestinput(self, event):
         self.inputstring = ""
         self.inputprompt = event.prompt
