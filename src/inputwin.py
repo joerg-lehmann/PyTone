@@ -44,7 +44,6 @@ class inputwin(window.window):
         self.channel.subscribe(events.keypressed, self.keypressed)
         self.channel.subscribe(events.mouseevent, self.mouseevent)
         self.channel.subscribe(events.requestinput, self.requestinput)
-        self.channel.subscribe(events.focuschanged, self.focuschanged)
 
     # we also need a blinking cursor, whenever we have the focus
 
