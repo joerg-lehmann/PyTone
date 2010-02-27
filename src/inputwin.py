@@ -90,8 +90,9 @@ class inputwin(window.window):
 
     def focuschanged(self, event):
         # we either have focus, or we disappear...
-        if not self.hasfocus():
-            self.hide()
+        pass
+        #if not self.hasfocus():
+        #    self.hide()
 
     def requestinput(self, event):
         self.inputstring = ""

@@ -165,7 +165,8 @@ class mixerwin(window.window):
     def focuschanged(self, event):
         # we either have focus, or we disappear...
         if not self.hasfocus():
-            self.hide()
+            # self.hide()
+            pass
         else:
             sbar = statusbar.generatedescription("general", "volumedown")
             sbar += statusbar.separator
