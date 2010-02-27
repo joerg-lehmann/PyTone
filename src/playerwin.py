@@ -50,7 +50,7 @@ class playerwin(window.window):
             log.error(_("error '%s' occured during write to playerinfofile") % e)
             self.playerinfofd = None
         # we don't want to have the focus
-        self.panel.bottom()
+        self.bottom()
 
         channel.subscribe(events.playbackinfochanged, self.playbackinfochanged)
         channel.subscribe(events.keypressed, self.keypressed)
