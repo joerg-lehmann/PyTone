@@ -1,6 +1,13 @@
+2010-02-27 Jörg Lehmann  <joerg@luga.de>
+
+        * Do not hide windows in focuschanged events in order to not trigger
+        further focuschanged events.
+
+
 2009-10-11 Jörg Lehmann  <joerg@luga.de>
 
         * Internal mixer implemented.
+
 
 2009-09-15 Jörg Lehmann  <joerg@luga.de>
 
