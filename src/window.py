@@ -22,6 +22,7 @@ import curses.panel
 import events, hub
 import config
 import encoding
+import log
 
 class window:
     def __init__(self, screen,
@@ -251,6 +252,7 @@ class window:
         except:
             pass
         else:
+            log.debug("window '%s' bottom" % repr(self))
             hub.notify(events.focuschanged())
 
     def top(self):
@@ -263,6 +265,7 @@ class window:
         except:
             pass
         else:
+            log.debug("window '%s' top" % repr(self))
             hub.notify(events.focuschanged())
 
     def hide(self):
@@ -272,6 +275,7 @@ class window:
         except:
             pass
         else:
+            log.debug("window '%s' hide" % repr(self))
             hub.notify(events.focuschanged())
 
     def hasfocus(self):
