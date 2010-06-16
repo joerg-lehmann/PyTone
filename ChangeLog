@@ -1,3 +1,8 @@
+2010-06-16 Jörg Lehmann  <joerg@luga.de>
+
+        * Version 3.0.3 released.
+
+
 2010-02-27 Jörg Lehmann  <joerg@luga.de>
 
         * Do not hide windows in focuschanged events in order to not trigger
