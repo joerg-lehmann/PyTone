@@ -1,3 +1,9 @@
+2010-06-19 Jörg Lehmann  <joerg@luga.de>
+
+        * filelist.py: Fix corner case in rating and deleting where neither a song nor
+        a directory has been selected.
+
+
 2010-06-16 Jörg Lehmann  <joerg@luga.de>
 
         * Version 3.0.3 released.

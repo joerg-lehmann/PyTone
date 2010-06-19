@@ -112,6 +112,7 @@ class filelist(slist.slist):
             hub.notify(events.playlistaddsongs([self.getselected()]))
 
     def rateselection(self, rating):
+        songs = []
         if self.isdirselected():
             if not isinstance(self.getselected(), (item.artist, item.album)):
                 self.win.sendmessage(_("Not rating virtual directories!"))
@@ -128,6 +129,7 @@ class filelist(slist.slist):
         return True
 
     def addtagselection(self, tag):
+        songs = []
         if self.isdirselected():
             if not isinstance(self.getselected(), (item.artist, item.album)):
                 self.win.sendmessage(_("Not tagging virtual directories!"))
@@ -141,6 +143,7 @@ class filelist(slist.slist):
         return True
 
     def removetagselection(self, tag):
+        songs = []
         if self.isdirselected():
             if not isinstance(self.getselected(), (item.artist, item.album)):
                 self.win.sendmessage(_("Not untagging virtual directories!"))
@@ -154,6 +157,7 @@ class filelist(slist.slist):
         return True
 
     def toggledeleteselection(self):
+        songs = []
         if self.isdirselected():
             if not isinstance(self.getselected(), (item.artist, item.album)):
                 self.win.sendmessage(_("Not (un)deleting virtual directories!"))
