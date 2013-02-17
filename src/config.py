@@ -382,6 +382,7 @@ class general(configsection):
     throttleoutput = configint("0")
     autoplaymode = configalternatives("off", ["off", "repeat", "random"])
     plugins = configlist("")
+    playlistdir = configpath("")
 
 class database(configsection):
     requestcachesize = configint("50000")
@@ -642,6 +643,7 @@ class keybindings(configsection):
         playlistdeleteplayedsongs = configkeys("KEY_BACKSPACE")
         playlistclear = configkeys("ctrl-d")
         playlistsave = configkeys("ctrl-w")
+        playlistload = configkeys("ctrl-r")
         playlistreplay = configkeys("ctrl-u")
         playlisttoggleautoplaymode = configkeys("ctrl-t")
         togglelayout = configkeys("KEY_F10")

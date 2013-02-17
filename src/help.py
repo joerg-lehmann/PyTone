@@ -52,6 +52,7 @@ descriptions = {
                                (_("toggle playlist mode"), _("toggle the playlist mode")),
           "playlistclear":     (_("clear"), _("clear playlist")),
           "playlistsave":      (_("save"), _("save playlist")),
+          "playlistload":      (_("load"), _("load playlist")),
           "showhelp":          (_("help"), _("show help")),
           "showlog":           (_("log"), _("show log messages")),
           "showstats":         (_("statistics"), _("show statistical information about database(s)")),

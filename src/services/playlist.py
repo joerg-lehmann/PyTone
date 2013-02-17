@@ -106,6 +106,7 @@ class playlist(service.service):
                                self.playlistdeleteplayedsongs)
         self.channel.subscribe(events.playlistreplay, self.playlistreplay)
         self.channel.subscribe(events.playlistsave, self.playlistsave)
+        self.channel.subscribe(events.playlistload, self.playlistload)
         self.channel.subscribe(events.playlistshuffle, self.playlistshuffle)
         self.channel.subscribe(events.playlisttoggleautoplaymode, self.playlisttoggleautoplaymode)
         self.channel.subscribe(events.playlistplaysong, self.playlistplaysong)
@@ -288,6 +289,44 @@ class playlist(service.service):
             songs = [item.song for item in self.items if item.song.songdbid == self.songdbid ]
             hub.notify(events.add_playlist(self.songdbid, name, songs))
 
+            # also write playlist to filesystem
+            if name[-4:] != ".m3u":
+                name = name + ".m3u"
+            try:
+                name = os.path.join(config.general.playlistdir, name)
+                file = open(name, "w")
+                for item in self.items:
+                    if item.song.url.startswith("file://"):
+                        dbstats = hub.request(requests.getdatabasestats(item.song.songdbid))
+                        path = os.path.join(dbstats.basedir, item.song.url[7:])
+                    else:
+                        path = item.song.url
+                    file.write("%s\n" % path)
+                file.close()
+            except (IOError, OSError):
+                pass
+
+    def loadplaylisthandler(self, name, key):
+        if key == ord("\n"):
+            if name[-4:] != ".m3u":
+                name = name + ".m3u"
+            try:
+                path = os.path.join(config.general.playlistdir, name)
+                file = open(path, "r")
+                self._clear()
+                for line in file.xreadlines():
+                    if not line.startswith("#"):
+                        song = hub.request(requests.autoregisterer_queryregistersong(self.songdbid,
+                                                                                     line.strip()))
+                        if song:
+                            self.append(playlistitem(song))
+                file.close()
+            except (IOError, OSError):
+                pass
+            self._updateplaystarttimes()
+            self.notifyplaylistchanged()
+
+
     def _locatesong(self, id):
         """ locate position of item in playlist by id """
         for item, i in zip(self.items, range(len(self.items))):
@@ -396,6 +435,11 @@ class playlist(service.service):
         hub.notify(events.requestinput(_("Save playlist"),
                                        _("Name:"),
                                        self.saveplaylisthandler))
+
+    def playlistload(self, event):
+        hub.notify(events.requestinput(_("Load playlist"),
+                                       _("Name:"),
+                                       self.loadplaylisthandler))
 
     def playlistshuffle(self, event):
         random.shuffle(self.items)

@@ -494,6 +494,10 @@ class playlistsave(playlistevent):
     pass
 
 
+class playlistload(playlistevent):
+    pass
+
+
 class playlistclear(playlistevent):
     pass
 
