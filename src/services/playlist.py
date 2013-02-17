@@ -301,7 +301,7 @@ class playlist(service.service):
                         path = os.path.join(dbstats.basedir, item.song.url[7:])
                     else:
                         path = item.song.url
-                    file.write("%s\n" % path)
+                    file.write("%s\n" % encoding.encode_path(path))
                 file.close()
             except (IOError, OSError):
                 pass
@@ -315,6 +315,7 @@ class playlist(service.service):
                 file = open(path, "r")
                 self._clear()
                 for line in file.xreadlines():
+                    line = encoding.decode_path(line)
                     if not line.startswith("#"):
                         song = hub.request(requests.autoregisterer_queryregistersong(self.songdbid,
                                                                                      line.strip()))
