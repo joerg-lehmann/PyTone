@@ -1104,6 +1104,24 @@ class filesystemdir(diritem):
                 except (IOError, OSError): pass
         except OSError:
             return None
+        def cmpitem(x, y):
+            if isinstance(x, filesystemdir):
+                if isinstance(y, filesystemdir):
+                    # sort directories alphabetically
+                    return cmp(x.getname(), y.getname())
+                else:
+                    # sort directories first
+                    return -1
+            else:
+                if isinstance(y, filesystemdir):
+                    # sort directories first
+                    return 1
+                else:
+                    # sort songs as usual in db
+                    return ( x.disknumber and y.disknumber and cmp(x.disknumber, y.disknumber) or
+                             x.tracknumber and y.tracknumber and cmp(x.tracknumber, y.tracknumber) or
+                             cmp(x.title, y.title) )
+        items.sort(cmp=cmpitem)
         return items
 
     def getcontentsrecursiverandom(self):

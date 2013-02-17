@@ -1,6 +1,7 @@
 2013-02-17 Jörg Lehmann  <joerg@luga.de>
 
-        * item.py: Keep sort order of filesystemdir.
+        * item.py: Sort songs in filesystem like in the rest of the db (thanks
+        to Stefan Wimmer <swimmer at xs4all dot nl> for the suggestion).
 
         * Resurrect writing and reading of playlists to/from files (for Stefan
         Wimmer <swimmer at xs4all dot nl>).
