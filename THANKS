@@ -17,7 +17,7 @@ David Braaten <xiticix47@hotmail.com>
 Michal Cihar <michal@cihar.com>
         for improving the unicode decoding in the tags of Ogg Vorbis files
 Tom Diedrich <tom@diedrich24.de>
-	for very constructive feedback
+        for very constructive feedback
 Stéphane Doyon <s.doyon@videotron.ca>
         for improving the behaviour of PyTone when using Braille displays
 Byron Ellacott <bje@apnic.net>
@@ -33,6 +33,8 @@ Damjan Georgeivski <penguinista@mail.net.mk>
         for locating a bug that I was not able to find
 Harald Görl <goerl@luga.de>
         for suggesting the name PyTone
+Michael Hartmann <michael@speicherleck.de>
+        for motivating me to continue to work on PyTone
 Philipp Jocham <philipp.jocham@gmx.net>
         for a small fix in the Ogg Vorbis metadata handling and a patch for
         a nasty bug in the song update function ... and various other
