@@ -51,7 +51,6 @@ locale.setlocale(locale.LC_ALL, '')
 ##############################################################################
 try:
     os.mkdir(os.path.expanduser("~/.pytone"))
-    log.info(_("created PyTone directory ~/.pytone"))
 except OSError, e:
     if e.errno!=17:
         raise
