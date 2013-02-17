@@ -1,7 +1,9 @@
 2013-02-17 Jörg Lehmann  <joerg@luga.de>
 
+        * item.py: Keep sort order of filesystemdir.
+
         * Resurrect writing and reading of playlists to/from files (for Stefan
-        Wimmer <swimmer at xs4all dot nl>)
+        Wimmer <swimmer at xs4all dot nl>).
 
 
 2010-06-19 Jörg Lehmann  <joerg@luga.de>

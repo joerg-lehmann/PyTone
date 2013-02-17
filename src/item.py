@@ -1104,7 +1104,6 @@ class filesystemdir(diritem):
                 except (IOError, OSError): pass
         except OSError:
             return None
-        items.sort(cmp=lambda x, y: cmp(x.getname(), y.getname()))
         return items
 
     def getcontentsrecursiverandom(self):
