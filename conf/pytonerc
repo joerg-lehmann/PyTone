@@ -36,6 +36,13 @@ songchangecommand =
 # Set this to an empty value to disable this feature
 playerinfofile = ~/.pytone/playerinfo
 
+# playlistdir: Directory, where new playlists should be stored
+#
+# Note that PyTone searches for playlists in all subdirs of
+# basedir. This option only specifies the directory, where new playlists
+# should be stored if no path is specified.
+playlistdir = 
+
 # dumpfile: Name of PyTone dump file
 #
 # PyTone can try to save it's state in a dump file upon a crash.
@@ -634,6 +641,7 @@ playerstop                = S
 playlistdeleteplayedsongs = KEY_BACKSPACE
 playlistclear             = ctrl-d
 playlistsave              = ctrl-w
+playlistload              = ctrl-r
 playlistreplay            = ctrl-u
 playlisttoggleautoplaymode= ctrl-t
 togglelayout              = KEY_F10

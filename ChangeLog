@@ -1,3 +1,9 @@
+2013-02-17 Jörg Lehmann  <joerg@luga.de>
+
+        * Resurrect writing and reading of playlists to/from files (for Stefan
+        Wimmer <swimmer at xs4all dot nl>)
+
+
 2010-06-19 Jörg Lehmann  <joerg@luga.de>
 
         * filelist.py: Fix corner case in rating and deleting where neither a song nor
