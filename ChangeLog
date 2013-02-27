@@ -1,3 +1,8 @@
+2013-02-27 Jörg Lehmann  <joerg@luga.de>
+
+        * Rescan playlists when doing a database rescan.
+
+
 2013-02-17 Jörg Lehmann  <joerg@luga.de>
 
         * item.py: Sort songs in filesystem like in the rest of the db (thanks
