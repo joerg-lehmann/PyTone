@@ -37,6 +37,7 @@ import metadata
 import item
 import service
 import encoding
+import config as configmodule
 
 
 create_tables = """
@@ -605,7 +606,7 @@ class songdb(service.service):
 
         self._txn_begin()
         try:
-            self.cur.execute("INSERT INTO playlists (name) VALUES (?)", [name])
+            self.cur.execute("INSERT OR REPLACE INTO playlists (name) VALUES (?)", [name])
             self.cur.execute("SELECT id FROM playlists WHERE name = ?", [name])
             r = self.cur.fetchone()
             playlist_id = r["id"]
@@ -1105,11 +1106,6 @@ class songautoregisterer(service.service):
                 log.debug_traceback()
         log.debug("registerer: leaving %r"% dir)
 
-    def run(self):
-        # wait a little bit to not disturb the startup too much
-        time.sleep(2)
-        service.service.run(self)
-
     def rescansong(self, song, force):
         if song.songdbid != self.songdbid:
             log.debug("Trying to rescan song in wrong database")
@@ -1134,6 +1130,27 @@ class songautoregisterer(service.service):
             # if anything goes wrong, we delete the song from the database
             self._notify(events.delete_song(self.songdbid, song))
 
+    def rescanplaylist(self, playlist):
+        if playlist.songdbid != self.songdbid:
+            log.debug("Trying to rescan playlist in wrong database")
+            return
+        name = playlist.name
+        if name[-4:] != ".m3u":
+            name = name + ".m3u"
+        try:
+            path = os.path.join(configmodule.general.playlistdir, name)
+            file = open(path, "r")
+            songs = []
+            for line in file.xreadlines():
+                if not line.startswith("#"):
+                    song = self._registerorupdatesong(line.strip(), force=False)
+                    if song:
+                        songs.append(song)
+            file.close()
+            self._notify(events.update_playlist(self.songdbid, playlist.name, songs))
+        except (IOError, OSError):
+            self._notify(events.delete_playlist(self.songdbid, playlist.name))
+
     #
     # event handler
     #
@@ -1151,6 +1168,11 @@ class songautoregisterer(service.service):
             log.info(_("database %r: removing %d stale songs") % (self.songdbid, len(oldsongs)))
             for song in oldsongs:
                 self._notify(events.delete_song(self.songdbid, song))
+
+            playlists = hub.request(requests.getplaylists(self.songdbid))
+            log.info(_("database %r: rescanning %d playlists") % (self.songdbid, len(playlists)))
+            for playlist in playlists:
+                self.rescanplaylist(playlist)
 
             nrsongs = hub.request(requests.getnumberofsongs(self.songdbid))
             log.info(_("database %r: rescan finished (%d songs registered)") % (self.songdbid, nrsongs))
