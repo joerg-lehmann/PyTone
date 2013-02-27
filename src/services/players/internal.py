@@ -409,7 +409,10 @@ class player(genericplayer):
                         self.songtransitionmode = "gapkill"
                         log.debug("internal player: don't crossfade successive songs.")
         except (IOError, RuntimeError):
-            log.warning(_('failed to open song "%r"') % str(song.url))
+            if isinstance(song, services.playlist.playlistitem):
+                log.warning(_('failed to open song "%r"') % str(song.song.url))
+            else:
+                log.warning(_('failed to open song "%r"') % str(song.url))
 
         log.debug("internal player: %d songs in queue" % len(self.decodedsongs))
 
