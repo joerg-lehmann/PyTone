@@ -184,7 +184,7 @@ class update_playlist(dbevent):
         self.songs = songs
 
     def __repr__(self):
-        return "%r(%r)->%r" % (self.__class__.__name__, self.name, self.songs, self.songdbid)
+        return "%r(%r,%r)->%r" % (self.__class__.__name__, self.name, self.songs, self.songdbid)
 
 
 class delete_playlist(dbevent):
