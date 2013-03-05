@@ -190,13 +190,12 @@ class update_playlist(dbevent):
 class delete_playlist(dbevent):
     """ delete playlist from database """
 
-    def __init__(self, songdbid, name):
+    def __init__(self, songdbid, playlist):
         self.songdbid = songdbid
-        self.name = name
+        self.playlist = playlist
 
     def __repr__(self):
-        return "%r(%r)->%r" % (self.__class__.__name__, self.name, self.songdbid)
-
+        return "%r(%r)->%r" % (self.__class__.__name__, self.playlist, self.songdbid)
 
 
 

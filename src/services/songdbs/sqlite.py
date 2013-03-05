@@ -621,14 +621,14 @@ class songdb(service.service):
 
     def _delete_playlist(self, playlist):
         """delete playlist from database"""
-        if not self.playlists.has_key(playlist.id):
-            raise KeyError
+        if not isinstance(playlist, item.playlist):
+            log.error("_delete_playlist: playlist has to be a item.playlist instance, not a %r instance" % playlist.__class__)
+        log.debug("deleting playlist: %r" % playlist)
 
-        log.debug("delete playlist: %r" % playlist)
         self._txn_begin()
         try:
-            self.playlists.delete(playlist.id, txn=self.cur)
-            hub.notify(events.dbplaylistchanged(self.id, playlist))
+            # remove song
+            self.cur.execute("DELETE FROM playlists WHERE id = ?", [playlist.id])
         except:
             self._txn_abort()
             raise
@@ -874,7 +874,7 @@ class songdb(service.service):
     def delete_playlist(self, event):
         if event.songdbid == self.id:
             try:
-                self._delete_playlist(event.name)
+                self._delete_playlist(event.playlist)
             except KeyError:
                 pass
 
@@ -1150,7 +1150,8 @@ class songautoregisterer(service.service):
             file.close()
             self._notify(events.update_playlist(self.songdbid, playlist.name, songs))
         except (IOError, OSError):
-            self._notify(events.delete_playlist(self.songdbid, playlist.name))
+            log.debug("deleting playlist: %s" % playlist.name)
+            self._notify(events.delete_playlist(self.songdbid, playlist))
 
     #
     # event handler
