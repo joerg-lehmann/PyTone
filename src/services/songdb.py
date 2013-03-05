@@ -123,6 +123,7 @@ class songdbmanager(service.service):
         songdb.start()
         if config.autoregisterer:
             hub.notify(events.autoregistersongs(id))
+            hub.notify(events.autoregisterplaylists(id))
 
         return id
 

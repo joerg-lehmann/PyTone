@@ -177,6 +177,9 @@ class filelist(slist.slist):
             # instead of rescanning of a whole filesystem we start the autoregisterer
             self.win.sendmessage(_("Scanning for songs in database '%s'...") % self.getselected().songdbid)
             hub.notify(events.autoregistersongs(self.getselected().songdbid))
+        elif isinstance(self.getselected(), item.playlists):
+            self.win.sendmessage(_("Rescanning playlists in database '%s'...") % self.getselected().songdbid)
+            hub.notify(events.autoregisterplaylists(self.getselected().songdbid))
         else:
             if self.isdirselected():
                 # distribute songs over songdbs

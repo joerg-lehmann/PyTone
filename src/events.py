@@ -213,6 +213,19 @@ class autoregistersongs(dbevent):
         return "%r(%r)->%r" % (self.__class__.__name__, self.force, self.songdbid)
 
 
+class autoregisterplaylists(dbevent):
+    """ start autoregisterer for database to rescan only playlists
+
+    If force is set, the m_time of songs is ignored and they are always rescanned.
+    """
+    def __init__(self, songdbid, force=False):
+        self.songdbid = songdbid
+        self.force = force
+
+    def __repr__(self):
+        return "%r(%r)->%r" % (self.__class__.__name__, self.force, self.songdbid)
+
+
 class autoregisterer_rescansongs(dbevent):
     """ rescan songs in given database 
 

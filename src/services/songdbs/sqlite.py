@@ -1009,6 +1009,7 @@ class songautoregisterer(service.service):
         self.supportedextensions = metadata.getextensions()
 
         self.channel.subscribe(events.autoregistersongs, self.autoregistersongs)
+        self.channel.subscribe(events.autoregisterplaylists, self.autoregisterplaylists)
         self.channel.subscribe(events.autoregisterer_rescansongs, self.autoregisterer_rescansongs)
         self.channel.supply(requests.autoregisterer_queryregistersong, self.autoregisterer_queryregistersong)
 
@@ -1169,13 +1170,15 @@ class songautoregisterer(service.service):
             for song in oldsongs:
                 self._notify(events.delete_song(self.songdbid, song))
 
+            nrsongs = hub.request(requests.getnumberofsongs(self.songdbid))
+            log.info(_("database %r: rescan finished (%d songs registered)") % (self.songdbid, nrsongs))
+
+    def autoregisterplaylists(self, event):
+        if self.songdbid == event.songdbid:
             playlists = hub.request(requests.getplaylists(self.songdbid))
             log.info(_("database %r: rescanning %d playlists") % (self.songdbid, len(playlists)))
             for playlist in playlists:
                 self.rescanplaylist(playlist)
-
-            nrsongs = hub.request(requests.getnumberofsongs(self.songdbid))
-            log.info(_("database %r: rescan finished (%d songs registered)") % (self.songdbid, nrsongs))
 
     def autoregisterer_rescansongs(self, event):
         if self.songdbid == event.songdbid:
