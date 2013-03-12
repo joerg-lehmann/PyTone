@@ -1131,15 +1131,8 @@ class songautoregisterer(service.service):
             # if anything goes wrong, we delete the song from the database
             self._notify(events.delete_song(self.songdbid, song))
 
-    def rescanplaylist(self, playlist):
-        if playlist.songdbid != self.songdbid:
-            log.debug("Trying to rescan playlist in wrong database")
-            return
-        name = playlist.name
-        if name[-4:] != ".m3u":
-            name = name + ".m3u"
+    def read_playlist_from_file(self, path):
         try:
-            path = os.path.join(configmodule.general.playlistdir, name)
             file = open(path, "r")
             songs = []
             for line in file.xreadlines():
@@ -1148,10 +1141,39 @@ class songautoregisterer(service.service):
                     if song:
                         songs.append(song)
             file.close()
-            self._notify(events.update_playlist(self.songdbid, playlist.name, songs))
+            return songs
         except (IOError, OSError):
+            return None
+
+    def rescanplaylists_dirtree(self, dir):
+        try:
+            relpaths = os.listdir(dir)
+        except OSError:
+            return
+        for relpath in relpaths:
+            path = os.path.join(dir, relpath)
+            name = os.path.splitext(relpath)[0]
+            extension = os.path.splitext(path)[1].lower()
+            log.debug("+++" + path + "..." + name + "..." + extension)
+            if os.access(path, os.R_OK):
+                if os.path.isdir(path):
+                    try:
+                        self.rescanplaylists_dirtree(path)
+                    except (IOError, OSError), e:
+                        log.warning("songautoregisterer: could not enter dir %r: %r" % (path, e))
+                elif extension == ".m3u":
+                    songs = self.read_playlist_from_file(path)
+                    if songs:
+                        self._notify(events.add_playlist(self.songdbid, name, songs))
+
+
+    def rescanplaylists(self):
+        # we rescan by deleting all playlist first and then reading them in again
+        for playlist in hub.request(requests.getplaylists(self.songdbid)):
             log.debug("deleting playlist: %s" % playlist.name)
             self._notify(events.delete_playlist(self.songdbid, playlist))
+
+        self.rescanplaylists_dirtree(configmodule.general.playlistdir or ".")
 
     #
     # event handler
@@ -1176,10 +1198,8 @@ class songautoregisterer(service.service):
 
     def autoregisterplaylists(self, event):
         if self.songdbid == event.songdbid:
-            playlists = hub.request(requests.getplaylists(self.songdbid))
-            log.info(_("database %r: rescanning %d playlists") % (self.songdbid, len(playlists)))
-            for playlist in playlists:
-                self.rescanplaylist(playlist)
+            log.info(_("database %r: rescanning playlists") % (self.songdbid))
+            self.rescanplaylists()
 
     def autoregisterer_rescansongs(self, event):
         if self.songdbid == event.songdbid:

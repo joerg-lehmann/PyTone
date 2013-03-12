@@ -1,3 +1,8 @@
+2013-03-12 Jörg Lehmann  <joerg@luga.de>
+
+        * Really sync playlists from file system.
+
+
 2013-03-05 Jörg Lehmann  <joerg@luga.de>
 
         * Enable separate playlist scan.
