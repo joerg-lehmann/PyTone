@@ -1,3 +1,11 @@
+2013-03-16 Jörg Lehmann  <joerg@luga.de>
+
+        * Remove "DISTINCT" from "SELECT" query for songs to prevent duplicate
+        items from being removed in playlists. It should not be necessary otherwise.
+
+        * Delete playlists properly.
+
+
 2013-03-12 Jörg Lehmann  <joerg@luga.de>
 
         * Really sync playlists from file system.

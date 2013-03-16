@@ -629,6 +629,7 @@ class songdb(service.service):
         try:
             # remove song
             self.cur.execute("DELETE FROM playlists WHERE id = ?", [playlist.id])
+            self.cur.execute("DELETE FROM playlistcontents WHERE playlist_id = ?", [playlist.id])
         except:
             self._txn_abort()
             raise
@@ -707,13 +708,13 @@ class songdb(service.service):
         wherestring = filters and filters.SQL_WHERE_string() or ""
         orderstring = sort and sort.SQL_string() or ""
         args = filters and filters.SQL_args() or []
-        select = """SELECT DISTINCT songs.id              AS song_id, 
-                                    songs.album_id        AS album_id, 
-                                    songs.artist_id       AS artist_id,
-                                    songs.album_artist_id AS album_artist_id
+        select = """SELECT songs.id              AS song_id,
+                           songs.album_id        AS album_id,
+                           songs.artist_id       AS artist_id,
+                           songs.album_artist_id AS album_artist_id
                     FROM songs
                     LEFT JOIN artists   ON (songs.artist_id = artists.id)
-                    LEFT JOIN albums    ON (songs.album_id = albums.id) 
+                    LEFT JOIN albums    ON (songs.album_id = albums.id)
                     %s
                     %s
                     %s
@@ -1154,7 +1155,6 @@ class songautoregisterer(service.service):
             path = os.path.join(dir, relpath)
             name = os.path.splitext(relpath)[0]
             extension = os.path.splitext(path)[1].lower()
-            log.debug("+++" + path + "..." + name + "..." + extension)
             if os.access(path, os.R_OK):
                 if os.path.isdir(path):
                     try:
