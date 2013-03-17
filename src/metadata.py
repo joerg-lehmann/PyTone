@@ -454,9 +454,10 @@ def read_vorbis_metadata(md, path):
 
     md.samplerate = vf.info().rate
     md.is_vbr = vf.info().bitrate_lower != vf.info().bitrate_upper
+    md.comments = []
+    md.lyrics = []
 
     for name, value in vf.comment().as_dict().items():
-        log.debug("Vorbis Metadata: %s -> %s" % (name, value))
         value = value[0]
         if name == "TITLE": md.title = value
         if name == "ALBUM": md.album = value
