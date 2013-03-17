@@ -387,7 +387,7 @@ def read_mp3_eyeD3_metadata(md, path):
             if length:
                 md.length = length
         md.lyrics = u"".join(mp3info.getLyrics())
-        md.comments = u"".join(map(lambda c: c.render(), mp3info.getComments()))
+        md.comments = ["", "", u"".join(map(lambda c: c.render(), mp3info.getComments()))]
         md.bpm = mp3info.getBPM()
 
         for rva2frame in mp3info.frames["RVA2"]:
@@ -465,8 +465,9 @@ def read_vorbis_metadata(md, path):
             except ValueError: pass
         if name == "GENRE" and value:
             md.tags.append("G:%s" % value)
-        if name == "COMMENT":
-           md.comments = [value]
+        if name == "COMMENT" or name == "COMMENTS":
+           # no language and description field in Vorbis
+           md.comments.append(["", "", value])
         if name == "TRACKNUMBER":
             try: md.tracknumber = int(value)
             except ValueError: pass

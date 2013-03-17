@@ -1,3 +1,13 @@
+2013-03-17 Jörg Lehmann  <joerg@luga.de>
+
+        * Unify internal handling of comment section in MP3 and Ogg Vorbis metadata
+
+        * Be more flexible with Ogg Vorbis comments (Thanks to Stefan
+        Wimmer <swimmer at xs4all dot nl> for the input).
+
+        * Filter iTunes comments.
+
+
 2013-03-16 Jörg Lehmann  <joerg@luga.de>
 
         * Remove "DISTINCT" from "SELECT" query for songs to prevent duplicate
