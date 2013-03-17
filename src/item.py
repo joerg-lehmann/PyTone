@@ -527,7 +527,7 @@ class song(item):
         for comment in self.comments:
             if not comment[1].startswith("iTun"):
                 comments.append(comment[2])
-        l.append([_("Comment:"), "".join(comments) or "-",
+        l.append([_("Comment:"), " ".join(comments) or "-",
                   _("Lyrics:"), self.lyrics and _("%d lines") % len(self.lyrics[0][2].split("\n")) or "-"])
         l.append([_("URL:"), self.url, "", ""])
 
