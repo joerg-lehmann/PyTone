@@ -316,7 +316,7 @@ class window:
             if self.hastopborder():
                 self.hline(0, self.ix, curses.ACS_HLINE, self.iw, attr)
                 # self.win.border(0, 0, topborder)
-                t = encoding.encode(self.title)[:self.w-4]
+                t = self.title[:self.w-4]
                 pos = (self.w-4-len(t))//2
                 self.addstr(0, pos, "[ %s ]" % t, titleattr)
                 if self.hasleftborder():

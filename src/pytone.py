@@ -31,8 +31,7 @@ import curses, os, os.path, signal, imp, sys
 
 import gettext
 locallocaledir = os.path.join(os.path.dirname(sys.argv[0]), "../locale")
-# gettext.install("PyTone", locallocaledir)
-gettext.translation("PyTone", locallocaledir, languages=["it"]).install()
+gettext.translation("PyTone", locallocaledir).install()
 
 ##############################################################################
 # locale initialization
