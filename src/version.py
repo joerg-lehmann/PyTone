@@ -18,4 +18,4 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 version = "3.0.4pre"
-copyright = u"(c) 2002-2010, 2012 Jörg Lehmann <joerg@luga.de>"
+copyright = "(c) 2002-2010, 2012 Jörg Lehmann <joerg@luga.de>"

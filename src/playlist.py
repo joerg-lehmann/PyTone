@@ -46,7 +46,7 @@ class playlist(slist.slist):
                 self.selected = i
                 if self.selected != oldselected:
                     self._notifyselectionchanged()
-                h2 = self.win.ih/2
+                h2 = self.win.ih//2
                 if len(self)-i <= h2:
                     self.top = max(0, len(self)-self.win.ih)
                 elif i >= h2:

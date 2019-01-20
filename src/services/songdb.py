@@ -106,11 +106,11 @@ class songdbmanager(service.service):
             return None
 
         if type=="local":
-            import songdbs.sqlite
-            songdb = songdbs.sqlite.songdb(id, config, self.songdbhub)
+            from .songdbs import sqlite
+            songdb = sqlite.songdb(id, config, self.songdbhub)
         elif type=="remote":
-            import songdbs.remote
-            songdb = songdbs.remote.songdb(id, config.networklocation, self.songdbhub)
+            from .songdbs import remote
+            songdb = remote.songdb(id, config.networklocation, self.songdbhub)
 
         for postprocessor_name in config.postprocessors:
             try:
@@ -153,7 +153,7 @@ class songdbmanager(service.service):
                 # remove least recently used items from cache
                 if self.requestcachesize > self.requestcachemaxsize:
                     log.debug("dbrequest cache: purging old items")
-                    cachebytime = [(item[2], key) for key, item in self.requestcache.items()]
+                    cachebytime = [(item[2], key) for key, item in list(self.requestcache.items())]
                     cachebytime.sort()
                     for atime, key in cachebytime[-10:]:
                         self.requestcachesize -= self.requestcache[key][3]
@@ -277,13 +277,13 @@ class songdbmanager(service.service):
                 # only the playing information was changed, so we just
                 # delete the relevant cache results
 
-                for key, item in self.requestcache.items():
+                for key, item in list(self.requestcache.items()):
                     if isinstance(item[1], (requests.getsongs)):
                         del self.requestcache[key]
                 return
         # otherwise we delete the queries for the correponding database (and all compound queries)
         log.debug("dbrequest cache: emptying cache for database %r" % event.songdbid)
-        for key, item in self.requestcache.items():
+        for key, item in list(self.requestcache.items()):
             songdbid = item[1].songdbid
             if songdbid is None or songdbid == event.songdbid:
                 del self.requestcache[key]
@@ -333,7 +333,7 @@ class songdbmanager(service.service):
                 # (playingtime, dbsong).
                 for dbsong in self.dbrequestsongs(nrequest):
                     resulthash[dbsong] = songdbid
-            return resulthash.values()
+            return list(resulthash.values())
         elif request.songdbid not in self.songdbids:
             log.error("songdbmanager: invalid songdbid '%r' for database request" % request.songdbid)
             return
@@ -352,7 +352,7 @@ class songdbmanager(service.service):
                 for result in self.dbrequestlist(nrequest):
                     resulthash[result] = songdbid
             # sort results
-            return resulthash.keys()
+            return list(resulthash.keys())
         elif request.songdbid not in self.songdbids:
             log.error("songdbmanager: invalid songdbid '%r' for database request" % request.songdbid)
         else:

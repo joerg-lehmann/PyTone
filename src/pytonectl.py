@@ -36,10 +36,10 @@ try:
 except:
     # Disable localization if there is any problem with the above.
     # This works around a problem with Python 2.1
-    import __builtin__
-    __builtin__.__dict__['_'] = lambda s: s
+    import builtins
+    builtins.__dict__['_'] = lambda s: s
 
-import network, events, requests, version, helper
+from . import network, events, requests, version, helper
 
 #
 # parse command line options
@@ -51,33 +51,33 @@ unixsocketfile = None
 debugmode = False
 
 def usage():
-    print "pytonectl %s" % version.version
-    print "Copyright (C) 2003, 2004 Jörg Lehmann <joerg@luga.de>"
-    print "usage: pytonectl.py [options] command"
-    print
-    print "Possible options are:"
-    print "   -h, --help:              show this help"
-    print "   -s, --server <hostname>: connect to PyTone server on hostname"
-    print "   -p, --port <portnumber>: connect to PyTone server on given port"
-    print "   -f, --file <filename>:   connect to PyTone UNIX socket filename"
-    print "   -d, --debug:             enable debug mode"
-    print
-    print "The supported commands are:"
-    print "    getplayerinfo:                  show information on the song currently being played"
-    print "    playerforward:                  play the next song in the playlist"
-    print "    playerprevious:                 play the previous song in the playlist"
-    print "    playerseekrelative <seconds>:   seek relative in the current song by the given number of seconds"
-    print "    playerpause:                    pause the player"
-    print "    playerstart:                    start/unpause the player"
-    print "    playertogglepause:              pause the player, if playing, or play, if paused"
-    print "    playerstop:                     stop the player"
-    print "    playerratecurrentsong <rating>: rate the song currently being played (1<=rating<=5)"
-    print "    playlistaddsongs <filenames>:   add files to end of playlist"
-    print "    playlistaddsongtop <filename>:  play file immediately"
-    print "    playlistclear:                  clear the playlist"
-    print "    playlistdeleteplayedsongs:      remove all played songs from the playlist"
-    print "    playlistreplay:                 mark all songs in the playlist as unplayed"
-    print "    playlistshuffle:                shuffle the playlist"
+    print("pytonectl %s" % version.version)
+    print("Copyright (C) 2003, 2004 Jörg Lehmann <joerg@luga.de>")
+    print("usage: pytonectl.py [options] command")
+    print()
+    print("Possible options are:")
+    print("   -h, --help:              show this help")
+    print("   -s, --server <hostname>: connect to PyTone server on hostname")
+    print("   -p, --port <portnumber>: connect to PyTone server on given port")
+    print("   -f, --file <filename>:   connect to PyTone UNIX socket filename")
+    print("   -d, --debug:             enable debug mode")
+    print()
+    print("The supported commands are:")
+    print("    getplayerinfo:                  show information on the song currently being played")
+    print("    playerforward:                  play the next song in the playlist")
+    print("    playerprevious:                 play the previous song in the playlist")
+    print("    playerseekrelative <seconds>:   seek relative in the current song by the given number of seconds")
+    print("    playerpause:                    pause the player")
+    print("    playerstart:                    start/unpause the player")
+    print("    playertogglepause:              pause the player, if playing, or play, if paused")
+    print("    playerstop:                     stop the player")
+    print("    playerratecurrentsong <rating>: rate the song currently being played (1<=rating<=5)")
+    print("    playlistaddsongs <filenames>:   add files to end of playlist")
+    print("    playlistaddsongtop <filename>:  play file immediately")
+    print("    playlistclear:                  clear the playlist")
+    print("    playlistdeleteplayedsongs:      remove all played songs from the playlist")
+    print("    playlistreplay:                 mark all songs in the playlist as unplayed")
+    print("    playlistshuffle:                shuffle the playlist")
 
 try:
     opts, args = getopt.getopt(sys.argv[1:],
@@ -107,7 +107,7 @@ if debugmode:
     log.info("Debug mode enabled")
 
 if server is not None and unixsocketfile is not None:
-    print "Error: cannot connect both via network and unix sockets"
+    print("Error: cannot connect both via network and unix sockets")
     sys.exit(2)
 if server is None:
     if unixsocketfile is None:
@@ -118,8 +118,8 @@ else:
 
 try:
     channel = network.clientchannel(networklocation)
-except Exception, e:
-    print "Error: cannot connect to PyTone server: %s" % e
+except Exception as e:
+    print("Error: cannot connect to PyTone server: %s" % e)
     sys.exit(2)
 
 channel.start()
@@ -157,11 +157,11 @@ elif len(args)==1:
            
             enc = locale.getpreferredencoding() or "ascii"
 
-            s=u"%s - %s (%s/%s)" % (song_metadata.artist,
+            s="%s - %s (%s/%s)" % (song_metadata.artist,
                                     song_metadata.title,
                                     helper.formattime(playbackinfo.time),
                                     helper.formattime(song_metadata.length))
-            print s.encode(enc)
+            print(s.encode(enc))
     else:
         usage()
         sys.exit(2)

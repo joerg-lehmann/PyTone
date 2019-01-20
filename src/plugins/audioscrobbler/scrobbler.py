@@ -26,7 +26,7 @@
 #
 ##############################################################################
 import os.path
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import md5
 import time
 import csv
@@ -57,7 +57,7 @@ class Scrobbler(object):
         timestamp = str(int(time.time()))
         pswd = md5.new(md5.new(self.password).hexdigest() +
                 timestamp).hexdigest()
-        rs = urllib.urlencode(
+        rs = urllib.parse.urlencode(
                 { 'hs' : 'true',
                   'p' : '1.1',
                   'c' : self.client,
@@ -66,7 +66,7 @@ class Scrobbler(object):
                   't' : int(time.time()),
                   'a' : pswd })
         url = self.url + "?" + rs
-        result = urllib.urlopen(url).readlines()
+        result = urllib.request.urlopen(url).readlines()
         if result[0].startswith('UPTODATE'):
             return True, False, result[1:]
         elif result[0].startswith('UPDATE'):
@@ -116,10 +116,10 @@ class Scrobbler(object):
         infodict = { 'u' : self.user, 's' : pswd, 'a[0]' : artist,
             't[0]' : title, 'b[0]' : album, 'm[0]' : '', 'l[0]' : length,
             'i[0]' : time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(debut))}
-        rs = urllib.urlencode(infodict)
+        rs = urllib.parse.urlencode(infodict)
 
         try:
-            result = urllib.urlopen(self.submitURL, rs).readlines()
+            result = urllib.request.urlopen(self.submitURL, rs).readlines()
         except IOError:
             self.addBacklog(infodict)
             return False
@@ -153,10 +153,10 @@ def main():
     class A:
         pass
     a = A()
-    a.artist = raw_input('Artiste: ')
-    a.title = raw_input('Titre: ')
-    a.album = raw_input('Album: ')
-    a.length = raw_input('Duree: ')
+    a.artist = input('Artiste: ')
+    a.title = input('Titre: ')
+    a.album = input('Album: ')
+    a.length = input('Duree: ')
     a.lastplayed = [ int(time.time() - 250) ]
 
     scrobbler = Scrobbler('user', '*****')

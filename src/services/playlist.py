@@ -49,7 +49,7 @@ class playlistitem:
         _counter += 1
 
     def __repr__(self):
-        return "playlistitem: id=%s" % `self.id`
+        return "playlistitem: id=%s" % repr(self.id)
 
     def getid(self):
         return self.id
@@ -229,12 +229,12 @@ class playlist(service.service):
         # it is ok if the song is contained in a local song database, so we first
         # check whether this is the case.
         # XXX make this behaviour configurable?
-	stats = hub.request(requests.getdatabasestats(song.songdbid))
+        stats = hub.request(requests.getdatabasestats(song.songdbid))
         if isinstance(song, item.song):
             if stats.type == "local":
                 return song
 
-	return song
+        return song
 
         # XXX do we really need this
         # currently it does not work anymore
@@ -314,7 +314,7 @@ class playlist(service.service):
                 path = os.path.join(config.general.playlistdir, name)
                 file = open(path, "r")
                 self._clear()
-                for line in file.xreadlines():
+                for line in file:
                     if not line.startswith("#"):
                         song = hub.request(requests.autoregisterer_queryregistersong(self.songdbid,
                                                                                      line.strip()))
@@ -329,7 +329,7 @@ class playlist(service.service):
 
     def _locatesong(self, id):
         """ locate position of item in playlist by id """
-        for item, i in zip(self.items, range(len(self.items))):
+        for item, i in zip(self.items, list(range(len(self.items)))):
             if item.id == id:
                 return i
         else:

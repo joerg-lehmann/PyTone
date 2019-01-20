@@ -29,15 +29,10 @@ import curses, os, os.path, signal, imp, sys
 # module. This may not be the case, if the .mo files are installed at
 # their proper location.
 
-try:
-    import gettext
-    locallocaledir = os.path.join(os.path.dirname(sys.argv[0]), "../locale")
-    gettext.install("PyTone", locallocaledir, unicode=True)
-except:
-    # Disable localization if there is any problem with the above.
-    # This works around a problem with Python 2.1
-    import __builtin__
-    __builtin__.__dict__['_'] = lambda s: s
+import gettext
+locallocaledir = os.path.join(os.path.dirname(sys.argv[0]), "../locale")
+# gettext.install("PyTone", locallocaledir)
+gettext.translation("PyTone", locallocaledir, languages=["it"]).install()
 
 ##############################################################################
 # locale initialization
@@ -51,7 +46,7 @@ locale.setlocale(locale.LC_ALL, '')
 ##############################################################################
 try:
     os.mkdir(os.path.expanduser("~/.pytone"))
-except OSError, e:
+except OSError as e:
     if e.errno!=17:
         raise
 
@@ -59,6 +54,7 @@ except OSError, e:
 # process commandline options and read config file
 ##############################################################################
 
+# import log
 import config
 # process the command line first, because a different location for the
 # config file may be given there
@@ -126,7 +122,7 @@ try:
                 config.finishconfigsection(pluginconfig)
                 pluginconfig = pluginconfig()
             plugins.append((pluginmodule, pluginconfig))
-        except Exception, e:
+        except Exception as e:
              log.error(_("Cannot load plugin '%s': %s") % (name, e))
              log.debug_traceback()
 
@@ -143,8 +139,9 @@ try:
             songdbid = songdbmanager.addsongdb(songdbname, config.database[songdbname])
             if songdbid:
                 songdbids.append(songdbid)
-        except Exception, e:
+        except Exception as e:
             log.error("cannot initialize db %s: %s" % (id, e))
+            raise
 
     if not songdbids:
         # raise last configuration error
@@ -215,14 +212,7 @@ def cursessetup():
         curses.use_default_colors()
         config.configcolor._colors["default"] = -1
     except:
-        try:
-            import cursext
-            if cursext.useDefaultColors():
-                config.configcolor._colors["default"] = -1
-            else:
-                log.warning("terminal does not support transparency")
-        except:
-            log.warning("transparency support disabled because cursext module is not present")
+        log.warning("terminal does not support transparency")
 
     # try disabling cursor
     try:
@@ -237,7 +227,7 @@ def cursessetup():
     # redirect stderr to /dev/null (to prevent spoiling the screen
     # with libalsa messages). This is not really nice but at the moment there
     # is no other way to get rid of this nuisance.
-    dev_null = file("/dev/null", 'w')
+    dev_null = open("/dev/null", 'w')
     os.dup2(dev_null.fileno(), sys.stderr.fileno())
 
     return stdscr
@@ -273,6 +263,7 @@ signal.signal(signal.SIGTERM, sigtermhandler)
 
 try:
     stdscr = cursessetup()
+    log.debug("-")
     # set m to None as marker in case that something goes wrong in the
     # mainscreen.mainscreen constructor
     m = None

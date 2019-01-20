@@ -24,7 +24,7 @@ import encoding
 import log
 
 # artist name for compilations
-VARIOUS = u"___VARIOUS___"
+VARIOUS = "___VARIOUS___"
 
 tracknrandtitlere = re.compile("^\[?(\d+)\]? ?[- ] ?(.*)\.(mp3|ogg)$")
 
@@ -126,12 +126,12 @@ def getmetadatadecoder(type):
 
 def getextensions():
     result = []
-    for decoder_function, extension in _fileformats.values():
+    for decoder_function, extension in list(_fileformats.values()):
         result.append(extension)
     return result
 
 def gettype(extension):
-    for type, extensions in _fileformats.items():
+    for type, extensions in list(_fileformats.items()):
         if extension.lower() in extensions:
             return type
     return None
@@ -217,7 +217,7 @@ def metadata_from_file(relpath, basedir, tracknrandtitlere, postprocessors):
 def read_path_metadata(md, relpath, tracknrandtitlere):
     relpath = os.path.normpath(relpath)
 
-    md.url = u"file://" + encoding.decode_path(relpath)
+    md.url = "file://" + encoding.decode_path(relpath)
 
     # guesses for title and tracknumber using the filename
     match = re.match(tracknrandtitlere, os.path.basename(relpath))
@@ -265,7 +265,7 @@ def read_path_metadata(md, relpath, tracknrandtitlere):
 
 def _splitnumbertotal(s):
     """ split string into number and total number """
-    r = map(int, s.split("/"))
+    r = list(map(int, s.split("/")))
     number = r[0]
     if len(r) == 2:
         count = r[1]
@@ -290,7 +290,7 @@ def read_mp3_mutagen_metadata(md, path):
     md.lyrics = []
 
     if mp3.tags:
-        for frame in mp3.tags.values():
+        for frame in list(mp3.tags.values()):
             if frame.FrameID == "TCON":
                 genre = " ".join(frame.genres)
                 if genre:
@@ -330,7 +330,7 @@ def read_mp3_mutagen_metadata(md, path):
             else:
                 name = _mutagen_framemapping.get(frame.FrameID, None)
                 if name:
-                    text = " ".join(map(unicode, frame.text))
+                    text = " ".join(map(str, frame.text))
                     md[name] = text
     else:
         log.debug("Could not read ID3 tags for song '%r'" % path)
@@ -364,7 +364,7 @@ def read_mp3_eyeD3_metadata(md, path):
             pass
         try:
             genre = mp3info.getGenre()
-        except eyeD3.tag.GenreException, e:
+        except eyeD3.tag.GenreException as e:
             genre = e.msg.split(':')[1].strip()
         if genre:
             md.tags.append("G:%s" % genre)
@@ -386,8 +386,8 @@ def read_mp3_eyeD3_metadata(md, path):
                     pass
             if length:
                 md.length = length
-        md.lyrics = u"".join(mp3info.getLyrics())
-        md.comments = ["", "", u"".join(map(lambda c: c.render(), mp3info.getComments()))]
+        md.lyrics = "".join(mp3info.getLyrics())
+        md.comments = ["", "", "".join([c.render() for c in mp3info.getComments()])]
         md.bpm = mp3info.getBPM()
 
         for rva2frame in mp3info.frames["RVA2"]:
@@ -457,7 +457,7 @@ def read_vorbis_metadata(md, path):
     md.comments = []
     md.lyrics = []
 
-    for name, value in vf.comment().as_dict().items():
+    for name, value in list(vf.comment().as_dict().items()):
         value = value[0]
         if name == "TITLE": md.title = value
         if name == "ALBUM": md.album = value
@@ -546,7 +546,7 @@ def read_flac_metadata(md, path):
         elif block.type == flac.metadata.STREAMINFO:
             streaminfo = block.data.stream_info
             self.length = streaminfo.total_samples / streaminfo.sample_rate
-        if not it.next():
+        if not next(it):
             break
 
 try:

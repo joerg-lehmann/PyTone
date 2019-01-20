@@ -192,7 +192,7 @@ class filelist(slist.slist):
             dsongs = {}
             for song in songs:
                 dsongs.setdefault(song.songdbid, []).append(song)
-            for songdbid, songs in dsongs.items():
+            for songdbid, songs in list(dsongs.items()):
                 if songs:
                     hub.notify(events.autoregisterer_rescansongs(songdbid, songs, force))
 

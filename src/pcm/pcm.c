@@ -75,17 +75,17 @@ static PyObject *py_mix(PyObject *self, PyObject *args) {
   PyObject *returnObj = NULL;
 
   char *b1;
-  int l1;
+  Py_ssize_t l1;
 
   char *b2;
-  int l2;
+  Py_ssize_t l2;
 
   char *dummy=0;       /* buffer used, if l1!=l2 */
 
   PyObject *buffobj;
   char *b;             /* here goes the mixed stream */
-  int l;
-      
+  Py_ssize_t l;
+
   float mixingratio;
   float mixingrate;
 
@@ -130,11 +130,13 @@ static PyObject *py_mix(PyObject *self, PyObject *args) {
 
       l = l1;
 
-      /* get new buffer object from python */
-      buffobj = PyBuffer_New(l);
+      /* get new buffer object from Python and use the internal argument parser to get b*/
+      // buffobj = PyBuffer_New(l);
+      // PyArg_Parse(buffobj, "t#", &b, &l);
 
-      /* use the internal python argument parser to get b*/
-      PyArg_Parse(buffobj, "t#", &b, &l);
+      // store data in bytes string
+      buffobj = PyBytes_FromStringAndSize(NULL, l);
+      b = PyBytes_AsString(buffobj);
 
       /* now do the real work*/
       Py_BEGIN_ALLOW_THREADS
@@ -144,7 +146,7 @@ static PyObject *py_mix(PyObject *self, PyObject *args) {
       /* build up return structure */
       returnObj = Py_BuildValue("Of", buffobj, mixingratio);
 
-      Py_DECREF(buffobj);  
+      Py_DECREF(buffobj);
 
       if (dummy)
 	  free(dummy);
@@ -319,12 +321,15 @@ static PyObject *py_rate_convert(PyObject *self, PyObject *args) {
       out_c = in_c;
     }
 
-    /* get new buffer object from python for prefixed data + resampled output */
-    py_out = PyBuffer_New(lpre_out + emitted);
+    ///* get new buffer object from python for prefixed data + resampled output */
+    //py_out = PyBuffer_New(lpre_out + emitted);
+    ///* use the internal python argument parser to get b*/
+    //PyArg_Parse(py_out, "t#", &b, &l);
 
-    /* use the internal python argument parser to get b*/
-    PyArg_Parse(py_out, "t#", &b, &l);
-      
+    l = lpre_out + emitted; 
+    py_out = PyBytes_FromStringAndSize(NULL, l);
+    b = PyBytes_AsString(py_out);
+
     /* now we copy our result */
     Py_BEGIN_ALLOW_THREADS
     memcpy((void *) b, (void *) pre_out_c, lpre_out); 
@@ -378,11 +383,14 @@ static PyObject *py_upsample(PyObject *self, PyObject *args) {
     }
     Py_END_ALLOW_THREADS
 
-    /* get new buffer object from python for prefixed data + resampled output */
-    py_out = PyBuffer_New(2*lin);
+    // /* get new buffer object from python for prefixed data + resampled output */
+    // /* and use the internal python argument parser to get b*/
+    // py_out = PyBuffer_New(2*lin);
+    // PyArg_Parse(py_out, "t#", &b, &l);
+    l = 2 * lin;
+    py_out = PyBytes_FromStringAndSize(NULL, l);
+    b = PyBytes_AsString(py_out);
 
-    /* use the internal python argument parser to get b*/
-    PyArg_Parse(py_out, "t#", &b, &l);
     memcpy((void *) b, (void *) out_c, 2*lin);
 
     free(out_c);
@@ -431,6 +439,17 @@ static PyMethodDef pcm_methods[] = {
   {NULL, NULL}
 };
 
-void initpcm(void) {
-  (void) Py_InitModule("pcm", pcm_methods);
+
+static struct PyModuleDef pcm_module = {
+    PyModuleDef_HEAD_INIT,
+    "pcm",   /* name of module */
+    NULL,    /* module documentation, may be NULL */
+    -1,      /* size of per-interpreter state of the module,
+                 or -1 if the module keeps state in global variables. */
+    pcm_methods
+};
+
+PyMODINIT_FUNC
+PyInit_pcm(void) {
+    return PyModule_Create(&pcm_module);
 }

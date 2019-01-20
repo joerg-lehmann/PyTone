@@ -59,12 +59,12 @@ class songdb(service.service):
     def dbrequest(self, request):
         if self.id != request.songdbid:
             raise hub.DenyRequest
-        log.debug("dispatching %s" % `request`)
+        log.debug("dispatching %s" % repr(request))
         # we have to copy the request, because another thread may also access it
         request = copy.copy(request)
         request.songdbid = self.remotesongdbid
         result = self.networkchannel.request(request)
-        log.debug("result %s" % `result`)
+        log.debug("result %s" % repr(result))
         # we change the databasestats accordingly
         if isinstance(request, requests.getdatabasestats):
             result.type = "remote"

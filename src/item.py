@@ -451,7 +451,7 @@ class song(item):
         else:
             l[2] += ["", ""]
         if self.tags:
-            l[3] = [_("Tags:"), u" | ".join(self.tags)]
+            l[3] = [_("Tags:"), " | ".join(self.tags)]
 
         if self.getplayingtime() is not None:
             seconds = int((time.time()-self.getplayingtime())/60)
@@ -492,7 +492,7 @@ class song(item):
         l.append([_("Time:"), "%d:%02d" % divmod(self.length, 60), _("Year:"), year])
         l.append([_("Track No:"), _formatnumbertotal(self.tracknumber, self.trackcount), 
                   _("Disk No:"), _formatnumbertotal(self.disknumber, self.diskcount)])
-        l.append([_("Tags:"), u" | ".join(self.tags), _("Rating:"), self.rating and ("*" * self.rating) or "-"])
+        l.append([_("Tags:"), " | ".join(self.tags), _("Rating:"), self.rating and ("*" * self.rating) or "-"])
 
         if self.size:
             if self.size > 1024*1024:
@@ -562,7 +562,7 @@ class song(item):
 
         if safe:
             allowedchars = encoding.decode(string.letters + string.digits + " :")
-            for key, value in d.items():
+            for key, value in list(d.items()):
                 try:
                     l = []
                     for c in value:
@@ -572,7 +572,7 @@ class song(item):
                 except TypeError:
                     pass
 
-        return unicode(formatstring) % d
+        return str(formatstring) % d
 
     def rate(self, rating):
         # just to fetch song metadata

@@ -27,7 +27,7 @@ import window
 # string.printable is not updated when locale is changed (this is a known bug, which
 # however is not planed to be fixed), so we just do this by ourselves
 
-printable = string.digits + string.letters + string.punctuation + string.whitespace
+printable = string.digits + string.ascii_letters + string.punctuation + string.whitespace
 
 class inputwin(window.window):
 
@@ -114,8 +114,8 @@ class popupinputwin(inputwin):
         # calculate size and position 
         h = 3
         w = 40
-        y = (maxh-h)/2
-        x = (maxw-w)/2
+        y = (maxh-h)//2
+        x = (maxw-w)//2
 
         window.window.__init__(self,
                                screen, h, w, y, x,
@@ -127,8 +127,8 @@ class popupinputwin(inputwin):
     def resize(self, maxh, maxw):
         h = 3
         w = 40
-        y = (maxh-h)/2
-        x = (maxw-w)/2
+        y = (maxh-h)//2
+        x = (maxw-w)//2
         window.window.resize(self, h, w, y, x)
 
     def requestinput(self, event):

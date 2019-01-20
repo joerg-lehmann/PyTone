@@ -30,7 +30,7 @@ import events
 import config
 import log
 import plugin
-import scrobbler
+from . import scrobbler
 
 # the configuration section [plugin.audioscrobbler] contains two options:
 # username and password

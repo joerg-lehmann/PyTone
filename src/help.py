@@ -144,7 +144,7 @@ for nr in range(1, 23):
     keynames[eval("curses.KEY_F%d" % nr)] = "<F%d>" %nr
 
 # alt+key
-for key in keynames.keys():
+for key in list(keynames.keys()):
     keynames[key+1024] = "%s-%s"% (_("Alt"), keynames[key])
 
 def getkeyname(key):

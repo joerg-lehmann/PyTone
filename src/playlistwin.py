@@ -216,5 +216,5 @@ class playlistwin(window.window):
         # move cursor to the right position in order to make it more
         # easy for users of Braille displays to track the current
         # position/selection
-	if self.hasfocus() and self.playlist.selected is not None:
-	    self.win.move(self.playlist.selected-self.playlist.top+1, 1)
+        if self.hasfocus() and self.playlist.selected is not None:
+            self.win.move(self.playlist.selected-self.playlist.top+1, 1)

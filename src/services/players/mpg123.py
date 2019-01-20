@@ -62,7 +62,7 @@ class player(genericplayer):
         try:
             self.pstdin.write("%s\n" % command)
             self.pstdin.flush()
-        except IOError, error:
+        except IOError as error:
             # broken pipe => restart player
             if error[0]==32:
                 self.closempg123()

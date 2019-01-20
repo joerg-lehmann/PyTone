@@ -44,9 +44,9 @@ class playerwin(window.window):
         window.window.__init__(self, screen, h, w, y, x,
                                config.colors.playerwindow,
                                _("Playback Info"), border)
-	try:
-            self.playerinfofd = open(self.playerinfofile, "w")
-        except IOError, e:
+        try:
+            self.playerinfofd = open(self.playerinfofile, "wb")
+        except IOError as e:
             log.error(_("error '%s' occured during write to playerinfofile") % e)
             self.playerinfofd = None
         # we don't want to have the focus
@@ -99,7 +99,7 @@ class playerwin(window.window):
             self.paused = event.playbackinfo.ispaused()
             self.stopped = event.playbackinfo.isstopped()
             if self.song:
-                self.settitle(u"%s%s" % (event.playbackinfo.iscrossfading() and "-> " or "", self.song.format(self.songformat)))
+                self.settitle("%s%s" % (event.playbackinfo.iscrossfading() and "-> " or "", self.song.format(self.songformat)))
             else:
                 self.settitle(_("Playback Info"))
             self.time = event.playbackinfo.time
@@ -119,7 +119,7 @@ class playerwin(window.window):
                     info = encoding.encode(info)
                     self.playerinfofd.write(info)
                     self.playerinfofd.truncate(len(info))
-                except IOError, e:
+                except IOError as e:
                     log.error(_("error '%s' occured during write to playerinfofile") % e)
                     self.playerinfofd = None
 

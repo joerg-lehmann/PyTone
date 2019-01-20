@@ -217,7 +217,7 @@ class getplaybackinfo(request):
         self.playerid = playerid
 
     def __repr__(self):
-        return "%r->%r" % (self.__class__.__name__, `self.playerid`)
+        return "%r->%r" % (self.__class__.__name__, repr(self.playerid))
 
 
 class requestinput:
@@ -228,7 +228,7 @@ class requestinput:
 
     def __repr__(self):
         return "%r(%r,%r,%r)" % (self.__class__.__name__,
-                              self.title, self.prompt, `self.handler`)
+                              self.title, self.prompt, repr(self.handler))
 
 
 class playlistgetcontents(request):

@@ -81,7 +81,7 @@ class mainscreen:
                 else:
                     self.mixerwin = mixerwin.statusbarmixerwin(screen, self.h, self.w, self.channel)
 
-            except IOError, e:
+            except IOError as e:
                 log.warning('error "%s" during mixer init - disabling mixer' % e)
         else:
             # disbable keybindings to obtain correct help window contents
@@ -252,7 +252,7 @@ class mainscreen:
                 filelistwinb = config.BORDER_TOP
             else:
                 filelistwinb = config.filelistwindow.border
-            filelistwinh = int(self.h/2)
+            filelistwinh = self.h//2
             result["filelistwin"] = filelistwinh, self.w, playerwinh+iteminfowinh, 0, filelistwinb
 
             if config.playlistwindow.border == config.BORDER_COMPACT:

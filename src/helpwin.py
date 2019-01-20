@@ -27,7 +27,7 @@ import encoding
 def getitems(section):
     items = []
     if section:
-        for function in config.keybindings[section].asdict().keys():
+        for function in list(config.keybindings[section].asdict().keys()):
             keys = list(config.keybindings[section][function])
             keys.sort()
             keynames = [help.getkeyname(key) for key in keys]

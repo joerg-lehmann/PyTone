@@ -17,7 +17,7 @@
 # along with PyTone; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import ConfigParser, copy, curses, sys, getopt, exceptions, os.path, types, re, types
+import configparser, copy, curses, sys, getopt, os.path, types, re, types
 import log, encoding, version
 
 
@@ -59,12 +59,12 @@ class configsection:
 
     def asdict(self):
         d = {}
-        for n, v in self._configitems.items():
+        for n, v in list(self._configitems.items()):
             d[n] = v
         return d
 
     def getsubsections(self):
-        return self._configsections.keys()
+        return list(self._configsections.keys())
 
 #
 # define different types of configuration variables
@@ -417,7 +417,7 @@ class network(configsection):
 
 class player(configsection):
     class main(configsection):
-        type = configalternatives("internal", ["internal", "xmms", "mpg123", "remote", "off"])
+        type = configalternatives("internal", ["internal", "mpg123", "remote", "off"])
         autoplay = configboolean("true")
 
         # only for internal player
@@ -429,10 +429,6 @@ class player(configsection):
         crossfadingduration = configfloat(6)
         aooptions = configstring("")
 
-        # only for xmms player
-        session = configint("0")
-        noqueue = configboolean("false")
-
         # only for mpg123 player
         cmdline = configstring("/usr/bin/mpg321 --skip-printing-frames=5 -a /dev/dsp")
 
@@ -440,7 +436,7 @@ class player(configsection):
         networklocation = confignetworklocation("localhost:1972")
 
     class secondary(configsection):
-        type = configalternatives("off", ["internal", "xmms", "mpg123", "off"])
+        type = configalternatives("off", ["internal", "mpg123", "off"])
         autoplay = configboolean("true")
 
         # only for internal player
@@ -451,10 +447,6 @@ class player(configsection):
         crossfadingstart = configfloat(5)
         crossfadingduration = configfloat(6)
         aooptions = configstring("")
-
-        # only for xmms player
-        session = configint("0")
-        noqueue = configboolean("false")
 
         # only for mpg123 player
         cmdline = configstring("/usr/bin/mpg321 --skip-printing-frames=5 -a /dev/dsp1")
@@ -723,29 +715,29 @@ forcedebugfile = None
 #
 
 # configparser used for the config files
-configparser = None
+config = None
 
 def setupconfigparser():
     """ initialize ConfigParser.RawConfigParser for the standard configuration files """
-    global configparser
+    global config
     cflist = ["/etc/pytonerc", userconfigfile]
     s = ", ".join(map(os.path.realpath, cflist))
     log.info("Using configuration from file(s) %s" % s)
-    configparser = ConfigParser.RawConfigParser()
-    configparser.read(cflist)
+    config = configparser.RawConfigParser()
+    config.read(cflist)
 
 
 def readconfigsection(section, clsection):
     """ fill configsection subclass clsection with entries stored under the name section in configfile and
     return a corresponding clsection instance"""
     try:
-        for option in configparser.options(section):
-            if not clsection.__dict__.has_key(option):
+        for option in config.options(section):
+            if option not in clsection.__dict__:
                 raise ConfigError("Unkown configuration option '%s' in section '%s'" %
                                   (option, section))
-            value = configparser.get(section, option)
+            value = config.get(section, option)
             clsection.__dict__[option].set(value)
-    except ConfigParser.NoSectionError:
+    except configparser.NoSectionError:
         pass
 
 
@@ -755,19 +747,20 @@ def finishconfigsection(clsection):
     # config subsections
     clsection._configitems = {}
     clsection._configsections = {}
-    for n, v in clsection.__dict__.items():
+    for n, v in list(clsection.__dict__.items()):
         if isinstance(v, configitem):
             clsection._configitems[n] = v
-            del clsection.__dict__[n]
-        elif type(v) == types.ClassType and issubclass(v, configsection) and n != "__template__":
+            delattr(clsection, n)
+        elif isinstance(v, type) and issubclass(v, configsection) and not n.startswith("__"): #  != "__template__":
             finishconfigsection(v)
             # instantiate class to make __getattr__ and __setattr__ work and add the instance to
             # a _configsections dictionary
-            clsection.__dict__[n] = clsection._configsections[n] = v()
+            clsection._configsections[n] = v()
+            setattr(clsection, n, clsection._configsections[n])
 
 
 def processstandardconfig():
-    for section in configparser.sections():
+    for section in config.sections():
         if not section.startswith("plugin."):
             if "." not in section:
                 # not a subsection
@@ -794,9 +787,10 @@ def processstandardconfig():
                         # We copy the __template__ class by explicitely
                         # creating a new class with a deeply copied class
                         # dictionary (maybe there is an easier solution)
-                        # Any
                         templateclassdict = eval("%s.__template__.__dict__" % mainsection)
-                        newclass = types.ClassType(mainsection+subsection, (configsection,), copy.deepcopy(templateclassdict))
+                        # filter __module__ in class
+                        templateclassdict = {k: v for k, v in templateclassdict.items() if k!="__module__"}
+                        newclass = type(mainsection+subsection, (configsection,), copy.deepcopy(templateclassdict))
                         exec("%s.%s = newclass" % (mainsection, subsection))
                     except AttributeError:
                         raise ConfigError("Unkown configuration section '%s'" % section)
@@ -812,12 +806,12 @@ def finishconfig():
 
         # convert the configsection class into an instance of the same class
         # to make __getattr__ and __setattr__ work
-        exec("%s = %s()" % (section, section)) in globals(), globals()
+        exec(("%s = %s()" % (section, section)), globals(), globals())
 
     # apply command line options
     if forcedatabaserebuild:
         for databasename in database.getsubsections():
-            exec("database.%s.autoregisterer = 'on'" % databasename) in globals(), globals()
+            exec(("database.%s.autoregisterer = 'on'" % databasename), globals(), globals())
 
     if forcedebugfile:
         general.debugfile = forcedebugfile
@@ -827,7 +821,7 @@ def gendefault():
     cp = ConfigParser()
     cp.read("/home/ringo/PyTone/config")
     for section in cp.sections():
-        print "class %s(configsection):" % section
+        print("class %s(configsection):" % section)
         for option in cp.options(section):
             default = cp.get(section, option)
 
@@ -842,23 +836,23 @@ def gendefault():
                 except:
                     itemname = "configstring"
 
-            print '    %s = %s("%s")' % (option, itemname, default)
-        print
+            print('    %s = %s("%s")' % (option, itemname, default))
+        print()
 
-    print "sections =", cp.sections()
+    print("sections =", cp.sections())
 
 #
 # parse command line options
 #
 
 def usage():
-    print "PyTone %s" % version.version
-    print "Copyright %s" % encoding.encode(version.copyright)
-    print "usage: pytone.py [options]"
-    print "-h, --help: show this help"
-    print "-c, --config <filename>: read config from filename"
-    print "-d, --debug <filename>: enable debugging output (into filename)"
-    print "-r, --rebuild: rebuild all databases"
+    print("PyTone %s" % version.version)
+    print("Copyright %s" % encoding.encode(version.copyright))
+    print("usage: pytone.py [options]")
+    print("-h, --help: show this help")
+    print("-c, --config <filename>: read config from filename")
+    print("-d, --debug <filename>: enable debugging output (into filename)")
+    print("-r, --rebuild: rebuild all databases")
 
 
 def processcommandline():
@@ -901,24 +895,25 @@ def checkoptions():
     dbfiles = []
 
     if not database.getsubsections():
-        print "Please define at least one song database in your configuration file."
+        print("Please define at least one song database in your configuration file.")
         sys.exit(2)
 
     for databasename in database.getsubsections():
         songdb = database[databasename]
 
         if songdb.type == "local" and songdb.musicbasedir == "":
-            print ( "Please set musicbasedir in the [database.%s] section of the config file ~/.pytone/pytonerc\n"
-                    "to the location of your MP3/Ogg Vorbis files." % databasename )
+            print(( "Please set musicbasedir in the [database.%s] section of the config file ~/.pytone/pytonerc\n"
+                    "to the location of your MP3/Ogg Vorbis files." % databasename ))
             sys.exit(2)
 
         if songdb.dbfile != "":
             if songdb.dbfile in dbfiles:
-                print "dbfile '%s' of database '%s' already in use." % (songdb.dbfile, databasename)
+                print("dbfile '%s' of database '%s' already in use." % (songdb.dbfile, databasename))
                 sys.exit(2)
             dbfiles.append(songdb.dbfile)
 
     # check ao options
+    print(player.main.aooptions)
     for aooption in player.main.aooptions.split() + player.secondary.aooptions.split():
         if aooption.count("=")!=1:
             raise RuntimeError("invalid format for alsa option '%s'" % aooption)

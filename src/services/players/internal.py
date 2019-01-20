@@ -17,7 +17,7 @@
 # along with PyTone; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import Queue
+import queue
 import sys
 import threading
 import time
@@ -31,7 +31,7 @@ import log
 
 try:
     import bufferedao
-    import thread
+    import _thread
     bufferedao_present = True
 except ImportError:
     bufferedao_present = False
@@ -89,7 +89,7 @@ class bufferedaudiodev(threading.Thread):
 
         # output queue
         queuesize = 1024*bufsize/self.SIZE + 1
-        self.queue = Queue.Queue(queuesize)
+        self.queue = queue.Queue(queuesize)
 
         self.done = False
         # wait if player thread is paused
@@ -112,7 +112,7 @@ class bufferedaudiodev(threading.Thread):
                 else:
                     self.audiodev = aoaudiodev(self.aodevice, rate=self.rate, options=self.aooptions)
                     log.debug("ao audio device opened")
-            except Exception, e:
+            except Exception as e:
                 if not errorlogged:
                     log.debug_traceback()
                     log.error(_('cannot open audio device: error "%s"') % e)
@@ -159,7 +159,7 @@ class bufferedaudiodev(threading.Thread):
         while True:
             try:
                 self.queue.get(0)
-            except Queue.Empty:
+            except queue.Empty:
                 break
 
     def pause(self):
@@ -263,7 +263,7 @@ class player(genericplayer):
         if bufferedao_present:
             self.audiodev = bufferedao.bufferedao(bufsize, self.SIZE, aodevice, byte_format=4, rate=self.rate, options=aooptions)
             # we have to start a new thread for the bufferedao device
-            thread.start_new(self.audiodev.start, ())
+            _thread.start_new(self.audiodev.start, ())
             log.debug("bufferedao device opened")
         else:
             # create audio device thread

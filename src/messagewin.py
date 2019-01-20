@@ -59,8 +59,8 @@ class messagewin(window.window):
         else:
             width = 80 + int((self.maxw-80)*0.8)
         height = min(self._outputlen(width-2)+2, self.maxh-3)
-        y = max(0, (self.maxh-height)/2)
-        x = max(0, (self.maxw-width)/2)
+        y = max(0, (self.maxh-height)//2)
+        x = max(0, (self.maxw-width)//2)
         window.window.resize(self, height, width, y, x)
 
     def resize(self, maxh, maxw):

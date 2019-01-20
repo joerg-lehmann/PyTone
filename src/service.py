@@ -52,7 +52,7 @@ class service(threading.Thread):
             # process events and catch all unhandled exceptions
             try:
                 self.work()
-            except Exception, e:
+            except Exception as e:
                 log.debug_traceback()
                 self.resetafterexception()
 

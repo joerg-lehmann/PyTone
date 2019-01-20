@@ -4,16 +4,11 @@ from distutils.core import setup, Extension
 import sys; sys.path.append("src")
 from version import version
 
-# build extension module which adds transparency support for terminals
-# supporting this feature (not necessary for Python 2.4 and above)
-# You need the curses header files for building
-buildcursext = False
-
 # build extension module which replaces the Python audio output buffer
 # by a C version, which should help preventing audio dropouts.
 # You need the libao header files for building (but on the other hand,
 # you don't need the pyao extension module when you use bufferedao)
-buildbufferedaoext = True
+buildbufferedaoext = False
 
 # list of supported locales
 locales = ["de", "it", "fr", "pl"]
@@ -29,12 +24,6 @@ packages = ["pytone",
 # list of extension modules to be built
 #
 ext_modules = [Extension("pytone.pcm", sources=["src/pcm/pcm.c"])]
-
-if buildcursext:
-    ext_modules.append(Extension("pytone.cursext",
-                                 sources=["src/cursext/cursextmodule.c"],
-                                 libraries=["curses"]))
-
 
 if buildbufferedaoext:
     ext_modules.append(Extension("pytone.bufferedao",

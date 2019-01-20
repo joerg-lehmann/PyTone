@@ -197,7 +197,7 @@ class iteminfowinlong(messagewin.messagewin):
         wc3 = 0
         wc4 = 0
         for line in info:
-            line = map(encoding.encode, line)
+            line = list(map(encoding.encode, line))
             wc1 = max(wc1, len(line[0]))
             wc3 = max(wc3, len(line[2]))
             wc4 = max(wc3, len(line[3]))
@@ -206,7 +206,7 @@ class iteminfowinlong(messagewin.messagewin):
         wc2 = self.iw-wc1-wc3-wc4-1
         self.clear()
         for lno in range(len(info)):
-            line = map(encoding.encode, l[lno])
+            line = list(map(encoding.encode, l[lno]))
             self.move(self.iy+lno, self.ix)
             self.addstr(line[0].ljust(wc1)[:wc1], self.colors.description)
             self.addstr(line[1].ljust(wc2)[:wc2], self.colors.content)

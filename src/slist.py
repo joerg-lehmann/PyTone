@@ -98,7 +98,7 @@ class slist:
             # the original position.
             oldselecteditemid = oldselecteditem.getid()
             startsearch = min(max(0, oldselected-1), len(self))
-            for i in range(startsearch, len(self)) + range(startsearch):
+            for i in list(range(startsearch, len(self))) + list(range(startsearch)):
                 if self[i].getid() == oldselecteditemid:
                     self.selected = i
                     break
@@ -230,7 +230,7 @@ class slist:
                 first = 0
             else:
                 first = self.selected
-            for i in range(first+1, len(self)) + range(first):
+            for i in list(range(first+1, len(self))) + list(range(first)):
                 if self[i].getname().lower().find(searchstring)!=-1:
                     self.selected = i
                     self._notifyselectionchanged()
@@ -250,7 +250,7 @@ class slist:
                 first = 0
             else:
                 first = self.selected
-            for i in range(first + (not includeselected and 1 or 0), len(self)) + range(first):
+            for i in list(range(first + (not includeselected and 1 or 0), len(self))) + list(range(first)):
                 if cregexp.search(self[i].getname()):
                     self.selected = i
                     self._notifyselectionchanged()
@@ -267,7 +267,7 @@ class slist:
             else:
                 first = self.selected
                 letter = letter.lower()
-                for i in range(first+1, len(self)) + range(first):
+                for i in list(range(first+1, len(self))) + list(range(first)):
                     if self[i].getname().lower().startswith(letter):
                         self.selected = i
                         self._notifyselectionchanged()

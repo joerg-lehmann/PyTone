@@ -198,8 +198,8 @@ class popupmixerwin(mixerwin):
         self.barlen = 20
         h = 3
         w = len(_("Volume:")) + 7 + self.barlen
-        y = (maxh-h)/2
-        x = (maxw-w)/2
+        y = (maxh-h)//2
+        x = (maxw-w)//2
 
         window.window.__init__(self,
                                screen, h, w, y, x,
@@ -211,8 +211,8 @@ class popupmixerwin(mixerwin):
     def resize(self, maxh, maxw):
         h = 3
         w = len(_("Volume:")) + 7 + self.barlen
-        y = (maxh-h)/2
-        x = (maxw-w)/2
+        y = (maxh-h)//2
+        x = (maxw-w)//2
         window.window.resize(self, h, w, y, x)
 
 

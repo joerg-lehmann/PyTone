@@ -146,15 +146,15 @@ songcolumns_all = songcolumns_w_indices + songcolumns_lists
 
 # secure unpickler which does not accept any instances
 
-import cPickle, cStringIO
+import pickle, io
 
 def loads(s):
-    unpickler = cPickle.Unpickler(cStringIO.StringIO(s))
+    unpickler = pickle.Unpickler(io.StringIO(s))
     unpickler.find_global = None
     return unpickler.load()
 
 def dumps(obj):
-    return buffer(cPickle.dumps(obj))
+    return buffer(pickle.dumps(obj))
 
 #
 # statistical information about songdb
@@ -1041,7 +1041,7 @@ class songautoregisterer(service.service):
         else:
            relpath = path[len(self.basedir)+1:]
 
-        song_url = u"file://" + encoding.decode_path(relpath)
+        song_url = "file://" + encoding.decode_path(relpath)
         urlfilter = item.filters((item.urlfilter(song_url),))
         songs = self._request(requests.getsongs(self.songdbid, filters=urlfilter))
 
@@ -1087,7 +1087,7 @@ class songautoregisterer(service.service):
                 if os.path.isdir(path):
                     try:
                         self.registerdirtree(path, oldsongs, force)
-                    except (IOError, OSError), e:
+                    except (IOError, OSError) as e:
                         log.warning("songautoregisterer: could not enter dir %r: %r" % (path, e))
                 elif extension in self.supportedextensions:
                     songpaths.append(path)
@@ -1136,7 +1136,7 @@ class songautoregisterer(service.service):
         try:
             file = open(path, "r")
             songs = []
-            for line in file.xreadlines():
+            for line in file:
                 if not line.startswith("#"):
                     song = self._registerorupdatesong(line.strip(), force=False)
                     if song:
@@ -1159,7 +1159,7 @@ class songautoregisterer(service.service):
                 if os.path.isdir(path):
                     try:
                         self.rescanplaylists_dirtree(path)
-                    except (IOError, OSError), e:
+                    except (IOError, OSError) as e:
                         log.warning("songautoregisterer: could not enter dir %r: %r" % (path, e))
                 elif extension == ".m3u":
                     songs = self.read_playlist_from_file(path)

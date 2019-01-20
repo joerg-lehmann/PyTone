@@ -39,7 +39,7 @@ def initplayer(id, config):
     if type=="off":
         return None
     elif type=="internal":
-        import players.internal
+        from .players import internal
         driver = config.driver
         if driver in ("alsa09", "alsa"):
             aooptions = {"dev": config.device}
@@ -54,45 +54,33 @@ def initplayer(id, config):
             key, value = aooption.split("=")
             aooptions[key] = value
         try:
-            p = players.internal.player(id,
-                                        playlistid,
-                                        autoplay=config.autoplay,
-                                        aodevice=driver,
-                                        aooptions=aooptions,
-                                        bufsize=config.bufsize,
-                                        crossfading=config.crossfading,
-                                        crossfadingstart=config.crossfadingstart,
-                                        crossfadingduration=config.crossfadingduration,
-                                        )
+            p = internal.player(id,
+                                playlistid,
+                                autoplay=config.autoplay,
+                                aodevice=driver,
+                                aooptions=aooptions,
+                                bufsize=config.bufsize,
+                                crossfading=config.crossfading,
+                                crossfadingstart=config.crossfadingstart,
+                                crossfadingduration=config.crossfadingduration)
         except:
             log.debug_traceback()
             raise RuntimeError("Cannot initialize %s player: type=internal, device=%s" % (id, config.device))
-    elif type=="xmms":
-        import players.xmmsplayer
-        try:
-            p = players.xmmsplayer.player(id,
-                                          playlistid,
-                                          autoplay=config.autoplay,
-                                          session=config.session,
-                                          noqueue=config.noqueue)
-        except:
-            log.debug_traceback()
-            raise RuntimeError("Cannot initialize %s player: type=xmms, session=%d" % (id, config.session))
     elif type=="mpg123":
-        import players.mpg123
+        from .players import mpg123
         try:
-            p = players.mpg123.player(id,
-                                      playlistid,
-                                      autoplay=config.autoplay,
-                                      cmdline=config.cmdline)
+            p = mpg123.player(id,
+                              playlistid,
+                              autoplay=config.autoplay,
+                              cmdline=config.cmdline)
 
         except:
             log.debug_traceback()
             raise RuntimeError("Cannot initialize %s player: type=mpg123, cmdline=%s" % (id, config.cmdline))
     elif type=="remote":
-        import players.remote
+        from .players import remote
         try:
-            p = players.remote.player(id, playlistid, config.networklocation)
+            p = remote.player(id, playlistid, config.networklocation)
         except:
             log.debug_traceback()
             raise RuntimeError("Cannot initialize %s player: type=remote, location=%s" % (id, config.networklocation))
@@ -149,7 +137,7 @@ class playbackinfo:
                 cmp(self.send_played_skipped_events, other.send_played_skipped_events))
 
     def __str__(self):
-        s = "player %s " % `self.playerid`
+        s = "player %s " % repr(self.playerid)
         if self.state==STOP:
             s = s + "stopped"
         elif self.state==PAUSE:

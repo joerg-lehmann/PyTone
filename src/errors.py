@@ -17,23 +17,22 @@
 # along with PyTone; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import exceptions
 
-class pytoneerror(exceptions.Exception):
+class pytoneerror(Exception):
     def __init__(self, value):
         self.value = value
 
     def __str__(self):
-        return "PyTone error: %s" % `self.value`
+        return "PyTone error: %s" % repr(self.value)
 
 class configurationerror(pytoneerror):
     def __str__(self):
-        return "PyTone configuration error: %s" % `self.value`
+        return "PyTone configuration error: %s" % repr(self.value)
 
 class databaseerror(pytoneerror):
     def __str__(self):
-        return "PyTone database error: %s" % `self.value`
-            
+        return "PyTone database error: %s" % repr(self.value)
+
 class playererror(pytoneerror):
     def __str__(self):
-        return "PyTone player error: %s" % `self.value`
+        return "PyTone player error: %s" % repr(self.value)

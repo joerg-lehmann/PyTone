@@ -37,15 +37,15 @@ def print_exc_plus():
         f = f.f_back
     stack.reverse()
     traceback.print_exc(file=sys.stdout)
-    print "Locals by frame, innermost last"
+    print("Locals by frame, innermost last")
     for frame in stack:
-        print
-        print "Frame %s in %s at line %s" % (frame.f_code.co_name,
+        print()
+        print("Frame %s in %s at line %s" % (frame.f_code.co_name,
                                              frame.f_code.co_filename,
-                                             frame.f_lineno)
-        for key, value in frame.f_locals.items():
-            print "\t%20s = " % key,
+                                             frame.f_lineno))
+        for key, value in list(frame.f_locals.items()):
+            print("\t%20s = " % key, end=' ')
             try:
-                print value
+                print(value)
             except:
-                print "<ERROR WHILE PRINTING VALUE>"
+                print("<ERROR WHILE PRINTING VALUE>")

@@ -221,8 +221,8 @@ class window:
     def scrollbardimensions(self, top, total):
         if total>0:
             totalheight = self.ih-4
-            scrollbarbegin = 3 + totalheight*top/total
-            scrollbarheight = totalheight*self.ih/total
+            scrollbarbegin = 3 + totalheight*top//total
+            scrollbarheight = totalheight*self.ih//total
             scrollbarheight = min(max(scrollbarheight, 1), totalheight-scrollbarbegin+3)
 
             return scrollbarbegin, scrollbarheight
@@ -317,7 +317,7 @@ class window:
                 self.hline(0, self.ix, curses.ACS_HLINE, self.iw, attr)
                 # self.win.border(0, 0, topborder)
                 t = encoding.encode(self.title)[:self.w-4]
-                pos = (self.w-4-len(t))/2 
+                pos = (self.w-4-len(t))//2
                 self.addstr(0, pos, "[ %s ]" % t, titleattr)
                 if self.hasleftborder():
                     self.addch(0, 0, curses.ACS_ULCORNER, attr)
