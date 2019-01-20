@@ -341,12 +341,12 @@ class playlist(service.service):
             self.playingitem.markunplayed()
         # self._deleteplayedsongs()
         self.notifyplaylistchanged()
-        dumpfile = open(config.general.dumpfile, "w")
+        dumpfile = open(config.general.dumpfile, "wb")
         pickle.dump(self.items, dumpfile)
 
     def load(self):
         """ load playlist from file """
-        dumpfile = open(config.general.dumpfile, "r")
+        dumpfile = open(config.general.dumpfile, "rb")
         self._clear()
         for item in pickle.load(dumpfile):
             # We have to be careful here and not use the playlist item
