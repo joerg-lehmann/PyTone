@@ -255,7 +255,7 @@ class songdb(service.service):
             self.con.executescript(create_tables)
             self._txn_commit()
             self.con.execute("PRAGMA user_version=%d" % self.currentdbversion)
-        log.debug("Starting db sevice")
+        log.debug("Starting db service")
         service.service.run(self)
         self.close()
 
