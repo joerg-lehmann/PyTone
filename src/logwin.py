@@ -37,7 +37,7 @@ class logwin(messagewin.messagewin):
         """number of lines in window with inner widht iw"""
         result = 0
         for item in self.items:
-            result += len(item[2])/(iw-self.mc+2)+1
+            result += len(item[2])//(iw-self.mc+2)+1
         return result
 
     def showitems(self):

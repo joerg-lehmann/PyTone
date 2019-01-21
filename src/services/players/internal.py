@@ -25,8 +25,8 @@ import time
 import hub, events
 import pcm
 import decoder
-from services.player import genericplayer
-import services.playlist
+from ..player import genericplayer
+from .. import playlist
 import log
 
 try:
@@ -45,7 +45,6 @@ except ImportError:
         ossaudiodev_present = False
     except ImportError:
         ossaudiodev_present = False
-
 
 class aoaudiodev:
     def __init__(self, aodevice, rate, options):
@@ -183,7 +182,7 @@ class bufferedaudiodev(threading.Thread):
 
 class decodedsong:
     def __init__(self, playlistitemorsong, rate, profiles):
-        if isinstance(playlistitemorsong, services.playlist.playlistitem):
+        if isinstance(playlistitemorsong, playlist.playlistitem):
             self.song = playlistitemorsong.song
             self.playlistitem = playlistitemorsong
         else:
@@ -409,7 +408,7 @@ class player(genericplayer):
                         self.songtransitionmode = "gapkill"
                         log.debug("internal player: don't crossfade successive songs.")
         except (IOError, RuntimeError):
-            if isinstance(song, services.playlist.playlistitem):
+            if isinstance(song, playlist.playlistitem):
                 log.warning(_('failed to open song "%r"') % str(song.song.url))
             else:
                 log.warning(_('failed to open song "%r"') % str(song.url))

@@ -28,16 +28,19 @@
 
 #define NRITEMS() ((self->in >= self->out) ? self->in-self->out : self->in+self->buffersize-self->out)
 
-struct module_state {
-    PyObject *error;
-    };
+//struct module_state {
+//    PyObject *error;  
+//    PyObject *log_debug; /* currently not used */
+//    PyObject *log_error;
+//};
 
-#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
+// #define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
 
-/* debug and error log functions */
+// global state
+
+PyObject *error;  
 PyObject *log_debug; /* currently not used */
 PyObject *log_error;
-
 
 
 static PyObject *bufferedaoerror;
@@ -46,6 +49,8 @@ typedef struct {
     char* buff;
     int bytes;
 } bufitem;
+
+// bufferedao extension type //
 
 typedef struct {
     PyObject_HEAD
@@ -74,8 +79,8 @@ typedef struct {
     pthread_mutex_t devmutex;     /* mutex protecting dev */
 } bufferedao;
 
-/* helper methods */
 
+/* helper methods */
 
 static ao_option *
 py_options_to_ao_options(PyObject *py_options)
@@ -127,7 +132,7 @@ bufferedao_dealloc(bufferedao* self)
     pthread_mutex_destroy(&self->restartmutex);
     pthread_cond_destroy(&self->restart);
     pthread_mutex_destroy(&self->devmutex);
-    self->ob_type->tp_free((PyObject*)self);
+    Py_TYPE(self)->tp_free((PyObject*) self);
 }
 
 static PyObject *
@@ -188,6 +193,7 @@ bufferedao_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     self->buffersize = 1024*bufsize/self->SIZE + 1;
     if ( !( self->buffer = (bufitem *) malloc(sizeof(bufitem) * self->buffersize) ) ) {
         Py_DECREF(self);
+        PyErr_NoMemory();
         return NULL;
     }
     for (i=0; i<self->buffersize; i++) {
@@ -198,6 +204,7 @@ bufferedao_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
                 free(self->buffer[j].buff);
             free(self->buffer);
             Py_DECREF(self);
+            PyErr_NoMemory();
             return NULL;
         }
     }
@@ -430,6 +437,7 @@ bufferedao_quit(bufferedao *self)
     return Py_None;
 }
 
+/*
 static int bufferedao_traverse(PyObject *m, visitproc visit, void *arg) {
     Py_VISIT(GETSTATE(m)->error);
     return 0;
@@ -439,6 +447,7 @@ static int bufferedao_clear(PyObject *m) {
     Py_CLEAR(GETSTATE(m)->error);
     return 0;
 }
+*/
 
 static PyMethodDef bufferedao_methods[] = {
     {"start", (PyCFunction) bufferedao_start, METH_VARARGS,
@@ -468,84 +477,52 @@ static PyMethodDef bufferedao_methods[] = {
     {NULL, NULL}  /* Sentinel */
 };
 
-static struct PyModuleDef moduledef = {
-        PyModuleDef_HEAD_INIT,
-        "bufferedao.bufferedao",
-        NULL,
-        sizeof(struct module_state),
-        bufferedao_methods,
-        NULL,
-        bufferedao_traverse,
-        bufferedao_clear,
-        NULL
-};
 
 
-// static PyTypeObject bufferedaoType = {
-//     PyObject_HEAD_INIT(NULL)
-//     0,                                        /* ob_size */
-//     "bufferedao.buferredao",                  /* tp_name */
-//     sizeof(bufferedao),                       /* tp_basicsize */
-//     0,                                        /* tp_itemsize */
-//     (destructor)bufferedao_dealloc,           /* tp_dealloc */
-//     0,                                        /* tp_print */
-//     0,                                        /* tp_getattr */
-//     0,                                        /* tp_setattr */
-//     0,                                        /* tp_compare */
-//     0,                                        /* tp_repr */
-//     0,                                        /* tp_as_number */
-//     0,                                        /* tp_as_sequence */
-//     0,                                        /* tp_as_mapping */
-//     0,                                        /* tp_hash */
-//     0,                                        /* tp_call */
-//     0,                                        /* tp_str */
-//     0,                                        /* tp_getattro */
-//     0,                                        /* tp_setattro */
-//     0,                                        /* tp_as_buffer */
-//     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /* tp_flags */
-//     "bufferedao objects",                     /* tp_doc */
-//     0,                                        /* tp_traverse */
-//     0,                                        /* tp_clear */
-//     0,                                        /* tp_richcompare */
-//     0,                                        /* tp_weaklistoffset */
-//     0,                                        /* tp_iter */
-//     0,                                        /* tp_iternext */
-//     bufferedao_methods,                       /* tp_methods */
-//     0,                                        /* tp_members */
-//     0,                                        /* tp_getset */
-//     0,                                        /* tp_base */
-//     0,                                        /* tp_dict */
-//     0,                                        /* tp_descr_get */
-//     0,                                        /* tp_descr_set */
-//     0,                                        /* tp_dictoffset */
-//     0,                                        /* tp_init */
-//     0,                                        /* tp_alloc */
-//     bufferedao_new,                           /* tp_new */
+// // the module only contains the bufferedao type, no methods
+// static PyMethodDef module_methods[] = {
+//     {NULL}  /* Sentinel */
 // };
-// 
-static PyMethodDef module_methods[] = {
-    {NULL}  /* Sentinel */
+
+static PyTypeObject bufferedaoType = {
+//    PyObject_HEAD_INIT(NULL)
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "bufferedao.bufferedao",
+    .tp_doc = "bufferedao objects",
+    .tp_basicsize = sizeof(bufferedao),
+    .tp_itemsize = 0,
+    .tp_dealloc = (destructor)bufferedao_dealloc,
+    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+    .tp_methods = bufferedao_methods,
+    .tp_new = bufferedao_new,
 };
 
-//#ifndef PyMODINIT_FUNC  /* declarations for DLL import/export */
-//#define PyMODINIT_FUNC void
-//#endif
+static struct PyModuleDef bufferedao_module = {
+        PyModuleDef_HEAD_INIT,
+        .m_name ="bufferedao",
+        .m_doc = "bufferedao module",
+        .m_size = -1 //sizeof(struct module_state),
+        //module_methods,
+//        NULL,
+//        bufferedao_traverse,
+//        bufferedao_clear,
+};
+
 
 PyMODINIT_FUNC
 PyInit_bufferedao(void) {
 
-    PyObject *module = PyModule_Create(&moduledef);
+    PyObject *module = PyModule_Create(&bufferedao_module);
 
     if (module == NULL)
         return NULL;
 
-    struct module_state *st = GETSTATE(module);
+    // struct module_state *st = GETSTATE(module);
 
     PyObject* log_module;
-    PyObject *m;
     PyObject *d;
 
-    /* import log module and fetch debug and error functions */
+    /* import log module and fetch debug and error functions into module_state */
     if ( !(log_module = PyImport_ImportModule("log")) )
       return NULL;
     d = PyModule_GetDict(log_module);
@@ -558,25 +535,36 @@ PyInit_bufferedao(void) {
       return NULL;
     }
     Py_DECREF(log_module);
-    
+    Py_INCREF(log_debug);
+    Py_INCREF(log_error);
+
+    // d = PyModule_GetDict(module);
+    // bufferedaoerror = PyErr_NewException("bufferedao.error", NULL, NULL);
+
+    error = PyErr_NewException("bufferedao.error", NULL, NULL);
+    if (error == NULL) {
+        Py_DECREF(module);
+        Py_DECREF(log_debug);
+        Py_DECREF(log_error);
+        return NULL;
+    }
+    Py_INCREF(error);
+    PyModule_AddObject(module, "error", error);
+    // PyDict_SetItemString(d, "error", st->error);
+
     /* initialize the ao library */
     ao_initialize();
 
     /* finalize and add extension type to module */
-    if (PyType_Ready(&bufferedaoType) < 0)
+    if (PyType_Ready(&bufferedaoType) < 0) {
+        Py_DECREF(module);
+        Py_DECREF(log_debug);
+        Py_DECREF(log_error);
         return NULL;
-
-//    m = Py_InitModule3("bufferedao", module_methods,
-//                       "The bufferedao module contains the bufferedao class.");
+    }
 
     Py_INCREF(&bufferedaoType);
-    PyModule_AddObject(m, "bufferedao", (PyObject *)&bufferedaoType);
-
-    d = PyModule_GetDict(m);
-    bufferedaoerror = PyErr_NewException("bufferedao.error", NULL, NULL);
-    PyDict_SetItemString(d, "error", bufferedaoerror);
-    Py_DECREF(bufferedaoerror);
+    PyModule_AddObject(module, "bufferedao", (PyObject *)&bufferedaoType);
 
     return module;
-
 }

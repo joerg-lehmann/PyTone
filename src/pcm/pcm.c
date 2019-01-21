@@ -180,8 +180,8 @@ static int rate_convert(char *in_c, int lin, char *out_c, int lout,
 			int16_t *last_l, int16_t *last_r) {
 
   long long lcm_rate  = lcm(in_rate, out_rate);
-  int in_skip   = lcm_rate / in_rate;
-  int out_skip  = lcm_rate / out_rate;
+  long long in_skip   = lcm_rate / in_rate;
+  long long out_skip  = lcm_rate / out_rate;
   int samplenr   = lin/4; 		     /* number of samples */
   int16_t *in_i  = (int16_t* ) in_c;
   int16_t *out_i = (int16_t* ) out_c;
@@ -264,7 +264,7 @@ static PyObject *py_rate_convert(PyObject *self, PyObject *args) {
   int firstsample;		/* are we dealing with the first sample */
 
   if (PyArg_ParseTuple(args, 
-		       "t#iOOiOO", 
+		       "y#iOOiOO", 
 		       &in_c, &lin,
 		       &in_rate,
 		       &py_pre_out_c,
@@ -283,16 +283,18 @@ static PyObject *py_rate_convert(PyObject *self, PyObject *args) {
     if (py_last_l!=Py_None && py_last_r!=Py_None) {
       int i;
       firstsample = 0;
-      PyArg_Parse(py_last_l, "i", &i); last_l = i;
-      PyArg_Parse(py_last_r, "i", &i); last_r = i;
+      if (!PyArg_Parse(py_last_l, "i", &i)) return NULL;
+      last_l = i;
+      if (!PyArg_Parse(py_last_r, "i", &i)) return NULL;
+      last_r = i;
     } 
     else 
       firstsample = 1;
 
     /* get data of prefix, if present */
     if (py_pre_out_c!=Py_None && py_start_pre_out!=Py_None) {
-      PyArg_Parse(py_pre_out_c, "t#", &pre_out_c, &lpre_out); 
-      PyArg_Parse(py_start_pre_out, "i", &start_pre_out); 
+      if (!PyArg_Parse(py_pre_out_c, "y#", &pre_out_c, &lpre_out)) return NULL;
+      if (!PyArg_Parse(py_start_pre_out, "i", &start_pre_out)) return NULL;
 
       pre_out_c += start_pre_out;
       lpre_out -= start_pre_out;
@@ -444,8 +446,7 @@ static struct PyModuleDef pcm_module = {
     PyModuleDef_HEAD_INIT,
     "pcm",   /* name of module */
     NULL,    /* module documentation, may be NULL */
-    -1,      /* size of per-interpreter state of the module,
-                 or -1 if the module keeps state in global variables. */
+    -1,      /* -1: module keeps state in global variables. */
     pcm_methods
 };
 

@@ -71,7 +71,7 @@ def getdecoder(type):
 class mp3decoder(decoder):
     def __init__(self, path):
         assert isinstance(path, str), "path has to be a string"
-        self.file = mad.MadFile(path)
+        self.file = mad.MadFile(open(path, "rb"))
 
     def samplerate(self):
         return self.file.samplerate()
@@ -231,7 +231,8 @@ class decodedsong:
             log.error("No decoder for song type '%r' registered "% song.type)
             raise RuntimeError("No decoder for song type '%r' registered "% song.type)
 
-        url = encoding.encode_path(song.url)
+        # url = encoding.encode_path(song.url)
+        url = song.url
         if url.startswith("file://"):
             dbstats = hub.request(requests.getdatabasestats(song.songdbid))
             if not dbstats.basedir:
@@ -270,7 +271,7 @@ class decodedsong:
             newbuff = self.decodedfile.read()
             if newbuff:
                 self.buff, self.last_l, self.last_r = \
-                           pcm.rate_convert(newbuff,
+                           pcm.rate_convert(bytes(newbuff),
                                             self.samplerate,
                                             self.buff,
                                             self.buffpos,
