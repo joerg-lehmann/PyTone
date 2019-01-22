@@ -53,14 +53,13 @@ except OSError as e:
 # process commandline options and read config file
 ##############################################################################
 
-# import log
 import config
 # process the command line first, because a different location for the
 # config file may be given there
 config.processcommandline()
 config.processconfig()
 
-# now that the configuration has been read, we can imort the log
+# now that the configuration has been read, we can import the log
 # module and initialize the debug file if necessary
 import log
 log.initdebugfile(config.general.debugfile)
@@ -262,7 +261,6 @@ signal.signal(signal.SIGTERM, sigtermhandler)
 
 try:
     stdscr = cursessetup()
-    log.debug("-")
     # set m to None as marker in case that something goes wrong in the
     # mainscreen.mainscreen constructor
     m = None
