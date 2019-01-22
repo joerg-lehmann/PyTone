@@ -32,6 +32,7 @@
  *  
  */
 
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -41,10 +42,10 @@
 /* Note: in all routines, we assume, that we deal with 16 bit stereo PCM data */
 
 static void mix(char *b, const char *b1, 
-		const char *b2, 
-		int l,
-		float *mixingratio,
-		float mixingrate) {
+                const char *b2, 
+                int l,
+                float *mixingratio,
+                float mixingrate) {
 
   int16_t *ib  = (int16_t *) b;
   int16_t *ib1 = (int16_t *) b1;
@@ -52,7 +53,7 @@ static void mix(char *b, const char *b1,
   int il = l/2;
 
   float f = *mixingratio;
-  float df = mixingrate/2;	/* we deal with stereo data */
+  float df = mixingrate/2;      /* we deal with stereo data */
 
   if (df>=0)
     while (il--) {
@@ -89,70 +90,72 @@ static PyObject *py_mix(PyObject *self, PyObject *args) {
   float mixingratio;
   float mixingrate;
 
-  if (PyArg_ParseTuple(args, 
-		       "t#t#ff", 
-		       &b1, &l1,
-		       &b2, &l2,
-		       &mixingratio,
-		       &mixingrate)) {
-      if (l1<l2) {
-	  if (!(dummy = (char *) malloc(l2)))
-	      return NULL;
+  if (!PyArg_ParseTuple(args, 
+                       "y#y#ff",
+                       &b1, &l1,
+                       &b2, &l2,
+                       &mixingratio,
+                       &mixingrate))
+     return NULL;
 
-          Py_BEGIN_ALLOW_THREADS
+   if (l1<l2) {
+       if (!(dummy = (char *) malloc(l2)))
+           return NULL;
 
-          memcpy((void *) dummy, (void *) b1, l1); 
-          /* fill rest with zeros */
-          memset((void *) (dummy+l1), 0, l2-l1); 
+       Py_BEGIN_ALLOW_THREADS
 
-          Py_END_ALLOW_THREADS
+       memcpy((void *) dummy, (void *) b1, l1); 
+       /* fill rest with zeros */
+       memset((void *) (dummy+l1), 0, l2-l1); 
 
-          /* now proceed, as if nothing has ever happend...*/
-          b1 = dummy;
-          l1 = l2;
-      }
-      else if (l1>l2) {
-	  if (!(dummy = (char *) malloc(l1)))
-	      return NULL;
+       Py_END_ALLOW_THREADS
 
-          Py_BEGIN_ALLOW_THREADS
+       /* now proceed, as if nothing has ever happend...*/
+       b1 = dummy;
+       l1 = l2;
+   }
+   else if (l1>l2) {
+       if (!(dummy = (char *) malloc(l1)))
+           return NULL;
 
-          memcpy((void *) dummy, (void *) b2, l2); 
-          /* fill rest with zeros */
-          memset((void *) (dummy+l2), 0, l1-l2); 
+       Py_BEGIN_ALLOW_THREADS
 
-          Py_END_ALLOW_THREADS
+       memcpy((void *) dummy, (void *) b2, l2); 
+       /* fill rest with zeros */
+       memset((void *) (dummy+l2), 0, l1-l2); 
 
-          /* now proceed, as if nothing has ever happend...*/
-          b2 = dummy;
-          l2 = l1;
-      }
+       Py_END_ALLOW_THREADS
 
-      l = l1;
+       /* now proceed, as if nothing has ever happend...*/
+       b2 = dummy;
+       l2 = l1;
+   }
 
-      /* get new buffer object from Python and use the internal argument parser to get b*/
-      // buffobj = PyBuffer_New(l);
-      // PyArg_Parse(buffobj, "t#", &b, &l);
+   l = l1;
 
-      // store data in bytes string
-      buffobj = PyBytes_FromStringAndSize(NULL, l);
-      b = PyBytes_AsString(buffobj);
+   /* get new buffer object from Python and use the internal argument parser to get b*/
+   // buffobj = PyBuffer_New(l);
+   // PyArg_Parse(buffobj, "t#", &b, &l);
 
-      /* now do the real work*/
-      Py_BEGIN_ALLOW_THREADS
-      mix(b, b1, b2, l, &mixingratio, mixingrate);
-      Py_END_ALLOW_THREADS
+   // store data in bytes string
+   buffobj = PyBytes_FromStringAndSize(NULL, l);
+   b = PyBytes_AsString(buffobj);
 
-      /* build up return structure */
-      returnObj = Py_BuildValue("Of", buffobj, mixingratio);
+   /* now do the real work*/
+   Py_BEGIN_ALLOW_THREADS
+   mix(b, b1, b2, l, &mixingratio, mixingrate);
+   Py_END_ALLOW_THREADS
 
-      Py_DECREF(buffobj);
+   /* build up return structure */
+   returnObj = Py_BuildValue("Of", buffobj, mixingratio);
 
-      if (dummy)
-	  free(dummy);
-  }
+   Py_DECREF(buffobj);
+
+   if (dummy)
+       free(dummy);
+
   return returnObj;
-		       
+                       
 }
 
 /* greatest common divisor */
@@ -175,14 +178,14 @@ static long long lcm(int i, int j)
 }
 
 static int rate_convert(char *in_c, int lin, char *out_c, int lout, 
-			int in_rate, int out_rate,
-			int firstsample, 
-			int16_t *last_l, int16_t *last_r) {
+                        int in_rate, int out_rate,
+                        int firstsample, 
+                        int16_t *last_l, int16_t *last_r) {
 
   long long lcm_rate  = lcm(in_rate, out_rate);
   long long in_skip   = lcm_rate / in_rate;
   long long out_skip  = lcm_rate / out_rate;
-  int samplenr   = lin/4; 		     /* number of samples */
+  int samplenr   = lin/4;                    /* number of samples */
   int16_t *in_i  = (int16_t* ) in_c;
   int16_t *out_i = (int16_t* ) out_c;
   int in_ofs     = 0;
@@ -208,16 +211,16 @@ static int rate_convert(char *in_c, int lin, char *out_c, int lout,
       samplenr--;
 
       if (samplenr == 0) 
-	return emitted*4;
+        return emitted*4;
     }
 
     *out_i++ = *last_l + (((float) in_i[0] - *last_l)
-			  * (out_ofs - in_ofs)
-			  / in_skip);
+                          * (out_ofs - in_ofs)
+                          / in_skip);
     
     *out_i++ = *last_r + (((float) in_i[1] - *last_r)
-			  * (out_ofs - in_ofs)
-			  / in_skip);
+                          * (out_ofs - in_ofs)
+                          / in_skip);
     
     /* count emitted samples*/
     emitted++;
@@ -239,21 +242,22 @@ static int rate_convert(char *in_c, int lin, char *out_c, int lout,
 static PyObject *py_rate_convert(PyObject *self, PyObject *args) {
   PyObject *returnObj = NULL;
 
-  char *in_c;			/* input data */
-  int lin;			/* length of in_c */
-  int in_rate;			/* input sampling rate */
+  char *in_c;                   /* input data */
+  Py_ssize_t lin;               /* length of in_c */
+  int in_rate;                  /* input sampling rate */
 
-  char *out_c;			/* output data */
-  int lout;			/* length of out_c */
-  int out_rate;			/* output sampling rate */
+  char *out_c;                  /* output data */
+  Py_ssize_t lout;                     /* length of out_c */
+  int out_rate;                 /* output sampling rate */
 
   char *newout_c=0;             /* dummy buffer for output data */
 
-  PyObject *py_pre_out_c; 	/* append output to this buffer */
-  PyObject *py_start_pre_out;	/* and start from here */
+  Py_buffer py_buff_in;        /* buffer object for input data */
+  PyObject *py_pre_out_c;       /* append output to this buffer */
+  PyObject *py_start_pre_out;   /* and start from here */
   char *pre_out_c = NULL;
-  int lpre_out = 0;
-  int start_pre_out = 0;
+  Py_ssize_t lpre_out = 0;
+  Py_ssize_t start_pre_out = 0;
 
   PyObject *py_last_l;
   PyObject *py_last_r;
@@ -261,95 +265,93 @@ static PyObject *py_rate_convert(PyObject *self, PyObject *args) {
   int16_t last_l;
   int16_t last_r;
 
-  int firstsample;		/* are we dealing with the first sample */
+  int firstsample;              /* are we dealing with the first sample */
 
-  if (PyArg_ParseTuple(args, 
-		       "y#iOOiOO", 
-		       &in_c, &lin,
-		       &in_rate,
-		       &py_pre_out_c,
-		       &py_start_pre_out,
-		       &out_rate,
-		       &py_last_l, 
-		       &py_last_r
-		       )) {
-    
-    PyObject *py_out;		/* python object for output buffer*/
-    char *b;			/* temporary variable */
-    int l;
+  if (!PyArg_ParseTuple(args, 
+                       "y*iOOiOO", 
+                       &py_buff_in,
+                       &in_rate,
+                       &py_pre_out_c,
+                       &py_start_pre_out,
+                       &out_rate,
+                       &py_last_l,
+                       &py_last_r
+                       )) return NULL;
 
-    int emitted;		/* length of output stream <= out_c */
+  in_c = py_buff_in.buf;
+  lin = py_buff_in.len;
 
-    if (py_last_l!=Py_None && py_last_r!=Py_None) {
-      int i;
-      firstsample = 0;
-      if (!PyArg_Parse(py_last_l, "i", &i)) return NULL;
-      last_l = i;
-      if (!PyArg_Parse(py_last_r, "i", &i)) return NULL;
-      last_r = i;
-    } 
-    else 
-      firstsample = 1;
+  PyObject *py_out;           /* Python object for output buffer*/
+  char *b;                    /* temporary variable */
+  Py_ssize_t l;
 
-    /* get data of prefix, if present */
-    if (py_pre_out_c!=Py_None && py_start_pre_out!=Py_None) {
-      if (!PyArg_Parse(py_pre_out_c, "y#", &pre_out_c, &lpre_out)) return NULL;
-      if (!PyArg_Parse(py_start_pre_out, "i", &start_pre_out)) return NULL;
+  int emitted;                /* length of output stream <= out_c */
 
-      pre_out_c += start_pre_out;
-      lpre_out -= start_pre_out;
-    }
+  if (py_last_l!=Py_None && py_last_r!=Py_None) {
+    int i;
+    firstsample = 0;
+    if (!PyArg_Parse(py_last_l, "i", &i)) { PyBuffer_Release(&py_buff_in); return NULL; }
+    last_l = i;
+    if (!PyArg_Parse(py_last_r, "i", &i)) { PyBuffer_Release(&py_buff_in); return NULL; }
+    last_r = i;
+  } 
+  else 
+    firstsample = 1;
 
-    if (in_rate!=out_rate) {
+  /* get data of prefix, if present */
+  if (py_pre_out_c!=Py_None && py_start_pre_out!=Py_None) {
+    if (!PyArg_Parse(py_pre_out_c, "y#", &pre_out_c, &lpre_out)) { PyBuffer_Release(&py_buff_in); return NULL; }
+    if (!PyArg_Parse(py_start_pre_out, "i", &start_pre_out)) { PyBuffer_Release(&py_buff_in); return NULL; }
 
-      /* allocate space for resampled output */
-      lout = lin*out_rate/in_rate + 4;
-      if (!(newout_c = (char *) malloc(lout)))
-	return NULL;
-
-      out_c = newout_c;
-
-      /* now do the real work*/
-      Py_BEGIN_ALLOW_THREADS
-	emitted=  rate_convert(in_c, lin, out_c, lout,
-			       in_rate, out_rate,
-			       firstsample,
-			       &last_l, &last_r);
-      Py_END_ALLOW_THREADS
-    }
-    else {
-      /* we only need to copy the input data */
-      emitted = lin;
-      out_c = in_c;
-    }
-
-    ///* get new buffer object from python for prefixed data + resampled output */
-    //py_out = PyBuffer_New(lpre_out + emitted);
-    ///* use the internal python argument parser to get b*/
-    //PyArg_Parse(py_out, "t#", &b, &l);
-
-    l = lpre_out + emitted; 
-    py_out = PyBytes_FromStringAndSize(NULL, l);
-    b = PyBytes_AsString(py_out);
-
-    /* now we copy our result */
-    Py_BEGIN_ALLOW_THREADS
-    memcpy((void *) b, (void *) pre_out_c, lpre_out); 
-    memcpy((void *) (b+lpre_out), (void *) out_c, emitted); 
-      
-    /* free space for dummy buffers if it has been allocated before */
-    if (newout_c)
-        free(newout_c);
-
-    Py_END_ALLOW_THREADS
-      
-    /* build up return structure */
-    returnObj = Py_BuildValue("Oii", py_out, (int) last_l, (int) last_r);
-
-    Py_DECREF(py_out);  
+    pre_out_c += start_pre_out;
+    lpre_out -= start_pre_out;
   }
+
+  if (in_rate!=out_rate) {
+
+    /* allocate space for resampled output */
+    lout = lin*out_rate/in_rate + 4;
+    if (!(newout_c = (char *) malloc(lout))) { PyBuffer_Release(&py_buff_in); return NULL; }
+
+    out_c = newout_c;
+
+    /* now do the real work*/
+    Py_BEGIN_ALLOW_THREADS
+      emitted=  rate_convert(in_c, lin, out_c, lout,
+                             in_rate, out_rate,
+                             firstsample,
+                             &last_l, &last_r);
+    Py_END_ALLOW_THREADS
+  }
+  else {
+    /* we only need to copy the input data */
+    emitted = lin;
+    out_c = in_c;
+  }
+
+  /* free input buffer */
+  PyBuffer_Release(&py_buff_in);
+
+  l = lpre_out + emitted; 
+  py_out = PyBytes_FromStringAndSize(NULL, l);
+  b = PyBytes_AsString(py_out);
+
+  /* now we copy our result */
+  Py_BEGIN_ALLOW_THREADS
+  if (lpre_out) memcpy((void *) b, (void *) pre_out_c, lpre_out); 
+  memcpy((void *) (b+lpre_out), (void *) out_c, emitted); 
+
+  /* free space for dummy buffers if it has been allocated before */
+  if (newout_c)
+      free(newout_c);
+
+  Py_END_ALLOW_THREADS
+
+  /* build up return structure */
+  returnObj = Py_BuildValue("Oii", py_out, (int) last_l, (int) last_r);
+
+  Py_DECREF(py_out);  
   return returnObj;
-		       
 }
 
 /* interleave stereo channels from mono file */
@@ -357,47 +359,45 @@ static PyObject *py_rate_convert(PyObject *self, PyObject *args) {
 static PyObject *py_upsample(PyObject *self, PyObject *args) {
   PyObject *returnObj = NULL;
 
-  char *in_c;			/* input data */
-  int lin;			/* length of in_c */
-  char *out_c;			/* output data */
+  char *in_c;                   /* input data */
+  Py_ssize_t lin;                      /* length of in_c */
+  char *out_c;                  /* output data */
 
-  PyObject *py_out;		/* python object for output buffer*/
+  Py_buffer py_buff_in;        /* buffer object for input data */
+  PyObject *py_out;             /* python object for output buffer*/
 
   int16_t *in_i;
   int16_t *out_i;
-  char *b;
-  int l;
   int i, j;
-    
 
-  if (PyArg_ParseTuple(args, "t#", &in_c, &lin)) {
-    Py_BEGIN_ALLOW_THREADS
+  if (!PyArg_ParseTuple(args, "y*", &py_buff_in)) 
+     return NULL;
 
-    if (!(out_c = (char *) malloc(2*lin)))
-      return NULL;
+  in_c = py_buff_in.buf;
+  lin = py_buff_in.len;
 
-    in_i = (int16_t* ) in_c;
-    out_i = (int16_t* ) out_c;
-    
-    for (i=0, j=0; i<lin; i+=2, j++) {
-      out_i[i] = in_i[j];
-      out_i[i+1] = in_i[j];
-    }
-    Py_END_ALLOW_THREADS
-
-    // /* get new buffer object from python for prefixed data + resampled output */
-    // /* and use the internal python argument parser to get b*/
-    // py_out = PyBuffer_New(2*lin);
-    // PyArg_Parse(py_out, "t#", &b, &l);
-    l = 2 * lin;
-    py_out = PyBytes_FromStringAndSize(NULL, l);
-    b = PyBytes_AsString(py_out);
-
-    memcpy((void *) b, (void *) out_c, 2*lin);
-
-    free(out_c);
-    returnObj = py_out;
+  if (!(out_c = (char *) malloc(2*lin))) {
+    PyBuffer_Release(&py_buff_in);
+    return NULL;
   }
+
+  in_i = (int16_t* ) in_c;
+  out_i = (int16_t* ) out_c;
+    
+  Py_BEGIN_ALLOW_THREADS
+  for (i=0, j=0; i<lin; i+=2, j++) {
+    out_i[i] = in_i[j];
+    out_i[i+1] = in_i[j];
+  }
+  Py_END_ALLOW_THREADS
+
+  PyBuffer_Release(&py_buff_in);
+
+  py_out = PyBytes_FromStringAndSize(out_c, 2*lin);
+
+  free(out_c);
+
+  returnObj = py_out;
   return returnObj;
 }
 
@@ -407,28 +407,29 @@ inplace scale all elements of buf (interpreted as signed int16) by factor
 */
 
 static PyObject *py_scale(PyObject *self, PyObject *args) {
-  PyObject *returnObj = NULL;
-  char *b_c;
-  int16_t *b_i;  /* the same as pointer to 16 bit ints */
-  int l;
-  float factor;
-  int i;
+  Py_buffer py_buff_in;        /* buffer object for input data */
+  float factor;                /* scaling factor */ 
 
-  if (PyArg_ParseTuple(args, "t#f", &b_c, &l, &factor )) {
-      b_i  = (int16_t *) b_c;
-      
-      Py_BEGIN_ALLOW_THREADS
-      for (i=0; i<l/2; i++) {
-          double r = b_i[i] * factor;
-          if (r>32768) b_i[i] = 32768;
-          else if (r<-32767) b_i[i] = -32767;
-          else b_i[i] = (int) r;
-      }
-      Py_END_ALLOW_THREADS
-    Py_INCREF(Py_None);
-    returnObj = Py_None;
+  int16_t *b_i;  /* the same as buffer char pointer by in 16 bit ints */
+  Py_ssize_t i;
+
+  if (!PyArg_ParseTuple(args, "y*f", &py_buff_in, &factor ))
+     return NULL;
+
+  b_i  = (int16_t *) py_buff_in.buf;
+
+  Py_BEGIN_ALLOW_THREADS
+  for (i=0; i<py_buff_in.len/2; i++) {
+      double r = b_i[i] * factor;
+      if (r>32767) b_i[i] = 32767;
+      else if (r<-32768) b_i[i] = -32768;
+      else b_i[i] = (int) r;
   }
-  return returnObj;
+  Py_END_ALLOW_THREADS
+
+  PyBuffer_Release(&py_buff_in);
+
+  Py_RETURN_NONE;
 }
 
 /* exported methods */

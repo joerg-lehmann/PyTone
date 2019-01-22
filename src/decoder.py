@@ -271,7 +271,7 @@ class decodedsong:
             newbuff = self.decodedfile.read()
             if newbuff:
                 self.buff, self.last_l, self.last_r = \
-                           pcm.rate_convert(bytes(newbuff),
+                           pcm.rate_convert(newbuff,
                                             self.samplerate,
                                             self.buff,
                                             self.buffpos,
