@@ -24,6 +24,38 @@ import events, hub, requests
 import encoding
 import helper
 
+# for porting from Python 2
+def cmp_to_key(mycmp):
+    'Convert a cmp= function into a key= function'
+    class K:
+        def __init__(self, obj, *args):
+            self.obj = obj
+        def __lt__(self, other):
+            return mycmp(self.obj, other.obj) < 0
+        def __gt__(self, other):
+            return mycmp(self.obj, other.obj) > 0
+        def __eq__(self, other):
+            return mycmp(self.obj, other.obj) == 0
+        def __le__(self, other):
+            return mycmp(self.obj, other.obj) <= 0
+        def __ge__(self, other):
+            return mycmp(self.obj, other.obj) >= 0
+        def __ne__(self, other):
+            return mycmp(self.obj, other.obj) != 0
+    return K
+
+def cmp(x, y):
+    """
+    Replacement for built-in function cmp that was removed in Python 3
+
+    Compare the two objects x and y and return an integer according to
+    the outcome. The return value is negative if x < y, zero if x == y
+    and strictly positive if x > y.
+    """
+
+    return (x > y) - (x < y)
+
+
 #
 # filters
 #
@@ -1127,7 +1159,7 @@ class filesystemdir(diritem):
                     return ( x.disknumber and y.disknumber and cmp(x.disknumber, y.disknumber) or
                              x.tracknumber and y.tracknumber and cmp(x.tracknumber, y.tracknumber) or
                              cmp(x.title, y.title) )
-        items.sort(cmp=cmpitem)
+        items.sort(key=cmp_to_key(cmpitem))
         return items
 
     def getcontentsrecursiverandom(self):
