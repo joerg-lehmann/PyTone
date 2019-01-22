@@ -217,7 +217,7 @@ def metadata_from_file(relpath, basedir, tracknrandtitlere, postprocessors):
 def read_path_metadata(md, relpath, tracknrandtitlere):
     relpath = os.path.normpath(relpath)
 
-    md.url = "file://" + encoding.decode_path(relpath)
+    md.url = "file://" + relpath
 
     # guesses for title and tracknumber using the filename
     match = re.match(tracknrandtitlere, os.path.basename(relpath))
@@ -236,11 +236,6 @@ def read_path_metadata(md, relpath, tracknrandtitlere):
         fnalbum = second
     else:
         fnartist = fnalbum = ""
-
-    # now convert this to unicode strings using the standard filesystem encoding
-    fntitle = encoding.decode_path(fntitle)
-    fnartist = encoding.decode_path(fnartist)
-    fnalbum = encoding.decode_path(fnalbum)
 
     fntitle = fntitle.replace("_", " ")
     fnalbum = fnalbum.replace("_", " ")

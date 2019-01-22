@@ -15,8 +15,5 @@ def encode(ustring):
 def decode(string):
     return string.decode(_localecharset, "replace")
 
-def decode_path(path):
-    return path.decode(_fs_encoding)
-
 def encode_path(path):
     return path.encode(_fs_encoding)

@@ -1048,7 +1048,7 @@ class songautoregisterer(service.service):
         else:
            relpath = path[len(self.basedir)+1:]
 
-        song_url = "file://" + encoding.decode_path(relpath)
+        song_url = "file://" + relpath
         urlfilter = item.filters((item.urlfilter(song_url),))
         songs = self._request(requests.getsongs(self.songdbid, filters=urlfilter))
 
