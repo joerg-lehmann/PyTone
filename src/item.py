@@ -1115,8 +1115,6 @@ class filesystemdir(diritem):
         if self.dir==self.basedir:
             self.name =  _("Filesystem")
         else:
-            # self.name = encoding.decode_path(self.dir[len(self.basedir):].split("/")[-1])
-            # XXX
             self.name = self.dir[len(self.basedir):].split("/")[-1]
 
     def getname(self):
@@ -1174,7 +1172,6 @@ class filesystemdir(diritem):
             return self.name
 
     def getinfo(self):
-        # return [["%s:" % _("Filesystem"), encoding.decode_path(self.dir), "", ""]]
         return [["%s:" % _("Filesystem"), self.dir, "", ""]]
 
     def isbasedir(self):
