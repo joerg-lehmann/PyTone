@@ -156,8 +156,8 @@ class playlist(service.service):
 
     def _logplay(self, item):
         if self.logfilename:
-            logfile = open(self.logfilename, "a")
-            logfile.write("%s: %s\n" % (time.asctime(), encoding.encode_path(item.song.url)))
+            logfile = open(self.logfilename, "a", encoding="utf-8")
+            logfile.write("%s: %s\n" % (time.asctime(), item.song.url))
             logfile.close()
 
     def _updateplaystarttimes(self):
@@ -294,14 +294,14 @@ class playlist(service.service):
                 name = name + ".m3u"
             try:
                 name = os.path.join(config.general.playlistdir, name)
-                file = open(name, "w")
+                file = open(name, "w", encoding="utf-8")
                 for item in self.items:
                     if item.song.url.startswith("file://"):
                         dbstats = hub.request(requests.getdatabasestats(item.song.songdbid))
                         path = os.path.join(dbstats.basedir, item.song.url[7:])
                     else:
                         path = item.song.url
-                    file.write("%s\n" % encoding.encode_path(path))
+                    file.write("%s\n" % path)
                 file.close()
             except (IOError, OSError):
                 pass
@@ -312,7 +312,7 @@ class playlist(service.service):
                 name = name + ".m3u"
             try:
                 path = os.path.join(config.general.playlistdir, name)
-                file = open(path, "r")
+                file = open(path, "r", encoding="utf-8")
                 self._clear()
                 for line in file:
                     if not line.startswith("#"):

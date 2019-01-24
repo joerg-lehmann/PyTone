@@ -233,7 +233,6 @@ class decodedsong:
             log.error("No decoder for song type '%r' registered "% song.type)
             raise RuntimeError("No decoder for song type '%r' registered "% song.type)
 
-        # url = encoding.encode_path(song.url)
         url = song.url
         if url.startswith("file://"):
             dbstats = hub.request(requests.getdatabasestats(song.songdbid))

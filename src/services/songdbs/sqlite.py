@@ -1127,7 +1127,7 @@ class songautoregisterer(service.service):
         if not song.url.startswith("file://"):
             log.debug("Can only rescan local files")
             return
-        relpath = encoding.encode_path(song.url[7:])
+        relpath = song.url[7:]
         path = os.path.join(self.basedir, relpath)
         try:
             if force or song_metadata.date_updated < os.stat(path).st_mtime:
@@ -1141,7 +1141,7 @@ class songautoregisterer(service.service):
 
     def read_playlist_from_file(self, path):
         try:
-            file = open(path, "r")
+            file = open(path, "r", encoding="utf-8")
             songs = []
             for line in file:
                 if not line.startswith("#"):
