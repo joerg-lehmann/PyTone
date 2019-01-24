@@ -49,3 +49,24 @@ def print_exc_plus():
                 print(value)
             except:
                 print("<ERROR WHILE PRINTING VALUE>")
+
+
+# restricted unpickler
+
+import pickle
+
+class RestrictedUnpickler(pickle.Unpickler):
+
+    safe_builtins = []
+
+    def allowed(self, module, name):
+        " explicitely allowed"
+        return False
+
+    def find_class(self, module, name):
+        if self.allowed(module, name):
+            return eval("%s.%s", module, name)
+        elif module == "builtins" and name in safe_builtins:
+            return getattr(builtins, name)
+        else:
+            raise pickle.UnpicklingError("global '%s.%s' is forbidden" % (module, name))

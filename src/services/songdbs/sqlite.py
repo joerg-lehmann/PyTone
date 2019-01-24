@@ -25,10 +25,7 @@ import sys
 import random
 import time
 
-try:
-    import sqlite3 as sqlite
-except ImportError:
-    from pysqlite2 import dbapi2 as sqlite
+import sqlite3 as sqlite
 
 import events, hub, requests
 import errors
@@ -39,6 +36,14 @@ import service
 import encoding
 import config as configmodule
 
+import pickle, io
+from helper import RestrictedUnpickler
+
+def loads(s):
+    return RestrictedUnpickler(io.BytesIO(s)).load()
+
+def dumps(obj):
+    return pickle.dumps(obj)
 
 create_tables = """
 CREATE TABLE artists (
@@ -144,24 +149,6 @@ songcolumns_w_indices = songcolumns_plain + songcolumns_indices
 songcolumns_lists = ["comments", "lyrics"]
 songcolumns_all = songcolumns_w_indices + songcolumns_lists
 
-# restricted unpickler (from Python's pickle docs)
-
-import pickle, io
-
-class RestrictedUnpickler(pickle.Unpickler):
-
-    def find_class(self, module, name):
-        # Only allow safe classes from builtins.
-        if module == "builtins" and name in safe_builtins:
-            return getattr(builtins, name)
-        # Forbid everything else.
-        raise pickle.UnpicklingError("global '%s.%s' is forbidden" % (module, name))
-
-def loads(s):
-    return RestrictedUnpickler(io.BytesIO(s)).load()
-
-def dumps(obj):
-    return pickle.dumps(obj)
 
 #
 # statistical information about songdb
