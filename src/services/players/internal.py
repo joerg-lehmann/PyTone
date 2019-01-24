@@ -57,7 +57,7 @@ class aoaudiodev:
         # to close the ao audio device, we have to delete it...
         del self.ao 
 
-# support for new ossaudiodev module of Python 2.3
+# support for ossaudiodev module
 
 class ossaudiodev:
     def __init__(self, device, rate):

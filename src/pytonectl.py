@@ -29,17 +29,11 @@ import os, os.path, sys, getopt, locale
 # be the case, if the .mo files are installed at their proper
 # location.
 
-try:
-    import gettext
-    locallocaledir = os.path.join(os.path.dirname(sys.argv[0]), "../locale")
-    gettext.install("PyTone", locallocaledir)
-except:
-    # Disable localization if there is any problem with the above.
-    # This works around a problem with Python 2.1
-    import builtins
-    builtins.__dict__['_'] = lambda s: s
+import gettext
+locallocaledir = os.path.join(os.path.dirname(sys.argv[0]), "../locale")
+gettext.install("PyTone", locallocaledir)
 
-from . import network, events, requests, version, helper
+import network, events, requests, version, helper
 
 #
 # parse command line options

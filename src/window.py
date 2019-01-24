@@ -106,20 +106,10 @@ class window:
             self.addstr(y+1, self.ix, " "*self.iw)
 
     def hline(self, x, y, c, n, attr):
-        try:
-            self.win.hline(x, y, c, n, attr)
-        except TypeError:
-            # workaround for Python 2.1.x
-            for y in range(y, y+n):
-                self.addch(x, y, c, attr)
+        self.win.hline(x, y, c, n, attr)
 
     def vline(self, x, y, c, n, attr):
-        try:
-            self.win.vline(x, y, c, n, attr)
-        except TypeError:
-            # workaround for Python 2.1.x
-            for x in range(x, x+n):
-                self.addch(x, y, c, attr)
+        self.win.vline(x, y, c, n, attr)
 
     def hastopborder(self):
         return self.border & config.BORDER_TOP
