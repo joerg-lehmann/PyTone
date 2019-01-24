@@ -161,7 +161,7 @@ def loads(s):
     return RestrictedUnpickler(io.BytesIO(s)).load()
 
 def dumps(obj):
-    return buffer(pickle.dumps(obj))
+    return pickle.dumps(obj)
 
 #
 # statistical information about songdb
@@ -1039,7 +1039,7 @@ class songautoregisterer(service.service):
         If force is set, the mtime of the song file is ignored.
         """
         if not path.startswith(self.basedir):
-            log.error("Path of song not in basedir of database")
+            log.error("Path of song '%s' not in basedir '%s' of database" % (path, self.basedir))
             return None
 
         # generate url corresponding to song
