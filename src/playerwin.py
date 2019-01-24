@@ -45,7 +45,7 @@ class playerwin(window.window):
                                config.colors.playerwindow,
                                _("Playback Info"), border)
         try:
-            self.playerinfofd = open(self.playerinfofile, "wb")
+            self.playerinfofd = open(self.playerinfofile, "w", encoding="utf-8")
         except IOError as e:
             log.error(_("error '%s' occured during write to playerinfofile") % e)
             self.playerinfofd = None
@@ -116,7 +116,6 @@ class playerwin(window.window):
                                                         formattime(self.song.length))
                     else:
                         info = _("Not playing") + "\n"
-                    info = encoding.encode(info)
                     self.playerinfofd.write(info)
                     self.playerinfofd.truncate(len(info))
                 except IOError as e:
