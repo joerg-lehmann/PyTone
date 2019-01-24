@@ -18,7 +18,8 @@
 # along with PyTone; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import curses, os, os.path, signal, imp, sys
+import curses, os, os.path, signal, sys
+import importlib, importlib.util
 
 ##############################################################################
 # gettext initialization.
@@ -102,17 +103,28 @@ try:
     userpluginpath = os.path.expanduser("~/.pytone/plugins/")
     cwd = os.path.abspath(os.path.dirname(sys.argv[0]))
     globalpluginpath = os.path.join(cwd, "plugins")
-    pluginpath = [userpluginpath, globalpluginpath]
+    pluginpaths = [userpluginpath, globalpluginpath]
 
     for name in config.general.plugins:
         try:
-            # We use imp.find_module to narrow down the plugin search path
-            # to the two possible locations. Setting sys.path correspondingly
-            # would not work, however, since then the plugin could not
-            # import its needed modules. 
-            fp, pathname, description = imp.find_module(name, pluginpath)
-            pluginmodule = imp.load_module(name, fp, pathname, description)
-            # 
+            # We use importlib to narrow down the plugin search path
+            # to the two possible locations.
+
+            # Set up a loader for Python source files
+            loaderdetails = (importlib.machinery.SourceFileLoader,
+                              importlib.machinery.SOURCE_SUFFIXES)
+
+            for pluginpath in pluginpaths:
+                pluginfinder = importlib.machinery.FileFinder(pluginpath, loaderdetails)
+                pluginspec = pluginfinder.find_spec(name)
+                if pluginspec:
+                    pluginmodule = importlib.util.module_from_spec(pluginspec)
+                    pluginspec.loader.exec_module(pluginmodule)
+                    break
+            else:
+                log.error(_("Cannot find plugin '%s'") % name)
+                continue
+
             # process configuration of plugin
             pluginconfig = pluginmodule.config
             if pluginconfig is not None:
@@ -120,6 +132,7 @@ try:
                 config.finishconfigsection(pluginconfig)
                 pluginconfig = pluginconfig()
             plugins.append((pluginmodule, pluginconfig))
+            log.info(_("Plugin '%s' loaded" % name))
         except Exception as e:
              log.error(_("Cannot load plugin '%s': %s") % (name, e))
              log.debug_traceback()
