@@ -72,6 +72,8 @@ class mp3decoder(decoder):
     def __init__(self, path):
         assert isinstance(path, str), "path has to be a string"
         self.file = mad.MadFile(open(path, "rb"))
+        # Here, as a work around for a bug in pymad, one could drop the first frame as this is sometimes corrupted
+        # self.file.read()
 
     def samplerate(self):
         return self.file.samplerate()
