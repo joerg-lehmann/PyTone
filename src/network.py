@@ -27,38 +27,29 @@ import log
 import item, metadata, requests, services, services.player, services.playlist
 import copyreg, builtins
 
-_EVENT = "EVENT"
-_REQUEST = "REQUEST"
-_RESULT = "RESULT"
-_SUBSCRIBE = "SUBSCRIBE"
-_SENDFILE = "SENDFILE"
+_EVENT = b"EVENT"
+_REQUEST = b"REQUEST"
+_RESULT = b"RESULT"
+_SUBSCRIBE = b"SUBSCRIBE"
+_SENDFILE = b"SENDFILE"
 
 ##############################################################################
 # restricted unpickling
 ##############################################################################
 
+import pickle, io
 
-def find_global(module, klass):
-    if module in ("events", "requests", "metadata", "copy_reg", "__builtin__"):
-        pass
-    elif module=="item" and klass=="song":
-        pass
-    elif module=="dbitem":
-        pass
-    elif module=="services.player":
-        pass
-    elif module=="services.playlist":
-        pass
-    else:
-        log.debug("refusing to unpickle %s.%s" % (module, klass))
-        raise pickle.UnpicklingError("cannot unpickle a %s.%s" % (module, klass))
-    log.debug("unpickling %s.%s" % (module, klass))
-    return eval("%s.%s" % (module, klass))
+class Unpickler(pickle.Unpickler):
+    def allowed(self, module, klass):
+        if module in ("events", "requests", "dbitem", "services.player", "services.playlist", "metadata", "copy_reg", "__builtin__"):
+            return True
+        elif module=="item" and klass=="song":
+            return True
+        else:
+            return False
 
 def loads(s):
-    unpickler = pickle.Unpickler(io.StringIO(s))
-    unpickler.find_global = find_global
-    return unpickler.load()
+    return Unpickler(io.BytesIO(s)).load()
 
 
 ##############################################################################
@@ -76,22 +67,26 @@ class servernetworkreceiver(threading.Thread):
     def __init__(self, socket, handler):
         self.socket = socket
         self.handler = handler
-        self.rfile = self.socket.makefile("r")
+        self.rfile = self.socket.makefile("rb")
         self.done = False
         threading.Thread.__init__(self)
         self.setDaemon(1)
 
     def _receiveobject(self):
         line = self.rfile.readline()
+        # atype = type
         if not line: return None, None
         try:
             log.debug("server: request type received")
             type, bytes = line.split()
             bytes = int(bytes)
+            log.debug("type=%s, bytes=%d" %( type, bytes))
             if type != _SENDFILE:
-                objstring = self.rfile.read(bytes+2)[:-2]
+                objbytes = self.rfile.read(bytes+2)
+                log.debug(str(objbytes.__class__))
+                objbytes = objbytes[:-2]
                 log.debug("server: object received")
-                obj = loads(objstring)
+                obj = loads(objbytes)
                 log.debug("server receive: type=%s object=%s" % (type, repr(obj)))
                 return (type, obj)
             else:
@@ -108,6 +103,7 @@ class servernetworkreceiver(threading.Thread):
                 return (type, tmpfilename)
         except Exception as e:
             log.debug("exception '%s' occured during _receiveobject" % e)
+            log.debug_traceback()
             return (None, None)
 
     def run(self):
@@ -150,7 +146,7 @@ class handler(socketserver.StreamRequestHandler, socketserver.BaseRequestHandler
         # we have to switch to blocking mode for send
         # self.request.setblocking(1)
         objstring = pickle.dumps(obj, 1)
-        self.wfile.write("%s %d\r\n%s\r\n" % (type, len(objstring), objstring))
+        self.wfile.write(b"%b %d\r\n%b\r\n" % (type, len(objstring), objstring))
         self.wfile.flush()
         log.debug("server send: type=%s object=%s" % (type, repr(obj)))
 
@@ -230,7 +226,7 @@ class clientnetworkreceiver(threading.Thread):
 
     def __init__(self, socket, queue):
         self.socket = socket
-        self.rfile = self.socket.makefile("r")
+        self.rfile = self.socket.makefile("rb")
         self.queue = queue
         self.done = False
         threading.Thread.__init__(self)
@@ -241,9 +237,9 @@ class clientnetworkreceiver(threading.Thread):
             line = self.rfile.readline()
             type, bytes = line.split()
             bytes = int(bytes)
-            objstring = self.rfile.read(bytes+2)[:-2]
-            log.debug("client receive: %s bytes" % len(objstring))
-            obj = loads(objstring)
+            objbytes = self.rfile.read(bytes+2)[:-2]
+            log.debug("client receive: %s bytes" % len(objbytes))
+            obj = loads(objbytes)
             log.debug("client receive: type=%s object=%s" % (type, repr(obj)))
             return (type, obj)
         except:
@@ -290,10 +286,10 @@ class clientchannel(threading.Thread):
     def _sendobject(self, type, obj):
         log.debug("client send: type=%s object=%s" % (type, obj))
         try:
-            objstring = pickle.dumps(obj, pickle.HIGHEST_PROTOCOL)
+            objbytes = pickle.dumps(obj, pickle.HIGHEST_PROTOCOL)
         except Exception as e:
             log.debug_traceback()
-        self.wfile.write("%s %d\r\n%s\r\n" % (type, len(objstring), objstring))
+        self.wfile.write(b"%b %d\r\n%b\r\n" % (type, len(objbytes), objbytes))
         self.wfile.flush()
 
     def sendfile(self, filename):
@@ -304,12 +300,12 @@ class clientchannel(threading.Thread):
         f.seek(0, 0)
         # length of request
         rlen = len(basename) + 2 + filelen
-        self.wfile.write("%s %d\r\n%s\r\n" % (_SENDFILE, rlen, basename))
+        self.wfile.write(b"%b %d\r\n%b\r\n" % (_SENDFILE, rlen, basename))
         while filelen>0:
             wbytes = min(filelen, 4096)
             self.wfile.write(file.read(wbytes))
             filelen -= wbytes
-        self.wfile.write("\r\n")
+        self.wfile.write(b"\r\n")
         self.wfile.flush()
         log.debug("client send: type=%s object=file:%s" % (type, filename))
 
@@ -384,7 +380,7 @@ class sender:
     
     def sendevent(self, event):
         objstring = pickle.dumps(event, 1)
-        self.wfile.write("%s %d\r\n%s\r\n" % (_EVENT, len(objstring), objstring))
+        self.wfile.write(b"%b %d\r\n%b\r\n" % (_EVENT, len(objstring), objstring))
         self.wfile.flush()
 
     def close(self):

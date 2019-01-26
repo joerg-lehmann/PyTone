@@ -36,14 +36,31 @@ import service
 import encoding
 import config as configmodule
 
+#
+# restricted unpickler
+#
+
 import pickle, io
-from helper import RestrictedUnpickler
+
+class RestrictedUnpickler(pickle.Unpickler):
+
+    safe_builtins = []
+
+    def find_class(self, module, name):
+        if module == "builtins" and name in safe_builtins:
+            return getattr(builtins, name)
+        else:
+            raise pickle.UnpicklingError("global '%s.%s' is forbidden" % (module, name))
 
 def loads(s):
     return RestrictedUnpickler(io.BytesIO(s)).load()
 
 def dumps(obj):
     return pickle.dumps(obj)
+
+#
+# table creation
+#
 
 create_tables = """
 CREATE TABLE artists (

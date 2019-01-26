@@ -149,13 +149,11 @@ elif len(args)==1:
             # initialized
             song_metadata = channel.request(requests.getsong_metadata(playbackinfo.song.songdbid, playbackinfo.song.id))
            
-            enc = locale.getpreferredencoding() or "ascii"
-
             s="%s - %s (%s/%s)" % (song_metadata.artist,
                                     song_metadata.title,
                                     helper.formattime(playbackinfo.time),
                                     helper.formattime(song_metadata.length))
-            print(s.encode(enc))
+            print(s)
     else:
         usage()
         sys.exit(2)
