@@ -18,7 +18,13 @@
 # along with PyTone; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import curses, os, os.path, signal, sys
+# check for Python 3
+import sys
+if sys.hexversion < 0x03050000:
+    sys.stderr.write("PyTone requires Python 3.5 or higher.\n")
+    sys.exit()
+
+import curses, os, os.path, signal
 import importlib, importlib.util
 
 ##############################################################################
