@@ -93,6 +93,12 @@
 
 <dl>
 
+<dt>2019/XX/XX</dt>
+<dd>After a long hiatus, I decided to port PyTone to Python 3 to provide a more
+sustainable future for this still quite nice music player. Years ago, I had also
+resurrected the playlist code (thanks to support from long-time user Stefan Wimmer),
+which also forms a part of the newly released PyTone 4.0.0.</dd>
+
 <dt>2010/07/24</dt>
 
 <dd>More out of curiosity, I added a <a href="http://flattr.com/">flattr</a> button.
@@ -515,16 +521,16 @@ bindings, automatic start of playing and of course bug fixes.
 <h2><a name="prerequisistes"></a>Software prerequisites</h2>
 
 <ul>
- <li>Python 2.5 (available from <a
-     href="http://www.python.org/">here</a>, older version may work, too).
+ <li>Python 3.5 and above (available from <a
+     href="http://www.python.org/">here</a>).
  </li>
- <li>for the mad based internal player (optional):
+ <li>mutagen (available from <a href="https://mutagen.readthedocs.org/">here</a>),</li>
+ <li>for the mad based internal player (optional, but recommended):
    <ul>
      <li>Python header files, </li>
      <li>pymad (available from <a href="http://spacepants.org/src/pymad/">here</a>),</li>
-     <li>mutagen (available from <a href="https://mutagen.readthedocs.org/">here</a>,</li>
      <li>pyvorbis (optional, available from
-         <a href="http://www.andrewchatham.com/pyogg/">here</a>),
+         <a href="http://ekyo.nerim.net/software/pyogg/index.html">here</a>),
      </li>
      <li>pyao 1.2 and above (available from <a href="https://github.com/tynn/PyAO">here</a>)
          or the Python OSS module in the standard library (on supported systems).
@@ -542,7 +548,7 @@ bindings, automatic start of playing and of course bug fixes.
  </li>
  <li>for the mixer interface (optional):
    <ul>
-     <li>Python OSS module (included in Python 2.3, otherwise available from <a href="http://indra.com/~tim/ossmodule/">here</a>)</li>
+     <li>Python OSS module if available on your platform</li>
    </ul>
  </li>
 
@@ -551,14 +557,14 @@ bindings, automatic start of playing and of course bug fixes.
 <h2><a name="download"></a>Download</h2>
 
 <p>The latest released version of PyTone can be downloaded as gzipped tar archive from
-<a href="download/PyTone-3.0.3.tar.gz">here</a>. The previous versions can still
+<a href="download/PyTone-4.0.0.tar.gz">here</a>. The previous versions can still
 be found <a href="download/">here</a>.
 
 <h2><a name="development"></a>Development</h2>
 
-<p> The latest development version of PyTone can be found in the <a
-href="https://www.luga.de/svn/PyTone/">Subversion repository</a>. Patches are
-prefered to be against the latest SVN version. </p>
+<p> The latest development version of PyTone can be found on <a
+href="https://www.github.com/joerg-lehmann/PyTone/">GitHub</a>. Pull requests 
+are always welcome.</p>
 
 <h2><a name="installation"></a>Installation</h2>
 
@@ -570,14 +576,9 @@ done simply via</p>
 $ python setup.py build_ext -i
 </pre>
 
-<p>Note that by default this builds also a C extension module for the output
-ring-buffer, which requires the libao header files (see above). If you are
-happy with the Python version of the output buffer, you can disable building
-the C module by setting <tt>buildbufferedaoext = False</tt> at the top of the
-<tt>setup.py</tt> file before running the above command.</p>
-
-<p>To enable support for transparent terminals (only needed for Python 2.3.x)
-set <tt>buildcursext = True</tt> at the top of the <tt>setup.py</tt> file
+<p>Note that you can also build a C extension module for the output
+ring-buffer, which requires the libao header files (see above) by setting
+<tt>buildbufferedaoext = True</tt> at the top of the <tt>setup.py</tt> file
 before running the above command.</p>
 
 <h2><a name="configuration"></a>Configuration</h2>
