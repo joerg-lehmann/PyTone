@@ -1,6 +1,6 @@
 # -*- coding: ISO-8859-1 -*-
 
-# Copyright (C) 2005 Jörg Lehmann <joerg@luga.de>
+# Copyright (C) 2005, 2019 Jörg Lehmann <joerg@luga.de>
 #
 # This file is part of PyTone (http://www.luga.de/pytone/)
 #
