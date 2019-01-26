@@ -6,7 +6,6 @@ include TODO
 include THANKS
 include pytone
 include pytonectl
-include src/cursext/cursextmodule.c
 include conf/pytonerc
 include conf/layout.compact
 include conf/layout.ultracompact
