@@ -1,2 +1,2 @@
 #!/bin/sh
-python src/pytone.py "$@"
+python3 src/pytone.py "$@"

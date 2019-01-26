@@ -1,2 +1,2 @@
 #!/bin/sh
-python src/pytonectl.py "$@"
+python3 src/pytonectl.py "$@"
