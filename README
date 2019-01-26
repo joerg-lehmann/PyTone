@@ -64,24 +64,24 @@ Features
 
 Software prerequisites
 
-     * Python 3.5 (available from [2]),
-     * mutagen (available from [3]),
+     * Python 3.5 (available from [1]),
+     * mutagen (available from [2]),
      * for the mad based internal player (optional):
           + Python header files,
-          + pymad (available from [4]) and
-          + pyvorbis (optional, available from [5]),
-          + pyao 1.2 and above (available from [6]) or 
+          + pymad (available from [3]) and
+          + pyvorbis (optional, available from [4]),
+          + pyao 1.2 and above (available from [5]) or 
             the new Python OSS module (on supported systems).
-          + libao header files (available from [7], if you want to compile
+          + libao header files (available from [6], if you want to compile
             the C version of the output ring-buffer.
      * for the mpg321 or mpg123 based external player (optional):
-          + mpg321 (available from [8]here) or
-          + mpg123 (available from [9]here)
+          + mpg321 (available from [7]) or
+          + mpg123 (available from [8])
 
 Download
 
    The latest version of PyTone can be downloaded as gzipped tar archive
-   from [10]here.
+   from [9].
 
 Installation
 
@@ -211,7 +211,7 @@ Key bindings
 Mailing list
 
    For discussions on PyTone, a mailing list has been created. For more
-   information on subscribing and for the list archive, see [11]here.
+   information on subscribing and for the list archive, see [10].
 
 History
 
@@ -221,7 +221,7 @@ History
    have not been reached by any other free program. Especially for the
    use at a party, KJukebox was very well suited.
 
-   However, after looking around on the net for sometime, I found [11]mjs,
+   However, after looking around on the net for sometime, I found mjs [11],
    a curses based MP3 Jukebox system, which featured a really simple and
    efficient GUI. Unfortunately, it was written in C and already the
    first attempts to tailor it to my needs showed that probably a Python
@@ -253,15 +253,14 @@ Copyright and author
 
 Links
 
-   1. http://packages.debian.org/unstable/sound/pytone.html
-   2. http://www.python.org/
-   3. https://mutagen.readthedocs.org/
-   4. http://spacepants.org/src/pymad/
-   5. http://ekyo.nerim.net/software/pyogg/index.html
-   6. https://github.com/tynn/PyAO
-   7. http://www.xiph.org/ao/
-   8. http://mpg321.sourceforge.net/
-   9. http://www.mpg123.de/
-   10. http://www.luga.de/pytone/PyTone-latest.tar.gz
-   11. https://www.luga.de/mailman/listinfo/pytone-users/
-   12. http://mjs.sourceforge.net/
+   1. http://www.python.org/
+   2. https://mutagen.readthedocs.org/
+   3. http://spacepants.org/src/pymad/
+   4. http://ekyo.nerim.net/software/pyogg/index.html
+   5. https://github.com/tynn/PyAO
+   6. http://www.xiph.org/ao/
+   7. http://mpg321.sourceforge.net/
+   8. http://www.mpg123.de/
+   9. http://www.luga.de/pytone/PyTone-latest.tar.gz
+   10. https://www.luga.de/mailman/listinfo/pytone-users/
+   11. http://mjs.sourceforge.net/
