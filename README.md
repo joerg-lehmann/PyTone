@@ -1,102 +1,107 @@
 
 PyTone
+======
 
-   MP3 Jukebox redux
-   _________________________________________________________________
+Music Jukebox Redux
+-------------------
 
 Summary
+-------
 
-   PyTone is a music jukebox written in Python with a curses based GUI.
-   While providing advanced features like crossfading and multiple
-   players, special emphasis is put on ease of use, turning PyTone into
-   an ideal jukebox system for use at parties.
+PyTone is a music jukebox written in Python with a curses based GUI. While
+providing advanced features like crossfading and multiple players, special
+emphasis is put on ease of use, turning PyTone into an ideal jukebox system for
+use at parties.
 
 Features
+--------
 
-     * concise curses based GUI
-     * simple song selection
-          + using an arbitrary number of music databases with hierarchical
-            (artist/album/songs, some tags/artist/album/songs) navigation,
-          + from list of top and last played songs,
-          + from list of most recently added songs,
-          + random song list,
-          + stored playlists, or
-          + alternatively from file system
-     * editable playlist:
-          + deletion
-          + move song up/down
-          + delete played songs
-          + shuffle
-          + repetition and automatic addition of random songs, when the 
-            playlist is empty
-          + save to and load from .m3u file
-     * pluggable players, currently
-          + internal MP3/Ogg Vorbis player with crossfading and/or
-          + xmms based external player and/or
-          + mpg321 or (the non-free) mpg123 based external player
-     * display of information for currently selected song:
-          + ID3 tag
-          + length, bitrate, sample rate, BPM, ReplayGain information, part
-            of a compilation, podcast
-          + times played and skipped
-          + last played
-          + song rating (1 to 5 stars)
-     * plays currently selected song on second player (if your computer
-       has a second sound card or one card with more than one line out)
-     * search functionality:
-          + quick search by first letter
-          + incremental search by regular expression
-     * random song selection taking into account song rating and time at
-       which song was last played
-     * description of important key bindings in status bar and context 
-       sensitive help
-     * random song suggestion
-     * logging of played songs
-     * execution of arbitrary command when playback of new song starts
-     * basic mixer functionality
-     * customizable key bindings
-     * customizable look
-     * English, French, German, Italian and Polish user interface
-     * external control, e.g. from the shell
-     * plugin system; currently plugins for the AudioScrobbler service and
-       for displaying the title in the terminal window and using xosd are
-       included
+* simple song selection
+  + using an arbitrary number of music databases with hierarchical
+    (artist/album/songs, some tags/artist/album/songs) navigation,
+  + from list of top and last played songs,
+  + from list of most recently added songs,
+  + random song list,
+  + stored playlists, or
+  + alternatively from file system
+* editable playlist:
+  + deletion
+  + move song up/down
+  + delete played songs
+  + shuffle
+  + repetition and automatic addition of random songs, when the 
+    playlist is empty
+  + save to and load from .m3u file
+* pluggable players, currently
+  + internal MP3/Ogg Vorbis player with crossfading and/or
+  + xmms based external player and/or
+  + mpg321 or (the non-free) mpg123 based external player
+* display of information for currently selected song:
+  + ID3 tag
+  + length, bitrate, sample rate, BPM, ReplayGain information, part
+    of a compilation, podcast
+  + times played and skipped
+  + last played
+  + song rating (1 to 5 stars)
+* plays currently selected song on second player (if your computer
+  has a second sound card or one card with more than one line out)
+* search functionality:
+  + quick search by first letter
+  + incremental search by regular expression
+* random song selection taking into account song rating and time at
+  which song was last played
+* description of important key bindings in status bar and context 
+  sensitive help
+* random song suggestion
+* logging of played songs
+* execution of arbitrary command when playback of new song starts
+* basic mixer functionality
+* customizable key bindings
+* customizable look
+* English, French, German, Italian and Polish user interface
+* external control, e.g. from the shell
+* plugin system; currently plugins for the AudioScrobbler service and
+  for displaying the title in the terminal window and using xosd are
+  included
 
 Software prerequisites
+----------------------
 
-     * Python 3.5 (available from [1]),
-     * mutagen (available from [2]),
-     * for the mad based internal player (optional):
-          + Python header files,
-          + pymad (available from [3]) and
-          + pyvorbis (optional, available from [4]),
-          + pyao 1.2 and above (available from [5]) or 
-            the new Python OSS module (on supported systems).
-          + libao header files (available from [6], if you want to compile
-            the C version of the output ring-buffer.
-     * for the mpg321 or mpg123 based external player (optional):
-          + mpg321 (available from [7]) or
-          + mpg123 (available from [8])
+* Python 3.5 (available from [here][1]),
+* mutagen (available from [here][2]),
+* for the mad based internal player (optional):
+  + Python header files,
+  + pymad (available from [here][3]) and
+  + pyvorbis (optional, available from [here][4]),
+  + pyao 1.2 and above (available from [here][5]) or 
+    the new Python OSS module (on supported systems).
+  + libao header files (available from [here][6], if you want to compile
+    the C version of the output ring-buffer.
+* for the mpg321 or mpg123 based external player (optional):
+  + mpg321 (available from [here][7]) or
+  + mpg123 (available from [here][8])
 
-Download
+oad
 
    The latest version of PyTone can be downloaded as gzipped tar archive
-   from [9].
+   from [here][9].
 
 Installation
+------------
 
-   If you want to use the internal libmad based player, you have to build
-   one C extension module located in the pcm subdirectory. This
-   can be done simply via
+If you want to use the internal libmad based player, you have to build
+one C extension module located in the pcm subdirectory. This
+can be done simply via
 
-     $ python setup.py build_ext -i
+   $ python setup.py build_ext -i
 
-   Note that you can also build a C extension module for the output
-   ring-buffer, which requires the libao header files (see above) by setting
-   "buildbufferedaoext = True" at the top of the setup.py file before running the
-   above command.
+Note that you can also build a C extension module for the output
+ring-buffer, which requires the libao header files (see above) by setting
+"buildbufferedaoext = True" at the top of the setup.py file before running the
+above command.
 
 Configuration
+-------------
 
    All configuration options of PyTone can be found in the sample configuration
    file conf/pytonerc. Side-wide configuration goes into /etc/pytonerc, user
@@ -113,30 +118,32 @@ Configuration
      musicbasedir=/root/of/your/music/collection
 
 Usage
+-----
 
-   After having adjusted the basic configuration variables to your personal
-   needs, just start the program with
+After having adjusted the basic configuration variables to your personal
+needs, just start the program with
 
-     $ ./pytone
+   $ ./pytone
 
-   and look how the database is being rebuilt. The key bindings described
-   below should say all about the use of PyTone. A list of command line
-   options can be obtained by
+and look how the database is being rebuilt. The key bindings described
+below should say all about the use of PyTone. A list of command line
+options can be obtained by
 
-     $ ./pytone --help
+   $ ./pytone --help
 
-   Then let it rock...
+Then let it rock...
 
-   The remote control of PyTone is possible using the  pytonectl script.
-   For a list of available options use:
+The remote control of PyTone is possible using the  pytonectl script.
+For a list of available options use:
 
-     $ ./pytonectl --help
+   $ ./pytonectl --help
 
-   In order for the remote control to work, either the socketfile
-   or the enableserver option have to be set in the [network] section
-   of the pytonerc file. By default, the former is the case.
+In order for the remote control to work, either the socketfile or the
+enableserver option have to be set in the [network] section of the pytonerc
+file. By default, the former is the case.
 
 Key bindings
+------------
 
    In database/filelist window (left half of screen)
 
@@ -209,11 +216,13 @@ Key bindings
 
 
 Mailing list
+------------
 
    For discussions on PyTone, a mailing list has been created. For more
-   information on subscribing and for the list archive, see [10].
+   information on subscribing and for the list archive, see [here][10].
 
 History
+-------
 
    PyTone was written since my favourite MP3 Jukebox (KJukebox) wasn't
    maintained anymore. Its simple user interface and good usability even
@@ -221,7 +230,6 @@ History
    have not been reached by any other free program. Especially for the
    use at a party, KJukebox was very well suited.
 
-   However, after looking around on the net for sometime, I found mjs [11],
    a curses based MP3 Jukebox system, which featured a really simple and
    efficient GUI. Unfortunately, it was written in C and already the
    first attempts to tailor it to my needs showed that probably a Python
@@ -240,27 +248,29 @@ History
 
 
 Copyright and author
+--------------------
 
-   PyTone was written by Jörg Lehmann and is free software licensed under
-   the GNU GPL Version 2.
+PyTone was written by Jörg Lehmann and is free software licensed under
+the GNU GPL Version 2.
 
-   Please send comments, wishes, bug reports and patches to the
-   [11]mailing list or directly to me, 
+Please send comments, wishes, bug reports and patches to the
+[mailing list][10]or directly to me, 
 
-     Jörg Lehmann <joerg@luga.de>
+  Jörg Lehmann <joerg@luga.de>
 
-   Of course, I always like to hear of happy users of PyTone.
+Of course, I always like to hear of happy users of PyTone.
 
 Links
+-----
 
-   1. http://www.python.org/
-   2. https://mutagen.readthedocs.org/
-   3. http://spacepants.org/src/pymad/
-   4. http://ekyo.nerim.net/software/pyogg/index.html
-   5. https://github.com/tynn/PyAO
-   6. http://www.xiph.org/ao/
-   7. http://mpg321.sourceforge.net/
-   8. http://www.mpg123.de/
-   9. http://www.luga.de/pytone/PyTone-latest.tar.gz
-   10. https://www.luga.de/mailman/listinfo/pytone-users/
-   11. http://mjs.sourceforge.net/
+[1]: http://www.python.org/
+[2]: https://mutagen.readthedocs.org/
+[3]: http://spacepants.org/src/pymad/
+[4]: http://ekyo.nerim.net/software/pyogg/index.html
+[5]: https://github.com/tynn/PyAO
+[6]: http://www.xiph.org/ao/
+[7]: http://mpg321.sourceforge.net/
+[8]: http://www.mpg123.de/
+[9]: http://www.luga.de/pytone/PyTone-latest.tar.gz
+[10]: https://www.luga.de/mailman/listinfo/pytone-users/
+[11]: http://mjs.sourceforge.net/
