@@ -246,11 +246,11 @@ imaginative name was found (kudos to Harry!) and PyTone was released.
 Copyright and author
 --------------------
 
-PyTone was written by Jörg Lehmann and is free software licensed under
+PyTone was written by JÃ¶rg Lehmann and is free software licensed under
 the GNU GPL Version 2.
 
 Please send comments, wishes, bug reports and patches to the [mailing list][10]
-or directly to me, Jörg Lehmann <joerg@luga.de>.
+or directly to me, JÃ¶rg Lehmann <joerg@luga.de>.
 
 Of course, I always like to hear of happy users of PyTone.
 
