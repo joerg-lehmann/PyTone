@@ -1,11 +1,11 @@
-2019-01-26 Jörg Lehmann  <joerg@luga.de>
+2019-01-26 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * The Python 3 port has been completed.
 
         * Bump version to 4.0.0pre.
 
 
-2013-03-17 Jörg Lehmann  <joerg@luga.de>
+2013-03-17 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Unify internal handling of comment section in MP3 and Ogg Vorbis metadata
 
@@ -15,7 +15,7 @@
         * Filter iTunes comments.
 
 
-2013-03-16 Jörg Lehmann  <joerg@luga.de>
+2013-03-16 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Remove "DISTINCT" from "SELECT" query for songs to prevent duplicate
         items from being removed in playlists. It should not be necessary otherwise.
@@ -23,22 +23,22 @@
         * Delete playlists properly.
 
 
-2013-03-12 Jörg Lehmann  <joerg@luga.de>
+2013-03-12 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Really sync playlists from file system.
 
 
-2013-03-05 Jörg Lehmann  <joerg@luga.de>
+2013-03-05 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Enable separate playlist scan.
 
 
-2013-02-27 Jörg Lehmann  <joerg@luga.de>
+2013-02-27 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Rescan playlists when doing a database rescan.
 
 
-2013-02-17 Jörg Lehmann  <joerg@luga.de>
+2013-02-17 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * item.py: Sort songs in filesystem like in the rest of the db (thanks
         to Stefan Wimmer <swimmer at xs4all dot nl> for the suggestion).
@@ -47,54 +47,54 @@
         Wimmer <swimmer at xs4all dot nl>).
 
 
-2010-06-19 Jörg Lehmann  <joerg@luga.de>
+2010-06-19 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * filelist.py: Fix corner case in rating and deleting where neither a song nor
         a directory has been selected.
 
 
-2010-06-16 Jörg Lehmann  <joerg@luga.de>
+2010-06-16 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 3.0.3 released.
 
 
-2010-02-27 Jörg Lehmann  <joerg@luga.de>
+2010-02-27 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Do not hide windows in focuschanged events in order to not trigger
         further focuschanged events.
 
 
-2009-10-11 Jörg Lehmann  <joerg@luga.de>
+2009-10-11 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Internal mixer implemented.
 
 
-2009-09-15 Jörg Lehmann  <joerg@luga.de>
+2009-09-15 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdbs/sqlite.py: Delete song from database when querying
         it and it is no longer present on disk.
 
 
-2009-08-23 Jörg Lehmann  <joerg@luga.de>
+2009-08-23 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * conf/pytonerc: Add notify-send as an example for the song change
         command which seems to be much more common nowadays (thanks to Michael
         Hartmann <michael at speicherleck dot de> for pointing this out).
 
 
-2009-08-23 Jörg Lehmann  <joerg@luga.de>
+2009-08-23 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * mixerwin.py: Encode unicode string (thanks to Michael Hartmann
         <michael at speicherleck dot de> for reporting this issue).
 
 
-2009-08-22 Jörg Lehmann  <joerg@luga.de>
+2009-08-22 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Create .pytone directory earlier in the initilization phase (thanks to
         Jean Jordaan <jean dot jordaan at gmail dot com> for pointing this out).
 
 
-2009-08-12 Jörg Lehmann  <joerg@luga.de>
+2009-08-12 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * filelist.py: Use updatedir() instead of readdir() when deleting songs
         to prevent that the current selection gets lost.
@@ -103,12 +103,12 @@
         * song while there is no such one.
 
 
-2009-05-31 Jörg Lehmann  <joerg@luga.de>
+2009-05-31 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 3.0.2 released.
 
 
-2009-03-04 Jörg Lehmann  <joerg@luga.de>
+2009-03-04 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdbs/sqlite.py: Do not force metadata reread when
         querying songs (as suggested by Tom Diedrich <tom at diedrich2 dot de>).
@@ -119,7 +119,7 @@
         for the patch).
 
 
-2008-12-13 Jörg Lehmann  <joerg@luga.de>
+2008-12-13 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * eventy.py: Fix a couple of __repr__ methods (fixing the skip song
         functionality).
@@ -128,13 +128,13 @@
         option (as suggested by Dominik Bruhn <dominik at dbruhn dot de>).
 
 
-2008-11-27 Jörg Lehmann  <joerg@luga.de>
+2008-11-27 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * pytonectl.py: Encode output (Thanks to Dominik Bruhn <dominik at
         dbruhn dot de> for the patch).
 
 
-2008-08-16 Jörg Lehmann  <joerg@luga.de>
+2008-08-16 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/player.py, services/players/*.py, services/playlist.py:
         Make sending of song_played and song_skipped events more local.
@@ -146,7 +146,7 @@
         Blennerhassett <eliot at blennerhassett dot gen dot nz>.
 
 
-2008-08-07 Jörg Lehmann  <joerg@luga.de>
+2008-08-07 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * config.py: Also allow "alsa05" driver.
 
@@ -158,19 +158,19 @@
         gmx dot net> for the patch).
 
 
-2008-07-16 Jörg Lehmann  <joerg@luga.de>
+2008-07-16 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * config.py: Allow "pulse" in driver arguments for players (Thanks to
         Eliot Blennerhassett <eliot atblennerhassett dot gen dot nz>).
 
 
-2008-02-18 Jörg Lehmann  <joerg@luga.de>
+2008-02-18 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * src/encoding.py: Add missing import (Thanks
         to Philipp Jocham <philipp dot jocham at gmx dot net> for the patch).
 
 
-2008-02-18 Jörg Lehmann  <joerg@luga.de>
+2008-02-18 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdbs/sqlite.py: Fix a bug in the _song_update function (Thanks
         to Philipp Jocham <philipp dot jocham at gmx dot net> for the patch).
@@ -179,27 +179,27 @@
         to Philipp Jocham <philipp dot jocham at gmx dot net> for the patch).
 
 
-2008-01-26 Jörg Lehmann  <joerg@luga.de>
+2008-01-26 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * metadata.py: Fix a bug in the Ogg Vorbis replaygain handling (Thanks
         to Philipp Jocham <philipp dot jocham at gmx dot net> for the patch).
 
 
-2007-08-15 Jörg Lehmann  <joerg@luga.de>
+2007-08-15 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdb.py: Request songs from database with id == "main"
         instead of None to prevent a lockup (thanks to Kurt Gysin <pytoner_ml
         at oberon dot on-the-web dot ch> for reporting this problem).
 
 
-2007-08-14 Jörg Lehmann  <joerg@luga.de>
+2007-08-14 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 3.0.1 released.
 
         * mainscreen.py: Reenable lyrics display.
 
 
-2007-08-13 Jörg Lehmann  <joerg@luga.de>
+2007-08-13 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * item.py: Implement played songs filter, which shows a virtual directory
         of all songs which have been played at least once.
@@ -210,17 +210,17 @@
         this searchs string)
 
 
-2007-08-12 Jörg Lehmann  <joerg@luga.de>
+2007-08-12 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdbs/sqlite.py: Implement clearstats.
 
 
-2007-08-02 Jörg Lehmann  <joerg@luga.de>
+2007-08-02 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * item.py: Fix tag filtering.
 
 
-2007-08-01 Jörg Lehmann  <joerg@luga.de>
+2007-08-01 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 3.0.0 released.
 
@@ -233,13 +233,13 @@
         * config.py: New keybindings for (un)deletion of songs
 
 
-2007-03-11 Jörg Lehmann  <joerg@luga.de>
+2007-03-11 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdb.py: Introduce upper cutoff for automatic rating according
         to times played minus skipped.
 
 
-2007-03-10 Jörg Lehmann  <joerg@luga.de>
+2007-03-10 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * config.py: Remove tags_* options and replace them by postprocessors
         lists
@@ -249,25 +249,25 @@
         code and decade adding code to the new system
 
 
-2007-01-21 Jörg Lehmann  <joerg@luga.de>
+2007-01-21 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * config.py: Fix check for local song databases (thanks to Alexander
         Wirt <formorer at formorer dot de> for reporting this bug).
 
 
-2006-09-04 Jörg Lehmann  <joerg@luga.de>
+2006-09-04 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Use platform byte order for ao devices.
 
 
-2006-08-28 Jörg Lehmann  <joerg@luga.de>
+2006-08-28 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Merge changes from Rothsee version: 
         - Set correct version for new databases
         - Output correct versions during db upgrade
 
 
-2006-08-20 Jörg Lehmann  <joerg@luga.de>
+2006-08-20 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Database version 6: Store bitrate, samplerate, vbr, size, tracknumber, trackcount,
         disknumber, diskccount, and replaygain information in database.
@@ -280,7 +280,7 @@
         * services/players/internal.py: Take disk number into account.
 
 
-2006-08-15 Jörg Lehmann  <joerg@luga.de>
+2006-08-15 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * metadata.py: Use mutagen as default ID3 reader from MP3 files.
 
@@ -294,12 +294,12 @@
         * services/players/internal.py: Use track gain for replaygain information.
 
 
-2006-08-12 Jörg Lehmann  <joerg@luga.de>
+2006-08-12 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.3.1 released.
 
 
-2006-08-08 Jörg Lehmann  <joerg@luga.de>
+2006-08-08 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Make keybindings for rating of currently playing songs configurable
         via playerratecurrentsong1, ... playerratecurrentsong5 in the
@@ -307,7 +307,7 @@
         Wirt <formorer at formorer dot de> for suggesting this).
 
 
-2005-12-05 Jörg Lehmann  <joerg@luga.de>
+2005-12-05 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/player.py: Start player only after the playlist service has
         been started since playlist requests may already be issued during the
@@ -315,14 +315,14 @@
         people on the mailing list.
 
 
-2005-11-07 Jörg Lehmann  <joerg@luga.de>
+2005-11-07 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * filelist.py: Update top after changing back into a directory as the 
         window size may have changed in the meantime (thanks to Martin Fenelon
         <fenm at freeuk dot com> for reporting this problem).
 
 
-2005-09-19 Jörg Lehmann  <joerg@luga.de>
+2005-09-19 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * mainscreen.py: Call correct getmaxyx method fixing problem with
         small terminals during startup (thanks to Dag Wieers
@@ -333,38 +333,38 @@
         by Dag Wieers <dag at wieers dot com>).
 
 
-2005-09-13 Jörg Lehmann  <joerg@luga.de>
+2005-09-13 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.3.0 released.
 
 
-2005-09-11 Jörg Lehmann  <joerg@luga.de>
+2005-09-11 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * plugings/osdtitle.py, plugins/termtitle.py: Apply
         patch by Dag Wieers <dag at wieers dot com> which adds
         checking for no song being played.
 
 
-2005-09-08 Jörg Lehmann  <joerg@luga.de>
+2005-09-08 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdbs/local.py: Rewrite db upgrade code to allow
         non-atomic upgrade, as well. Prompt the user before an upgrade to
         ask whether a non-atomic or atomic upgrade has to be performed.
 
 
-2005-08-24 Jörg Lehmann  <joerg@luga.de>
+2005-08-24 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Check earlier for dbfile != "db".
 
         * item.py: Fix filters handling in songs class.
 
 
-2005-08-23 Jörg Lehmann  <joerg@luga.de>
+2005-08-23 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Add error reporting to bufferedao extension module.
 
 
-2005-08-22 Jörg Lehmann  <joerg@luga.de>
+2005-08-22 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Disabled automatic closing of help window by default.
 
@@ -372,7 +372,7 @@
         <smithbone at gmail dot com> for providing the patch).
 
 
-2005-08-21 Jörg Lehmann  <joerg@luga.de>
+2005-08-21 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Merged item-rework branch, which contains a new filter code.
         The new code makes the unfiltered case a special case of the filtered
@@ -383,7 +383,7 @@
         the top-played songs of a certain genre.
 
 
-2005-08-19 Jörg Lehmann  <joerg@luga.de>
+2005-08-19 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Get rid of multi-file database layout:
            - convert old layout automatically
@@ -400,7 +400,7 @@
         code.
 
 
-2005-08-11 Jörg Lehmann  <joerg@luga.de>
+2005-08-11 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * bufferedao.c: New C extension module corresponding to
         services/players/interal/buffereddevice with an ao device. The
@@ -412,7 +412,7 @@
         bufferedao.
 
 
-2005-08-10 Jörg Lehmann  <joerg@luga.de>
+2005-08-10 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdbs/internal.py: Checkpoint database regularly during
         registering of songs to prevent oversized transaction logs.
@@ -424,21 +424,21 @@
         * services/players/internal.py: Do not open audiodevice without need.
 
 
-2005-08-09 Jörg Lehmann  <joerg@luga.de>
+2005-08-09 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * help.py, helpwin.py, statusbar.py: Introduced getkeyname function
         which has a fallback solution for unnamed keys (thanks to Troels
         Vognsen <bashfalcon at gmail dot com> for reporting this problem).
 
 
-2005-08-03 Jörg Lehmann  <joerg@luga.de>
+2005-08-03 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Normalize all paths in config files.
 
         * Rework dbstats system.
 
 
-2005-08-02 Jörg Lehmann  <joerg@luga.de>
+2005-08-02 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdb.py. Measure cache size not by number
         of stored requests but by the number of objects the requests
@@ -461,7 +461,7 @@
         * Various updates in German PyTone.po.
 
 
-2005-07-16 Jörg Lehmann  <joerg@luga.de>
+2005-07-16 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * plugin.py: Use thread-local channel in threadedplugin to make it
         actually a threaded plugin.
@@ -470,7 +470,7 @@
         common path from module name.
 
 
-2005-07-16 Jörg Lehmann  <joerg@luga.de>
+2005-07-16 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * filelist.py. Update window contents in filelistjumptosong().
 
@@ -480,7 +480,7 @@
         * Initial checkin into Subversion repository.
 
 
-2005-06-30 Jörg Lehmann  <joerg@luga.de>
+2005-06-30 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * plugin.py: Use init() method instead of start(), which has a
         different meaning for threads. The plugins currently distributed
@@ -489,13 +489,13 @@
         * plugins/audioscrobbler/scrobbler.py: Fix typos in backlog code.
 
 
-2005-06-28 Jörg Lehmann  <joerg@luga.de>
+2005-06-28 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * config.py: Be more liberal concerning the accepted section names
         (patch by Dag Wieers <dag at wieers dot com>).
 
 
-2005-06-20 Jörg Lehmann  <joerg@luga.de>
+2005-06-20 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.2.4 released.
 
@@ -504,12 +504,12 @@
         windows.
 
         * plugins: Include audioscrobbler plugin contributed by Nicolas
-        Évrard <nicoe at altern dot org>).
+        Ã‰vrard <nicoe at altern dot org>).
 
         * config.py: Rename listen to bind in network section.
 
 
-2005-06-06 Jörg Lehmann  <joerg@luga.de>
+2005-06-06 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Rewrite plugin loader to use imp module: Use imp module to specify
         plugin search path and log errors instead of aborting
@@ -518,13 +518,13 @@
         wieers dot com>.
 
 
-2005-06-04 Jörg Lehmann  <joerg@luga.de>
+2005-06-04 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * events.py: Renamed attribute songs -> items in playlistchanged
         event.
 
 
-2005-05-28 Jörg Lehmann  <joerg@luga.de>
+2005-05-28 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * item.py: Import _genrandomchoice function needed for random
         selections of filesystem directories from services.songdb, where
@@ -532,12 +532,12 @@
         dot com> for reporting this issue).
 
 
-2005-05-22 Jörg Lehmann  <joerg@luga.de>
+2005-05-22 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * mainscreen.py: Force minimal height and width of window.
 
 
-2005-05-18 Jörg Lehmann  <joerg@luga.de>
+2005-05-18 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * iteminfowin.py: Fix some small bugs in the songchanged event
         handler.
@@ -550,7 +550,7 @@
         keybindings.general section.
 
         
-2005-05-17 Jörg Lehmann  <joerg@luga.de>
+2005-05-17 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * requests.py, services/songdb.py: Handle getlastplayedsongs as
         other requests by just supplying another wrapper function.
@@ -566,7 +566,7 @@
         playing song.
 
 
-2005-05-11 Jörg Lehmann  <joerg@luga.de>
+2005-05-11 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * playlistwin.py: Check for playstarttime not being None before
         referencing it (thanks to Stefan Wimmer <swimmer at xs4all dot nl>
@@ -577,7 +577,7 @@
         problem).
 
 
-2005-05-10 Jörg Lehmann  <joerg@luga.de>
+2005-05-10 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * config.py: replace all occurrences of server/port by networklocation
 
@@ -586,19 +586,19 @@
         * Remote players should at least partially work again.
 
 
-2005-04-27 Jörg Lehmann  <joerg@luga.de>
+2005-04-27 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.2.3 released.
 
 
-2005-04-26 Jörg Lehmann  <joerg@luga.de>
+2005-04-26 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Deactivate playlist window before initializing the playlist to
         prevent issuing a wrong selectionchanged event (fixing a problem
         reported by Stuart Pook <Stuart dot Pook at infres dot enst dot fr>).
 
 
-2005-04-25 Jörg Lehmann  <joerg@luga.de>
+2005-04-25 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/players/internal.py: Prevent sound device from being
         reopened when an already stopped player is being stopped again
@@ -609,7 +609,7 @@
         again.
         
 
-2005-04-21 Jörg Lehmann  <joerg@luga.de>
+2005-04-21 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * network.py: Ignore empty lines in _receiveobject instead of
         reporting an error.
@@ -619,20 +619,20 @@
         reporting this bug).
 
 
-2005-04-20 Jörg Lehmann  <joerg@luga.de>
+2005-04-20 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Ignore invalid database definitions unless there is at least one
         valid database.
 
 
-2005-03-30 Jörg Lehmann  <joerg@luga.de>
+2005-03-30 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * iteminfowin.py: Fix secondary player for songs in the playlist
         window (thanks to Stefan Wimmer <swimmer at xs4all dot nl> for
         reporting this problem).
 
 
-2005-03-23 Jörg Lehmann  <joerg@luga.de>
+2005-03-23 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * iteminfowin.py, item.py: Fix wrong window size of item info window.
 
@@ -641,17 +641,17 @@
         reporting this problem).
         
 
-2005-03-16 Jörg Lehmann  <joerg@luga.de>
+2005-03-16 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.2.2 released.
 
 
-2005-03-12 Jörg Lehmann  <joerg@luga.de>
+2005-03-12 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/players/mpg123.py: Implement seeking.
 
 
-2005-03-08 Jörg Lehmann  <joerg@luga.de>
+2005-03-08 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * events.py: Make checkpointdb a dbevent in order to let the
         songdbmanager pass it to the databases (many thanks to Tomas Menzl
@@ -674,7 +674,7 @@
         * services/playlist.py: Cleanup variable names: song -> item.
 
 
-2005-03-07 Jörg Lehmann  <joerg@luga.de>
+2005-03-07 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/player.py: Process incoming events twice to be able
         to rely on block argument of channel. Also block when waiting
@@ -687,14 +687,14 @@
         * filelist.py: Also react on new playlists.
 
 
-2005-03-06 Jörg Lehmann  <joerg@luga.de>
+2005-03-06 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdbs/local.py: Delete log files when checkpointing
         dbenv preventing huge disk space usage during song registering
         (Ochsenschlegel bugfix).
 
 
-2005-03-03 Jörg Lehmann  <joerg@luga.de>
+2005-03-03 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/players/internal.py. Also request new song when not
         crossfading to make autoplay == False work in this case
@@ -725,7 +725,7 @@
         shut it down properly.
 
 
-2005-03-01 Jörg Lehmann  <joerg@luga.de>
+2005-03-01 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * hub.py: Add optional timeout to process method of channel.
 
@@ -744,7 +744,7 @@
         problem).
 
 
-2005-02-27 Jörg Lehmann  <joerg@luga.de>
+2005-02-27 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * filelist.py: Some cleanups.
 
@@ -762,7 +762,7 @@
         artist.
 
 
-2005-02-26 Jörg Lehmann  <joerg@luga.de>
+2005-02-26 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * dbitem.py: Remove __class__ comparison from __cmp__ method of dbitem
         class
@@ -771,12 +771,12 @@
         songs out of a short list.
 
 
-2005-02-12 Jörg Lehmann  <joerg@luga.de>
+2005-02-12 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/playlist.py: Cleanup and fix some minor bugs.
 
 
-2005-02-09 Jörg Lehmann  <joerg@luga.de>
+2005-02-09 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * setup.py: (Ab-)use scripts directive for installing pytone
         and pytonectl shell scripts.
@@ -800,13 +800,13 @@
         <jbakeman at indra dot com>).
 
 
-2005-02-08 Jörg Lehmann  <joerg@luga.de>
+2005-02-08 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * config.py: Use correct copyright date when printing usage
         summary.
 
 
-2005-02-07 Jörg Lehmann  <joerg@luga.de>
+2005-02-07 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.2.1 released.
 
@@ -822,7 +822,7 @@
         sharing of basenames or dbenvdirs of several databases.
 
 
-2005-02-06 Jörg Lehmann  <joerg@luga.de>
+2005-02-06 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * log.py: New function debug_traceback which records a traceback
         when in debugging mode.
@@ -835,7 +835,7 @@
         * metadata.py: fix fallback code for length calculation.
 
 
-2005-02-03 Jörg Lehmann  <joerg@luga.de>
+2005-02-03 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * service.py: New module containing a base class for
         services which contains a main loop doing exception handling
@@ -852,24 +852,24 @@
         * services/playlist.py: Use new service class.
 
 
-2005-02-01 Jörg Lehmann  <joerg@luga.de>
+2005-02-01 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.2.0 released.
 
 
-2005-01-25 Jörg Lehmann  <joerg@luga.de>
+2005-01-25 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * filelistwin.py: Clear searchstring when search has been aborted
         by pressing ESC.
 
 
-2005-01-24 Jörg Lehmann  <joerg@luga.de>
+2005-01-24 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * metadata.py: Also import MP3Info module when using the eyeD3
         module, since one helper function is also needed when using the
         latter module.
 
-2005-01-23 Jörg Lehmann  <joerg@luga.de>
+2005-01-23 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdb.py: Do not sort the intermediate results when
         querying multiple databases. While this yields an improved caching
@@ -880,7 +880,7 @@
         buffer underrun messages from spoiling the user interface.
 
 
-2005-01-22 Jörg Lehmann  <joerg@luga.de>
+2005-01-22 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * item.py: Remove bogus cmpitem method of rating class.
 
@@ -890,7 +890,7 @@
         yet and thus currently unsupported!)
 
 
-2005-01-17 Jörg Lehmann  <joerg@luga.de>
+2005-01-17 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * pcm/pcm.c: add new function upsample which allows to create
         a pseudo-stereo stream from a mono stream
@@ -901,7 +901,7 @@
         * item.py: Be more robust when displaying playing time of song.
 
 
-2005-01-16 Jörg Lehmann  <joerg@luga.de>
+2005-01-16 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * events.py: registerplaylists now expects lists of playlists
         instead of list of paths (analogous to registersongs).
@@ -914,17 +914,17 @@
         Stefan Wimmer <swimmer at xs4all dot nl>).
 
 
-2005-01-09 Jörg Lehmann  <joerg@luga.de>
+2005-01-09 JÃ¶rg Lehmann  <joerg@luga.de>
 
-        * Plugin architecture (based upon the prototype by Nicolas Évrard
+        * Plugin architecture (based upon the prototype by Nicolas Ã‰vrard
         <nicoe at altern dot org>).
 
 
-2004-12-31 Jörg Lehmann  <joerg@luga.de>
+2004-12-31 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * item.py: Case-insensitive sort in filelist window.
 
-2004-12-19 Jörg Lehmann  <joerg@luga.de>
+2004-12-19 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Include path of song in detailed information about currently selected
         item.
@@ -933,13 +933,13 @@
         when a new song is requested while the player is paused.
 
 
-2004-12-12 Jörg Lehmann  <joerg@luga.de>
+2004-12-12 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * config.py: Add support for config subsection templates. It is now possible
         to define an arbitrary number of databases.
 
 
-2004-11-29 Jörg Lehmann  <joerg@luga.de>
+2004-11-29 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.1.3 released.
 
@@ -952,9 +952,9 @@
         various databases).
 
 
-2004-11-27 Jörg Lehmann  <joerg@luga.de>
+2004-11-27 JÃ¶rg Lehmann  <joerg@luga.de>
 
-        * Add French translation (many thanks to Nicolas Évrard
+        * Add French translation (many thanks to Nicolas Ã‰vrard
         <nicoe at altern dot org>).
 
         * services/playlist.py: Convert songs to playlistitems, when
@@ -966,12 +966,12 @@
         debug file code into the log module.
 
 
-2004-11-24 Jörg Lehmann  <joerg@luga.de>
+2004-11-24 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * item.py: Reduce precision for longer last played times.
 
 
-2004-11-20 Jörg Lehmann  <joerg@luga.de>
+2004-11-20 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * hub.py: renamed hub-> _defaulthub, _hub -> hub.
 
@@ -982,21 +982,21 @@
         functions making the code more readable.
 
 
-2004-11-18 Jörg Lehmann  <joerg@luga.de>
+2004-11-18 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdbs/local.py: Make playlists work again (thanks to
         Maurizio Panniello <maurizio at iac dot es> for reporting and
         locating this problem).
 
 
-2004-11-15 Jörg Lehmann  <joerg@luga.de>
+2004-11-15 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Renamed services/players/xmms.py in services/players/xmmsplayer.py to
         prevent a name conflict with the pyxmms module.
 
         * services/players/xmmsplayer.py: Replace xmms by xmms.control to
         make this module work with the latest versions of pyxmms (thanks
-        to Mario Rodríguez <mrodriguezc at gmail dot com> for reporting
+        to Mario RodrÃ­guez <mrodriguezc at gmail dot com> for reporting
         this problem).
 
         * services/songdbs/local.py: When reregistering a song which is
@@ -1005,24 +1005,24 @@
         (closing Debian bug #269711).
 
 
-2004-11-08 Jörg Lehmann  <joerg@luga.de>
+2004-11-08 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.1.2 released.
 
         * pytonerc: Fix typo in addsongtoplaylist and showiteminfolong options
-        (thanks to Toma¸ Ficko <tomaz at gmx dot net> for reporting these bugs).
+        (thanks to TomaÂ¸ Ficko <tomaz at gmx dot net> for reporting these bugs).
 
         * services/songdbs/local.py: Fix error occuring when requesting
-        artists, albums or songs with unknown decade (thanks to Toma¸
+        artists, albums or songs with unknown decade (thanks to TomaÂ¸
         Ficko <tomaz at gmx dot net> for sending a patch).
 
         * services/songdbs/local.py: Manually remove unneeded log files
         because automatic removal is only supported by the newest bsddb
-        versions, fixing Debian bug #273370 (thanks to Toma¸ Ficko <tomaz
+        versions, fixing Debian bug #273370 (thanks to TomaÂ¸ Ficko <tomaz
         at gmx dot net> for sending a patch).
 
 
-2004-11-07 Jörg Lehmann  <joerg@luga.de>
+2004-11-07 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.1.1 released.
 
@@ -1039,21 +1039,21 @@
         the basedir of a database to prevent blocking of the UI thread.
 
 
-2004-09-25 Jörg Lehmann  <joerg@luga.de>
+2004-09-25 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * item.py: Fix calculating of hours and minutes of last played
         time (thanks to Zoltan Szalontai <szazol at e98 dothu> for finding
         this bug).
 
 
-2004-09-12 Jörg Lehmann  <joerg@luga.de>
+2004-09-12 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * dbitem.py: Update path information when rescanning song. When
         updating the songs in a database, a relocation in a different
         musicbasedir is now taken into amount correctly.
 
 
-2004-08-20 Jörg Lehmann  <joerg@luga.de>
+2004-08-20 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Never issue a requestnextsong request for second player. (Fixing
         a problem occured during the last Rothsee-Party).
@@ -1069,21 +1069,21 @@
         * dbitem.py: Only store last 10 playing times.
 
 
-2004-08-16 Jörg Lehmann  <joerg@luga.de>
+2004-08-16 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdbs/local.py: Treat case of musicbasedir ending
         with a slash correctly (fixing a problem reported by Alexander
         Wirt <formorer at formorer dot de>).
 
 
-2004-08-11 Jörg Lehmann  <joerg@luga.de>
+2004-08-11 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/playlist.py: Fix wrong playlistitem constructor
         signature in playlistaddsongtop (thanks to Andreas Poisel
         <a.poisel at acat dot cc> for reporting this bug).
 
 
-2004-08-09 Jörg Lehmann  <joerg@luga.de>
+2004-08-09 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Also accept "MP3" etc. as extension of MP3 files.
 
@@ -1091,7 +1091,7 @@
         selected item.
 
 
-2004-08-03 Jörg Lehmann  <joerg@luga.de>
+2004-08-03 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.1.0 released.
 
@@ -1104,7 +1104,7 @@
         * services/playlist.py: React on changes in the song database.
 
 
-2004-08-02 Jörg Lehmann  <joerg@luga.de>
+2004-08-02 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * dbitem.py: Try harder to get reasonable length information
         for MP3 file.
@@ -1122,7 +1122,7 @@
         event of the player since this leads to race conditions.
 
 
-2004-07-27 Jörg Lehmann  <joerg@luga.de>
+2004-07-27 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * item.py : Show songs in filtered artist.
 
@@ -1131,14 +1131,14 @@
 
         * config.py: New key binding "repeatsearch" in filelist window
          which allows the user to specify a key for the repetition of the
-         last search (as suggested by Falko Rütten <falko.ruetten at
+         last search (as suggested by Falko RÃ¼tten <falko.ruetten at
          cmdline dot net>).
 
         * config.py: New option songchangecommand in general section which allows
         to specify a command executed when the playback of a new song starts.
 
 
-2004-07-26 Jörg Lehmann  <joerg@luga.de>
+2004-07-26 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * New configuration options in database sections which allow the user
         to turn on and off various tag transformation and to specify the
@@ -1150,7 +1150,7 @@
         directly in this items but only in songs.
 
 
-2004-07-25 Jörg Lehmann  <joerg@luga.de>
+2004-07-25 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Implemented play previous song (as requested by Sebastian
         Schwerdhoefer and Han Boetes, George J. De Bruin, and Sam Rowe)
@@ -1165,7 +1165,7 @@
         univ dot gda dot pl>).
 
 
-2004-07-24 Jörg Lehmann  <joerg@luga.de>
+2004-07-24 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * dbitem.py: Remove genres and years attributes of artist and album.
 
@@ -1186,7 +1186,7 @@
         * Database version 4.
 
 
-2004-07-22 Jörg Lehmann  <joerg@luga.de>
+2004-07-22 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.0.14 released.
 
@@ -1194,7 +1194,7 @@
         to Krzysztof Zych <kzych at manta dot univ dot gda dot pl>).
 
 
-2004-07-19 Jörg Lehmann  <joerg@luga.de>
+2004-07-19 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Replace "PyX" by "PyTone" in license headers (thanks to
         Krzysztof Zych <kzych at manta dot univ dot gda dot pl> for
@@ -1211,7 +1211,7 @@
         * services/songdbs/locale.py: Some fixes in database upgrade code.
 
 
-2004-07-18 Jörg Lehmann  <joerg@luga.de>
+2004-07-18 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdbs/locale.py: Really make use of transactional
         subsystem.
@@ -1224,13 +1224,13 @@
         files much faster as the current version of the MP3Info module.
 
 
-2004-07-15 Jörg Lehmann  <joerg@luga.de>
+2004-07-15 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Handle SIGTERM gracefully by sending a quit signal to all
         running threads.
 
 
-2004-07-13 Jörg Lehmann  <joerg@luga.de>
+2004-07-13 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * hub.py: Explicitly use list as underlying queue to make the
         PriorityQueue class work with Python 2.4 (thanks to Krzysztof Zych
@@ -1238,7 +1238,7 @@
         problem).
 
 
-2004-07-08 Jörg Lehmann  <joerg@luga.de>
+2004-07-08 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * pytone.py: Catch errors during service creation to be able to shut down
         all already running services
@@ -1251,7 +1251,7 @@
         the item info window showed the wrong playlist item.
 
 
-2004-07-07 Jörg Lehmann  <joerg@luga.de>
+2004-07-07 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Allow only songs located under basedir in databases.
 
@@ -1261,7 +1261,7 @@
         playing time since the data has already been resampled to outrate.
 
 
-2004-07-06 Jörg Lehmann  <joerg@luga.de>
+2004-07-06 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Removed some unnecessary selectionchanged notifications.
 
@@ -1276,7 +1276,7 @@
         the musicbasedir) consists of exactly two directories.
 
 
-2004-07-01  Jörg Lehmann  <joerg@luga.de>
+2004-07-01  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdbs/local.py: Don't index song in
         _queryregistersong, if it is already registered in database.
@@ -1301,7 +1301,7 @@
         expressions.
 
 
-2004-06-29  Jörg Lehmann  <joerg@luga.de>
+2004-06-29  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Make timer a service, which runs in an independent thread
 
@@ -1309,30 +1309,30 @@
         and checkpoint log regularly.
 
 
-2004-06-25  Jörg Lehmann  <joerg@luga.de>
+2004-06-25  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * mixerwin.py: Do not fail if neither ossaudiodev nor oss module
-        is present (thanks to Linus Sjöberg <lsjoberg at aland dot net>)
+        is present (thanks to Linus SjÃ¶berg <lsjoberg at aland dot net>)
 
 
-2004-06-21  Jörg Lehmann  <joerg@luga.de>
+2004-06-21  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * dbitem.py: Catch error when no id3 tag is present in an MP3
-        file (fix contributed by Toma¸ Ficko <tomaz at gmx dot net>).
+        file (fix contributed by TomaÂ¸ Ficko <tomaz at gmx dot net>).
 
-        * MP3Info.py: New version (thanks to Toma¸ Ficko <tomaz at gmx dot
+        * MP3Info.py: New version (thanks to TomaÂ¸ Ficko <tomaz at gmx dot
         net> for providing me with the update). Included is a patch which
         should fix the length detection for VBR MP3 files (hopefully
         fixing a problem reported some time ago by George J. De Bruin
         <SoundChaser at myrealbox dot com>).
 
 
-2004-06-13  Jörg Lehmann  <joerg@luga.de>
+2004-06-13  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.0.13 released.
 
 
-2004-06-10  Jörg Lehmann  <joerg@luga.de>
+2004-06-10  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * conf/pytonerc: Update description of autoregisterer option
         in the database sections (fixing Debian bug #245528).
@@ -1345,7 +1345,7 @@
         single file.
 
 
-2004-04-22  Jörg Lehmann  <joerg@luga.de>
+2004-04-22  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Do not process global keybindings when input window is active
         (thanks to Andreas Poisel <a.poisel at acat dot cc> for reporting
@@ -1358,21 +1358,21 @@
         Alexander Wirt <formorer at formorer dot de>).
 
 
-2004-04-21  Jörg Lehmann  <joerg@luga.de>
+2004-04-21  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * pytonectl: Print error message instead of traceback when
         connection to server fails (as suggested by Alexander Wirt
         <formorer at formorer dot de>).
 
 
-2004-04-17  Jörg Lehmann  <joerg@luga.de>
+2004-04-17  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.0.12 released.
 
         * Fixed selection by mouse in playlist window.
 
 
-2004-04-12  Jörg Lehmann  <joerg@luga.de>
+2004-04-12  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * When dumpfile is set, we use it to store the playlist state not
         only when a crash occurs but also on PyTone's exit.
@@ -1383,7 +1383,7 @@
         entries in playlist window.
 
 
-2004-04-11  Jörg Lehmann  <joerg@luga.de>
+2004-04-11  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Added new layout which consists only of one column.
 
@@ -1399,7 +1399,7 @@
         automatic crossfading.
 
 
-2004-04-09  Jörg Lehmann  <joerg@luga.de>
+2004-04-09  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * decoder.py: Use length information of mad decoder instead
         of the one stored in the database to further improve
@@ -1411,7 +1411,7 @@
         iteminfowindow, and playerwindow sections.
 
 
-2004-04-05  Jörg Lehmann  <joerg@luga.de>
+2004-04-05  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * dbitem.py: Use the TLEN id3 tag when existent for the length of an
         MP3 file. Hopefully, this improves the behaviour when using
@@ -1421,12 +1421,12 @@
         suggested by Andreas Poisel <a.poisel at acat dot cc>).
 
 
-2004-04-04  Jörg Lehmann  <joerg@luga.de>
+2004-04-04  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.0.11 released.
 
 
-2004-04-03  Jörg Lehmann  <joerg@luga.de>
+2004-04-03  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * config.py: Add aooptions configuration option string that allows
         the user to change all options provided by the ao library
@@ -1434,7 +1434,7 @@
         dot fr>).
 
 
-2003-03-28 Jörg Lehmann  <joerg@luga.de>
+2003-03-28 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdbs/local.py: automatically update to new
         database version if necessary.
@@ -1447,7 +1447,7 @@
         as expected.
 
 
-2003-03-22 Jörg Lehmann  <joerg@luga.de>
+2003-03-22 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/songdbs/local.py: store version number of database
         schema in database.
@@ -1458,13 +1458,13 @@
         merged in the albums list.
 
 
-2003-03-18 Jörg Lehmann  <joerg@luga.de>
+2003-03-18 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Prevent race condition by starting song auto registerer
         only after the database thread has been started.
 
 
-2003-03-17 Jörg Lehmann  <joerg@luga.de>
+2003-03-17 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.0.10 released.
 
@@ -1479,7 +1479,7 @@
         George J. De Bruin <SoundChaser at myrealbox dot com>).
 
 
-2003-03-15 Jörg Lehmann  <joerg@luga.de>
+2003-03-15 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Keep audio device only open, when it is really needed, i.e.,
         close it when the player is stopped or paused (as suggested by
@@ -1488,7 +1488,7 @@
         * Log problems during audio device initialisation to message log.
 
 
-2003-03-14 Jörg Lehmann  <joerg@luga.de>
+2003-03-14 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Disable mixer functionality when an error occured during mixer
         initialisation.
@@ -1498,7 +1498,7 @@
         * Do not use "=" for the top border of an active windows anymore.
 
 
-2003-03-13 Jörg Lehmann  <joerg@luga.de>
+2003-03-13 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * pytone.py: Initialize players after databases to prevent a race
         condition when autoplaymode=random (thanks to Niels Drost
@@ -1513,7 +1513,7 @@
         reporting this problem).
 
 
-2003-02-18 Jörg Lehmann  <joerg@luga.de>
+2003-02-18 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Check for old database type did require Python 2.2 and above.
 
@@ -1524,19 +1524,19 @@
         paradise dot net dot nz>.
 
 
-2003-02-18 Jörg Lehmann  <joerg@luga.de>
+2003-02-18 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Include po files in distribution.
 
 
-2003-02-15 Jörg Lehmann  <joerg@luga.de>
+2003-02-15 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.0.9 released.
 
         * filelistwin.py and playlistwin.py: Move cursor to the right
         position in order to make it more easy for users of Braille
         displays to track the current position/selection (thanks to
-        Stéphane Doyon <s.doyon at videotron dot ca>).
+        StÃ©phane Doyon <s.doyon at videotron dot ca>).
 
         * config.py and services/players/internal.py: New config option
         crossfading in [players.*] sections, which allows the user to turn
@@ -1549,7 +1549,7 @@
         list will be deleted!
 
 
-2003-02-14 Jörg Lehmann  <joerg@luga.de>
+2003-02-14 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/playlist.py: Upon deletion of played songs, the played and total
         times info of the playlist have not been adapted.
@@ -1567,14 +1567,14 @@
         new songs.
 
 
-2003-02-12 Jörg Lehmann  <joerg@luga.de>
+2003-02-12 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * dbitem.py: Try to determine the "correct" character set for the reencoding
         of the unicode strings contained in the tags of Ogg Vorbis files
         (thanks to Michal Cihar <michal at cihar dot com> for the patch).
 
 
-2003-02-08 Jörg Lehmann  <joerg@luga.de>
+2003-02-08 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Better curses initialisation (thanks to Johannes Mockenhaupt <jmockenhaupt
         at gmx dot net>)
@@ -1589,7 +1589,7 @@
         * services/player.py: Be more verbose on player initialization problems.
 
 
-2003-02-07 Jörg Lehmann  <joerg@luga.de>
+2003-02-07 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/playlist.py: Remove extraneous _checksong call in _addsongs method.
 
@@ -1601,7 +1601,7 @@
         * Rescanning songs proceeds now in a separate thread.
 
 
-2003-01-31 Jörg Lehmann  <joerg@luga.de>
+2003-01-31 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/players/internal.py: Check for endianness of platform to set
         correct output format when using the ossaudiodev module, fixing the
@@ -1611,7 +1611,7 @@
         * setup.py: install italian message catalog
 
 
-2003-01-18 Jörg Lehmann  <joerg@luga.de>
+2003-01-18 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.0.8 released.
 
@@ -1619,14 +1619,14 @@
         <dalessio at softhome dot net>).
 
 
-2003-01-11 Jörg Lehmann  <joerg@luga.de>
+2003-01-11 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * network.py: Do not bail out when pytonectl socket does not exist
         (thanks to Alexander Wirt <formorer at formorer dot de> for
         reporting this problem).
 
 
-2003-01-06 Jörg Lehmann  <joerg@luga.de>
+2003-01-06 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * playlist.py: Fix bug occuring when rating a song and no song is
         selected in playlist. Furthermore, the song info window was not
@@ -1636,7 +1636,7 @@
         the user to rescan/update the id3 information of the selected song(s).
 
 
-2003-01-05 Jörg Lehmann  <joerg@luga.de>
+2003-01-05 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.0.7 released.
 
@@ -1644,7 +1644,7 @@
         decade filtered items.
 
 
-2003-01-04 Jörg Lehmann  <joerg@luga.de>
+2003-01-04 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * MP3Info.py: use new version of Vivake Gupta.
 
@@ -1654,7 +1654,7 @@
         "03 Songtitle.mp3".
 
 
-2003-01-03 Jörg Lehmann  <joerg@luga.de>
+2003-01-03 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * config.py: Added new option cachesize in [database.*] sections,
         which allows to specify the cache size used for the database
@@ -1667,7 +1667,7 @@
         from Python 2.3 and above.
 
 
-2003-12-13 Jörg Lehmann  <joerg@luga.de>
+2003-12-13 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * config.py: Do not process command line and reading of
         configuration file at module initialisation time, in order to be
@@ -1685,7 +1685,7 @@
         suggested by Han Boetes <han at mijncomputer dot nl>).
 
 
-2003-12-12 Jörg Lehmann  <joerg@luga.de>
+2003-12-12 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.0.6 released.
 
@@ -1693,7 +1693,7 @@
         rating of the song currently being played on the player.
 
 
-2003-12-11 Jörg Lehmann  <joerg@luga.de>
+2003-12-11 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * pytonectl.py: Add support for song addition and immediate song
         play.
@@ -1704,7 +1704,7 @@
         Boetes <han at mijncomputer dot nl>).
 
 
-2003-12-09 Jörg Lehmann  <joerg@luga.de>
+2003-12-09 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * config.py: Prune removed -n switch from usage/help output.
 
@@ -1716,7 +1716,7 @@
         of PyTone, if set to a non-empty value.
 
 
-2003-11-25 Jörg Lehmann  <joerg@luga.de>
+2003-11-25 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.0.5 released.
 
@@ -1733,12 +1733,12 @@
         * Cleanup README file: purge news section.
 
 
-2003-11-25 Jörg Lehmann  <joerg@luga.de>
+2003-11-25 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.0.4 released.
 
 
-2003-11-24 Jörg Lehmann  <joerg@luga.de>
+2003-11-24 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Added repeat function for playlist.
 
@@ -1747,7 +1747,7 @@
         autorandomplay) and toggled during runtime by pressing CTRL-T.
 
 
-2003-11-23 Jörg Lehmann  <joerg@luga.de>
+2003-11-23 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * More safety checks with respect to Ogg Vorbis support.
 
@@ -1760,7 +1760,7 @@
         * Rename _nextsong->_playsong in player modules.
 
 
-2003-11-18 Jörg Lehmann  <joerg@luga.de>
+2003-11-18 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * services/playlist.py: Replace incorrect use of dbitem.song by item.song in
         _checksong method.
@@ -1774,13 +1774,13 @@
         #218282)
 
 
-2003-10-18 Jörg Lehmann  <joerg@luga.de>
+2003-10-18 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.0.3 released.
 
         * pytone.py: Prevent mainscreen.dump from being called if the mainscreen
         constructor did not succeed (reported including a patch in Debian bug 216002
-        by David Kågedal <davidk at lysator dot liu dot se>)
+        by David KÃ¥gedal <davidk at lysator dot liu dot se>)
 
         * config.py: Remove command line option "-n/--network". Use a
         config file instead.
@@ -1791,7 +1791,7 @@
         first time users setting this option.
 
 
-2003-10-13 Jörg Lehmann  <joerg@luga.de>
+2003-10-13 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * item.py: Allow getcontentsrecursive (recursive insert) and implement
         getcontentsrecursiverandom (random insert) for filesystem directories.
@@ -1805,7 +1805,7 @@
         song requests of different players
 
 
-2003-08-12 Jörg Lehmann  <joerg@luga.de>
+2003-08-12 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * config.py: Fix wrong behaviour in mono mode, when no mono
         attribute is given in config file.
@@ -1821,12 +1821,12 @@
         there is still user input.
 
 
-2003-07-27 Jörg Lehmann  <joerg@luga.de>
+2003-07-27 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.0.2 released.
 
 
-2003-07-26 Jörg Lehmann  <joerg@luga.de>
+2003-07-26 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * item.py: Fixed typo in decades.getcontentsrecursive()
 
@@ -1841,12 +1841,12 @@
         * setup.py: Move everything (including pcm module) into pytone module.
 
 
-2003-07-25 Jörg Lehmann  <joerg@luga.de>
+2003-07-25 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.0.1 released.
 
 
-2003-07-24 Jörg Lehmann  <joerg@luga.de>
+2003-07-24 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Allow batching of addition of songs to playlist.
 
@@ -1857,7 +1857,7 @@
         * Updated THANKS file.
 
 
-2003-07-23 Jörg Lehmann  <joerg@luga.de>
+2003-07-23 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Code cleanups at various places.
 
@@ -1870,7 +1870,7 @@
         * Add originating module to debugging output.
 
 
-2003-07-20 Jörg Lehmann  <joerg@luga.de>
+2003-07-20 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Fix load and save of playlists (thanks to Alexander Wirt
           <formorer at formorer.de> for spotting this bug)
@@ -1880,25 +1880,25 @@
         eventually have to add a configuration variable for that.
 
 
-2003-07-19 Jörg Lehmann  <joerg@luga.de>
+2003-07-19 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Fix missing os.path.expanduser around config file path
         (thanks to David Braaten <xiticix47 at hotmail.com>)
 
 
-2003-07-18 Jörg Lehmann  <joerg@luga.de>
+2003-07-18 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 2.0.0 finally released.
 
 
-2003-06-08 Jörg Lehmann  <joerg@luga.de>
+2003-06-08 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Move service setup from mainscreen.py to pytone.py
 
         * Resurrect playlist functionality.
 
 
-2003-05-25 Jörg Lehmann  <joerg@luga.de>
+2003-05-25 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Renamed:
             aoplayer.py -> internal.py,
@@ -1911,7 +1911,7 @@
         * Prevent too many register request from auto registerer.
 
 
-2003-05-24 Jörg Lehmann  <joerg@luga.de>
+2003-05-24 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * players/mpg123player.py: Fix bug spotted by
          John Plevyak <jplevyak at acm.org>: Adding a new song
@@ -1919,7 +1919,7 @@
         restart the player, even though autoplay was enabled.
 
 
-2003-05-17 Jörg Lehmann  <joerg@luga.de>
+2003-05-17 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Support default background color and try to use
         curses.use_default_colors, if present. This requires
@@ -1939,7 +1939,7 @@
         which lead sometimes to a crash during the PyTone shutdown.
 
 
-2003-05-13 Jörg Lehmann  <joerg@luga.de>
+2003-05-13 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * New db index for playing statistics. Move respective
         code to songdb.py
@@ -1948,7 +1948,7 @@
         to database.
 
 
-2003-05-11 Jörg Lehmann  <joerg@luga.de>
+2003-05-11 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * item.py: Replaced filtereditem by two, more specialised, classes
         filtereddecade and filteredgenre.
@@ -1959,7 +1959,7 @@
         * songdb.py: More index work, should be almost complete now.
 
 
-2003-05-10 Jörg Lehmann  <joerg@luga.de>
+2003-05-10 JÃ¶rg Lehmann  <joerg@luga.de>
 
         * MP3Info.py: change _strip_zero function to
           - use faster lstrip, if Python 2.2.2 and above
@@ -1971,13 +1971,13 @@
         reported by John Plevyak <jplevyak at acm.org>.
 
 
-2003-05-06  Jörg Lehmann  <joerg@luga.de>
+2003-05-06  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * mainscreen.py: Catch curses.curs_set exception (reported
         by roland at steeltorch.com.
 
 
-2003-05-05  Jörg Lehmann  <joerg@luga.de>
+2003-05-05  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * More database work and tests. Genres now contain indices
         to albums and songs
@@ -1987,9 +1987,9 @@
         * introduced song.id, but not yet used
 
 
-2003-05-01  Jörg Lehmann  <joerg@luga.de>
+2003-05-01  JÃ¶rg Lehmann  <joerg@luga.de>
 
-        * Integrated and polished some patches by Iñigo Serna
+        * Integrated and polished some patches by IÃ±igo Serna
         <inigoserna at telefonica.net>: Currently playing song gets different colour and
         stays centred in playlist. Furthermore, some sanity checks of the id3 tags
         have been included. Finally, as suggested by him, a much nicer scrollbar
@@ -2001,24 +2001,24 @@
         * Many fixes for bugs remaining from code restructuring.
 
 
-2003-04-19  Jörg Lehmann  <joerg@luga.de>
+2003-04-19  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * New configuration system is complete now.
 
 
-2003-04-18  Jörg Lehmann  <joerg@luga.de>
+2003-04-18  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Massive rework of configuration file handling.
         Now it is possible to use ini-style file configuration files.
         Exceptions are for the moment the key bindings.
 
 
-2003-04-17  Jörg Lehmann  <joerg@luga.de>
+2003-04-17  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Network connectivity now via TCP instead of XML-RPC.
 
 
-2003-04-13  Jörg Lehmann  <joerg@luga.de>
+2003-04-13  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Reworked config file as first step versus a
         new config syntax. Import of the curses module
@@ -2038,7 +2038,7 @@
         possible.
 
 
-2003-04-12  Jörg Lehmann  <joerg@luga.de>
+2003-04-12  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Do not show playlist window of xmms (oops, forgot that).
 
@@ -2047,7 +2047,7 @@
         * Released 1.12.2 from the 1.12.1 codebase, fixing a Python 2.2ism.
 
 
-2003-04-06  Jörg Lehmann  <joerg@luga.de>
+2003-04-06  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Add immediately played to before last played item of playlist.
 
@@ -2061,7 +2061,7 @@
         * Requests for new songs now also use new request hub.
 
 
-2003-04-05  Jörg Lehmann  <joerg@luga.de>
+2003-04-05  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Some restructuring in the player code.
 
@@ -2081,14 +2081,14 @@
         to incorrect values.
 
 
-2003-03-19  Jörg Lehmann  <joerg@luga.de>
+2003-03-19  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * slist.py: prevent invalid items state.
 
         * disable long traceback
 
 
-2003-02-06  Jörg Lehmann  <joerg@luga.de>
+2003-02-06  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * updatedb.py script.
 
@@ -2097,12 +2097,12 @@
         * Version 1.12.0 released.
 
 
-2003-02-04  Jörg Lehmann  <joerg@luga.de>
+2003-02-04  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * pcm.c: Don't free memory allocated by Python!
 
 
-2003-02-03  Jörg Lehmann  <joerg@luga.de>
+2003-02-03  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * All *.py files: specify encoding (for Python 2.3)
 
@@ -2111,13 +2111,13 @@
         * pcm.c: Don't forget to free temporary buffer.
 
 
-2003-01-30  Jörg Lehmann  <joerg@luga.de>
+2003-01-30  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * playerwin.py: Allow rating of currently playing song (via
         alt+1, ..., alt+5 -- better suggestions are always welcome).
 
 
-2003-01-26  Jörg Lehmann  <joerg@luga.de>
+2003-01-26  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Incorporated patch by Byron Ellacott <bje at apnic.net>
         adding Ogg Vorbis support.
@@ -2147,17 +2147,17 @@
         configurable.
 
 
-2003-01-21  Jörg Lehmann  <joerg@luga.de>
+2003-01-21  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 1.11.0 released.
 
 
-2003-01-18  Jörg Lehmann  <joerg@luga.de>
+2003-01-18  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * new class playbackinfo. All players should work again.
 
 
-2003-01-16  Jörg Lehmann  <joerg@luga.de>
+2003-01-16  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Indices for genres and years. This gives a huge speedup
         for large databases.
@@ -2165,19 +2165,19 @@
         * item.py: new item method getname().
 
 
-2003-01-14  Jörg Lehmann  <joerg@luga.de>
+2003-01-14  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Implement song, album and artist rating. Choose song
         depending on rating upon random song insertion.
 
 
-2003-01-13  Jörg Lehmann  <joerg@luga.de>
+2003-01-13  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Implement random recursive insert. Reserve key "r" for
         this function, giving up the old behaviour.
 
 
-2003-01-12  Jörg Lehmann  <joerg@luga.de>
+2003-01-12  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * config.py: New option autoregisterer, which allows to
         enable/disbale the song automatic searching for songs
@@ -2187,25 +2187,25 @@
         database.
 
 
-2003-01-09  Jörg Lehmann  <joerg@luga.de>
+2003-01-09  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * item.py: New classes decade and decades, which allow
         to show only songs from a specify decade.
 
 
-2003-01-06  Jörg Lehmann  <joerg@luga.de>
+2003-01-06  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Some improvements/fixes for old songdb.py. Hopefully,
         this version is more stable for large databases.
 
 
-2003-01-02  Jörg Lehmann  <joerg@luga.de>
+2003-01-02  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Implement bsddb3 version of songdb.py. Probably not
         yet ready for next version.
 
 
-2002-12-30  Jörg Lehmann  <joerg@luga.de>
+2002-12-30  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * players/madplayer.py: Set sample size to 4096 (instead of 4806,
         i.e. the size of an mp3 frame). This is much more friendlier to
@@ -2213,7 +2213,7 @@
         <penguinista at mail.net.mk> for pointing this out.
 
 
-2002-12-22  Jörg Lehmann  <joerg@luga.de>
+2002-12-22  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Use MP3Info.py from http://www.omniscia.org/~vivake/python
         instead of old, modified mp3info.py from
@@ -2221,20 +2221,20 @@
         tags are now supported.
 
 
-2002-12-21  Jörg Lehmann  <joerg@luga.de>
+2002-12-21  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 1.10.0 released.
 
         * madplayer.py: Manual song forward works again.
 
 
-2002-12-19  Jörg Lehmann  <joerg@luga.de>
+2002-12-19  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * players/madplayer.py: Do not crossfade, if two songs follow
         each other on an album. Kill the gap between the songs instead.
 
 
-2002-12-15  Jörg Lehmann  <joerg@luga.de>
+2002-12-15  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Implement genre list: New database schema, permitting efficient
         search for items belonging to a given genre. New items: genres,
@@ -2242,7 +2242,7 @@
         only a subset of the directory hierarchy.
 
 
-2002-12-14  Jörg Lehmann  <joerg@luga.de>
+2002-12-14  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * More refactoring: merge the two filelist classes. The filesystem
         view is now provided by a virtual folder in item.py.
@@ -2266,7 +2266,7 @@
         * iteminfo.py: Recognise new items.
 
 
-2002-12-12  Jörg Lehmann  <joerg@luga.de>
+2002-12-12  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Refactor filelist code: remove filelistitem, move logic
         to item, etc.
@@ -2274,13 +2274,13 @@
         * Allow resizing of terminal (not fully complete yet).
 
 
-2002-12-11  Jörg Lehmann  <joerg@luga.de>
+2002-12-11  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * New module  purgedb.py: This module allows
         to delete no longer existent songs from the database.
 
 
-2002-12-10  Jörg Lehmann  <joerg@luga.de>
+2002-12-10  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Better formatting of last played time.
 
@@ -2291,7 +2291,7 @@
         main database view.
 
 
-2002-12-08  Jörg Lehmann  <joerg@luga.de>
+2002-12-08  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Fix recursive insertion of top and last played songs.
 
@@ -2299,7 +2299,7 @@
         content.
 
 
-2002-12-06  Jörg Lehmann  <joerg@luga.de>
+2002-12-06  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Sort songs by tracknr if possible. Otherwise
         use name.
@@ -2309,7 +2309,7 @@
         * Fill up caches after song auto registering.
 
 
-2002-11-30  Jörg Lehmann  <joerg@luga.de>
+2002-11-30  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 1.9.7 released.
 
@@ -2319,7 +2319,7 @@
         for small terminal sizes) and make it scrollable.
 
 
-2002-11-27  Jörg Lehmann  <joerg@luga.de>
+2002-11-27  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Initial support for colors. Customizable via config.py.
 
@@ -2328,7 +2328,7 @@
         I hope, this is more intuitive then the old behaviour.
 
 
-2002-11-25  Jörg Lehmann  <joerg@luga.de>
+2002-11-25  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Customize appearance of mixerwin and inputwin: one
         can now choose between a popup and a status bar variant.
@@ -2342,13 +2342,13 @@
         .mo files under their proper location.
 
 
-2002-11-25  Jörg Lehmann  <joerg@luga.de>
+2002-11-25  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * New module inputwin for a generic input window (for search
         strings, filenames, etc).
 
 
-2002-11-24  Jörg Lehmann  <joerg@luga.de>
+2002-11-24  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * More mouse work: Hide mixer and help win on mouse clicks.
 
@@ -2360,12 +2360,12 @@
         * playlist.py: Localize load and save prompts.
 
 
-2002-11-23  Jörg Lehmann  <joerg@luga.de>
+2002-11-23  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Initial work for mouse support.
 
 
-2002-11-03  Jörg Lehmann  <joerg@luga.de>
+2002-11-03  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * slist.py: Cleanup: remove active flag; use focus of
         corresponding window instead.
@@ -2383,7 +2383,7 @@
         COPYING, ChangeLOG, TODO, and *.mo files.
 
 
-2002-11-02  Jörg Lehmann  <joerg@luga.de>
+2002-11-02  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * mixerwin.py: Localize mixer text.
 
@@ -2402,7 +2402,7 @@
         * pytone.py: Removed obsolete reference to hipplayer module.
 
 
-2002-11-01  Jörg Lehmann  <joerg@luga.de>
+2002-11-01  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Localization work all over the place.
 
@@ -2410,7 +2410,7 @@
         directory (Thanks to Andy Bourges for the bug report).
 
 
-2002-10-27  Jörg Lehmann  <joerg@luga.de>
+2002-10-27  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 1.9.6
 
@@ -2426,7 +2426,7 @@
         * timer.py: Return immediately, if no alarms are pending.
 
 
-2002-10-17  Jörg Lehmann  <joerg@luga.de>
+2002-10-17  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * timer.py: New timer service, which sends events at specified
         times.
@@ -2438,7 +2438,7 @@
         * helpwin.py, mixerwin.py: Automatically hide after 5 seconds.
 
 
-2002-10-13  Jörg Lehmann  <joerg@luga.de>
+2002-10-13  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * songdb.py: Implemented caching of list of all artists (and
         already existent caching of all songs).
@@ -2448,7 +2448,7 @@
         * Implement context sensitivity of help window.
 
 
-2002-10-12  Jörg Lehmann  <joerg@luga.de>
+2002-10-12  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Implemented automatic adjustment of statusbar to
         keybinding.
@@ -2458,12 +2458,12 @@
         * First version of help window.
 
 
-2002-10-12  Jörg Lehmann  <joerg@luga.de>
+2002-10-12  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * item.py: Prevent empty artist names
 
 
-2002-09-20  Jörg Lehmann  <joerg@luga.de>
+2002-09-20  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 1.9.5
 
@@ -2478,14 +2478,14 @@
         * madplayer.py: Catch exception during mp3file object creation.
 
 
-2002-09-20  Jörg Lehmann  <joerg@luga.de>
+2002-09-20  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * All players are now running in a separate thread.
 
         * Factored out most of player control logic to player.py.
 
 
-2002-09-10  Jörg Lehmann  <joerg@luga.de>
+2002-09-10  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Implement write lock for song database.
 
@@ -2501,7 +2501,7 @@
         insertion of songs.
 
 
-2002-09-08  Jörg Lehmann  <joerg@luga.de>
+2002-09-08  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * New event handling: Queue generated events and process them not
         until an explicit call of a new process method.  This makes event
@@ -2516,14 +2516,14 @@
         was really a change.
 
 
-2002-09-05  Jörg Lehmann  <joerg@luga.de>
+2002-09-05  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 1.9.4
 
         * Stopping works again in autoplay mode.
 
 
-2002-08-31  Jörg Lehmann  <joerg@luga.de>
+2002-08-31  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * filelistwin.py: Corrected quick search key logic.
 
@@ -2543,7 +2543,7 @@
         * helper.py: Q&D solution to make debug output configurable.
 
 
-2002-08-30  Jörg Lehmann  <joerg@luga.de>
+2002-08-30  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Made key bindings configurable wherever possible.
 
@@ -2560,7 +2560,7 @@
         show although playing has already finished.
 
 
-2002-08-29  Jörg Lehmann  <joerg@luga.de>
+2002-08-29  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Fixed the specification of the libao device. It is now also
         possible to specify arbitrary options. Added aRts based player
@@ -2571,17 +2571,17 @@
         * RightArrow in playlist window now also moves to database window.
 
 
-2002-08-28  Jörg Lehmann  <joerg@luga.de>
+2002-08-28  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 1.9.3, aka ready for release
 
         * Added license headers to all python files except config.py
 
         * Renamed PyJuke -> PyTone following a suggestion by
-        Harald Görl (goerl at luga.de)
+        Harald GÃ¶rl (goerl at luga.de)
 
 
-2002-08-25  Jörg Lehmann  <joerg@luga.de>
+2002-08-25  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 1.9.2
 
@@ -2602,7 +2602,7 @@
         * Added simple style.css for index.html
 
 
-2002-08-22  Jörg Lehmann  <joerg@luga.de>
+2002-08-22  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Version 1.9
 
@@ -2618,6 +2618,6 @@
         * Added some licence headers
 
 
-2002-08-08  Jörg Lehmann  <joerg@luga.de>
+2002-08-08  JÃ¶rg Lehmann  <joerg@luga.de>
 
         * Released 1.0 for Rothsee party
