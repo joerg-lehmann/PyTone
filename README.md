@@ -1,6 +1,5 @@
-
-PyTone -- Music Jukebox Redux
-============================
+PyTone --- Music Jukebox Redux
+==============================
 
 PyTone is a music jukebox written in Python with a curses based GUI. While
 providing advanced features like crossfading and multiple players, special
