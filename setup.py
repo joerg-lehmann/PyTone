@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: ISO-8859-1 -*-
-from distutils.core import setup, Extension
+# from distutils.core import setup, Extension
+from setuptools import setup, Extension # find_packages
 import sys; sys.path.append("src")
+from os import path
 from version import version
 
 # build extension module which replaces the Python audio output buffer
@@ -13,7 +15,12 @@ buildbufferedaoext = False
 # list of supported locales
 locales = ["de", "it", "fr", "pl"]
 
-#
+
+# Get the long description from the README file
+here = path.abspath(path.dirname(__file__))
+with open(path.join(here, "README.md"), encoding="utf-8") as f:
+    long_description = f.read()
+
 # list of packages
 #
 packages = ["pytone",
@@ -57,10 +64,14 @@ addargs = {"classifiers": classifiers}
 setup(name="PyTone",
       version=version,
       description="Powerful music jukebox with a curses based GUI.",
+      long_description=long_description,
+      long_description_content_type="text/markdown",
       author="Jörg Lehmann",
       author_email="joerg@luga.de",
       url="http://www.luga.de/pytone/",
       license="GPL",
+      python_requires="~=3.5",
+      install_requires=["mutagen"],
       package_dir={"pytone": "src"},
       packages=packages,
       ext_modules=ext_modules,
