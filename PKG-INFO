@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: PyTone
-Version: 2.2.4+
+Version: 4.0.0
 Summary: Powerful music jukebox with a curses based GUI.
 Home-page: http://www.luga.de/pytone/
 Author: Jörg Lehmann
