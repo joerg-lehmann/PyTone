@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: ISO-8859-1 -*-
-# from distutils.core import setup, Extension
+
 from setuptools import setup, Extension # find_packages
 import sys; sys.path.append("src")
 from os import path
@@ -10,7 +10,7 @@ from version import version
 # by a C version, which should help preventing audio dropouts.
 # You need the libao header files for building (but on the other hand,
 # you don't need the pyao extension module when you use bufferedao)
-buildbufferedaoext = False
+buildbufferedaoext = True
 
 # list of supported locales
 locales = ["de", "it", "fr", "pl"]
@@ -34,8 +34,8 @@ ext_modules = [Extension("pytone.pcm", sources=["src/pcm/pcm.c"])]
 
 if buildbufferedaoext:
     ext_modules.append(Extension("pytone.bufferedao",
-                                 sources=["src/bufferedao.c"],
-                                 libraries=["ao"]))
+                       sources=["src/bufferedao.c"],
+                       libraries=["ao"]))
 #
 # list of data files to be installed
 #
