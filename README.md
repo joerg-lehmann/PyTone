@@ -6,7 +6,7 @@ providing advanced features like crossfading and multiple players, special
 emphasis is put on ease of use, turning PyTone into an ideal jukebox system for
 use at parties.
 
-![PyTone screenshot](https://www.luga.de/pytone/pytone.png "PyTone screenshot")
+![PyTone screenshot](https://www.luga.de/pytone/pytone.png)
 
 Features
 --------
