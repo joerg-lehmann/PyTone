@@ -185,9 +185,9 @@ In playlist window (lower right quarter half of screen)
     r                            shuffle playlist
     TAB/ArrowLeft/h              switch to database/filelist window
     ArrowRight/l                 jump to currently selected song in filelist window
- 
-    Always active
- 
+
+Always active
+
     p                            start/pause playing
     S                            stop playing
     n                            advance to next song in playlist
@@ -254,10 +254,8 @@ Copyright and author
 PyTone was written by Jörg Lehmann and is free software licensed under
 the GNU GPL Version 2.
 
-Please send comments, wishes, bug reports and patches to the
-[mailing list][10]or directly to me, 
-
-  Jörg Lehmann <joerg@luga.de>
+Please send comments, wishes, bug reports and patches to the [mailing list][10]
+or directly to me, Jörg Lehmann <joerg@luga.de>.
 
 Of course, I always like to hear of happy users of PyTone.
 
