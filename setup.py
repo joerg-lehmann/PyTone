@@ -52,10 +52,7 @@ classifiers = ["Development Status :: 5 - Production/Stable",
                "Programming Language :: Python",
                "Topic :: Multimedia :: Sound/Audio :: Players"]
 
-if sys.version_info >= (2, 3):
-    addargs = {"classifiers": classifiers}
-else:
-    addargs = {}
+addargs = {"classifiers": classifiers}
 
 setup(name="PyTone",
       version=version,
