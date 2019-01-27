@@ -17,5 +17,5 @@
 # along with PyTone; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-version = "4.0.0pre"
+version = "4.0.0rc0"
 copyright = "(c) 2002-2010, 2012, 2013, 2019 Jörg Lehmann <joerg@luga.de>"
