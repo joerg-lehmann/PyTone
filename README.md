@@ -259,9 +259,6 @@ or directly to me, Jörg Lehmann <joerg@luga.de>.
 
 Of course, I always like to hear of happy users of PyTone.
 
-Links
------
-
 [1]: http://www.python.org/
 [2]: https://mutagen.readthedocs.org/
 [3]: http://spacepants.org/src/pymad/
