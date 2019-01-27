@@ -12,3 +12,7 @@ build/
 # Translations
 *.mo
 *.po.old
+
+# setuptools stuff
+dist/
+*.egg-info/
