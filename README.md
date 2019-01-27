@@ -29,7 +29,6 @@ Features
   + save to and load from .m3u file
 * pluggable players, currently
   + internal MP3/Ogg Vorbis player with crossfading and/or
-  + xmms based external player and/or
   + mpg321 or (the non-free) mpg123 based external player
 * display of information for currently selected song:
   + ID3 tag
@@ -239,7 +238,7 @@ terminal) and astoundingly stable, even under extreme, Woodstock like
 conditions (very heavy rain + deep mud :-) )
 
 Subsequently, the internal mad based player was written, which
-provides crossfading capabilities without using xmms, a new, more
+provides crossfading capabilities, a new, more
 imaginative name was found (kudos to Harry!) and PyTone was released.
 
 

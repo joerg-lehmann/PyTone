@@ -2,6 +2,8 @@
 
         * The Python 3 port has been completed.
 
+        * xmms player support removed.
+
         * Bump version to 4.0.0pre.
 
 
