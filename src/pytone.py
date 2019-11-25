@@ -38,7 +38,7 @@ import importlib, importlib.util
 
 import gettext
 locallocaledir = os.path.join(os.path.dirname(sys.argv[0]), "../locale")
-gettext.translation("PyTone", locallocaledir).install()
+gettext.translation("PyTone", locallocaledir, fallback=True).install()
 
 ##############################################################################
 # locale initialization
