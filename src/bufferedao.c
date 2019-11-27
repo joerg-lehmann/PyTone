@@ -514,6 +514,8 @@ PyInit_bufferedao(void) {
 
     PyObject *module = PyModule_Create(&bufferedao_module);
 
+    printf("1\n");
+
     if (module == NULL)
         return NULL;
 
@@ -522,6 +524,7 @@ PyInit_bufferedao(void) {
     PyObject* log_module;
     PyObject *d;
 
+    printf("2\n");
     /* import log module and fetch debug and error functions into module_state */
     if ( !(log_module = PyImport_ImportModule("log")) )
       return NULL;
@@ -537,6 +540,7 @@ PyInit_bufferedao(void) {
     Py_DECREF(log_module);
     Py_INCREF(log_debug);
     Py_INCREF(log_error);
+    printf("3\n");
 
     // d = PyModule_GetDict(module);
     // bufferedaoerror = PyErr_NewException("bufferedao.error", NULL, NULL);
@@ -551,9 +555,11 @@ PyInit_bufferedao(void) {
     Py_INCREF(error);
     PyModule_AddObject(module, "error", error);
     // PyDict_SetItemString(d, "error", st->error);
+    printf("4\n");
 
     /* initialize the ao library */
     ao_initialize();
+    printf("5\n");
 
     /* finalize and add extension type to module */
     if (PyType_Ready(&bufferedaoType) < 0) {
@@ -562,9 +568,12 @@ PyInit_bufferedao(void) {
         Py_DECREF(log_error);
         return NULL;
     }
+    printf("6\n");
 
     Py_INCREF(&bufferedaoType);
     PyModule_AddObject(module, "bufferedao", (PyObject *)&bufferedaoType);
+
+    printf("7\n");
 
     return module;
 }
