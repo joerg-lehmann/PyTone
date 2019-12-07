@@ -501,11 +501,12 @@ static struct PyModuleDef bufferedao_module = {
         PyModuleDef_HEAD_INIT,
         .m_name ="bufferedao",
         .m_doc = "bufferedao module",
-        .m_size = -1 //sizeof(struct module_state),
-        //module_methods,
-//        NULL,
-//        bufferedao_traverse,
-//        bufferedao_clear,
+        .m_size = -1,       // sizeof(struct module_state),
+        .m_methods = NULL,  // bufferedao_methods,
+        .m_slots = NULL,
+        .m_traverse = NULL, // bufferedao_traverse,
+        .m_clear = NULL,    // buferedao_clear,
+        .m_free = NULL,     // bufferedao_free,
 };
 
 
@@ -530,10 +531,12 @@ PyInit_bufferedao(void) {
       return NULL;
     d = PyModule_GetDict(log_module);
     if ( !(log_debug = PyDict_GetItemString(d, "debug")) ) {
+      Py_DECREF(module);
       Py_DECREF(log_module);
       return NULL;
     }
     if ( !(log_error = PyDict_GetItemString(d, "error")) ) {
+      Py_DECREF(module);
       Py_DECREF(log_module);
       return NULL;
     }
@@ -542,19 +545,23 @@ PyInit_bufferedao(void) {
     Py_INCREF(log_error);
     printf("3\n");
 
-    // d = PyModule_GetDict(module);
-    // bufferedaoerror = PyErr_NewException("bufferedao.error", NULL, NULL);
-
+    // create exception and add it to module
     error = PyErr_NewException("bufferedao.error", NULL, NULL);
+    printf("3b\n");
     if (error == NULL) {
-        Py_DECREF(module);
-        Py_DECREF(log_debug);
-        Py_DECREF(log_error);
-        return NULL;
+      Py_DECREF(module);
+      Py_DECREF(log_debug);
+      Py_DECREF(log_error);
+      return NULL;
     }
+    printf("3c\n");
+
     Py_INCREF(error);
-    PyModule_AddObject(module, "error", error);
-    // PyDict_SetItemString(d, "error", st->error);
+    if (PyModule_AddObject(module, "error", error)<0) {
+      Py_DECREF(module);
+      Py_DECREF(error);
+      return NULL;
+    }
     printf("4\n");
 
     /* initialize the ao library */
