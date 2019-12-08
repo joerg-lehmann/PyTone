@@ -543,7 +543,7 @@ PyInit_bufferedao(void) {
     Py_DECREF(log_module);
     Py_INCREF(log_debug);
     Py_INCREF(log_error);
-    printf("3\n");
+    printf("3a\n");
 
     // create exception and add it to module
     error = PyErr_NewException("bufferedao.error", NULL, NULL);
