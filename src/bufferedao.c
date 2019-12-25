@@ -502,7 +502,7 @@ static struct PyModuleDef bufferedao_module = {
         .m_name ="bufferedao",
         .m_doc = "bufferedao module",
         .m_size = -1,       // sizeof(struct module_state),
-        .m_methods = NULL,  // bufferedao_methods,
+        .m_methods = NULL,  // bufferedao_methods: None
         .m_slots = NULL,
         .m_traverse = NULL, // bufferedao_traverse,
         .m_clear = NULL,    // buferedao_clear,
@@ -520,29 +520,30 @@ PyInit_bufferedao(void) {
     if (module == NULL)
         return NULL;
 
-    // struct module_state *st = GETSTATE(module);
-
     PyObject* log_module;
-    PyObject *d;
 
     printf("2\n");
     /* import log module and fetch debug and error functions into module_state */
     if ( !(log_module = PyImport_ImportModule("log")) )
       return NULL;
-    d = PyModule_GetDict(log_module);
-    if ( !(log_debug = PyDict_GetItemString(d, "debug")) ) {
+
+    if ( !(log_debug = PyObject_GetAttrString(log_module, "debug")) ) {
       Py_DECREF(module);
       Py_DECREF(log_module);
       return NULL;
     }
-    if ( !(log_error = PyDict_GetItemString(d, "error")) ) {
+    if ( !(log_error = PyObject_GetAttrString(log_module, "error")) ) {
       Py_DECREF(module);
       Py_DECREF(log_module);
       return NULL;
     }
     Py_DECREF(log_module);
-    Py_INCREF(log_debug);
-    Py_INCREF(log_error);
+
+    PyObject *result = PyObject_CallFunction(log_error, "s", "test_error");
+    Py_XDECREF(result);
+    result = PyObject_CallFunction(log_error, "s", "test_debug");
+    Py_XDECREF(result);
+
     printf("3a\n");
 
     // create exception and add it to module
