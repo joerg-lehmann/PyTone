@@ -549,6 +549,9 @@ PyInit_bufferedao(void) {
     // create exception and add it to module
     error = PyErr_NewException("bufferedao.error", NULL, NULL);
     printf("3b\n");
+
+    result = PyObject_CallFunction(log_error, "s", "test_debug2");
+    Py_XDECREF(result);
     if (error == NULL) {
       Py_DECREF(module);
       Py_DECREF(log_debug);
