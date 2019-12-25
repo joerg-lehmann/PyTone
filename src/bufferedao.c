@@ -479,13 +479,7 @@ static PyMethodDef bufferedao_methods[] = {
 
 
 
-// // the module only contains the bufferedao type, no methods
-// static PyMethodDef module_methods[] = {
-//     {NULL}  /* Sentinel */
-// };
-
 static PyTypeObject bufferedaoType = {
-//    PyObject_HEAD_INIT(NULL)
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "bufferedao.bufferedao",
     .tp_doc = "bufferedao objects",
@@ -497,16 +491,21 @@ static PyTypeObject bufferedaoType = {
     .tp_new = bufferedao_new,
 };
 
+// the module only contains the bufferedao type, no methods
+static PyMethodDef bufferedao_module_methods[] = {
+     {NULL, NULL, 0, NULL}  /* Sentinel */
+};
+
 static struct PyModuleDef bufferedao_module = {
         PyModuleDef_HEAD_INIT,
         .m_name ="bufferedao",
         .m_doc = "bufferedao module",
-        .m_size = -1,       // sizeof(struct module_state),
-        .m_methods = NULL,  // bufferedao_methods: None
+        .m_size = -1,
+        .m_methods = bufferedao_module_methods,
         .m_slots = NULL,
-        .m_traverse = NULL, // bufferedao_traverse,
-        .m_clear = NULL,    // buferedao_clear,
-        .m_free = NULL,     // bufferedao_free,
+        .m_traverse = NULL,
+        .m_clear = NULL,
+        .m_free = NULL,
 };
 
 
@@ -523,7 +522,7 @@ PyInit_bufferedao(void) {
     PyObject* log_module;
 
     printf("2\n");
-    /* import log module and fetch debug and error functions into module_state */
+    /* import log module and fetch debug and error functions */
     if ( !(log_module = PyImport_ImportModule("log")) )
       return NULL;
 
