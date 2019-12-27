@@ -38,9 +38,9 @@
 
 // global state
 
-PyObject *error;  
-PyObject *log_debug; /* currently not used */
-PyObject *log_error;
+static PyObject *error = NULL;
+static PyObject *log_debug = NULL; /* currently not used */
+static PyObject *log_error = NULL;
 
 
 static PyObject *bufferedaoerror;
