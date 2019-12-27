@@ -262,8 +262,8 @@ static PyObject *py_rate_convert(PyObject *self, PyObject *args) {
   PyObject *py_last_l;
   PyObject *py_last_r;
 
-  int16_t last_l;
-  int16_t last_r;
+  int16_t last_l = 0;
+  int16_t last_r = 0;
 
   int firstsample;              /* are we dealing with the first sample */
 
