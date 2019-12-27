@@ -28,14 +28,6 @@
 
 #define NRITEMS() ((self->in >= self->out) ? self->in-self->out : self->in+self->buffersize-self->out)
 
-//struct module_state {
-//    PyObject *error;  
-//    PyObject *log_debug; /* currently not used */
-//    PyObject *log_error;
-//};
-
-// #define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
-
 // global state
 
 static PyObject *error = NULL;
@@ -437,17 +429,6 @@ bufferedao_quit(bufferedao *self)
     return Py_None;
 }
 
-/*
-static int bufferedao_traverse(PyObject *m, visitproc visit, void *arg) {
-    Py_VISIT(GETSTATE(m)->error);
-    return 0;
-}
-
-static int bufferedao_clear(PyObject *m) {
-    Py_CLEAR(GETSTATE(m)->error);
-    return 0;
-}
-*/
 
 static PyMethodDef bufferedao_methods[] = {
     {"start", (PyCFunction) bufferedao_start, METH_VARARGS,
@@ -501,11 +482,7 @@ static struct PyModuleDef bufferedao_module = {
         PyModuleDef_HEAD_INIT,
         .m_name ="bufferedao",
         .m_doc = "bufferedao module",
-        .m_size = -1 //sizeof(struct module_state),
-        //module_methods,
-//        NULL,
-//        bufferedao_traverse,
-//        bufferedao_clear,
+        .m_size = -1
 };
 
 
@@ -517,29 +494,23 @@ PyInit_bufferedao(void) {
     if (module == NULL)
         return NULL;
 
-    // struct module_state *st = GETSTATE(module);
-
     PyObject* log_module;
-    PyObject *d;
 
-    /* import log module and fetch debug and error functions into module_state */
+    /* import log module and fetch debug and error functions */
     if ( !(log_module = PyImport_ImportModule("log")) )
       return NULL;
-    d = PyModule_GetDict(log_module);
-    if ( !(log_debug = PyDict_GetItemString(d, "debug")) ) {
+
+    if ( !(log_debug = PyObject_GetAttrString(log_module, "debug")) ) {
+      Py_DECREF(module);
       Py_DECREF(log_module);
       return NULL;
     }
-    if ( !(log_error = PyDict_GetItemString(d, "error")) ) {
+    if ( !(log_error = PyObject_GetAttrString(log_module, "error")) ) {
+      Py_DECREF(module);
       Py_DECREF(log_module);
       return NULL;
     }
     Py_DECREF(log_module);
-    Py_INCREF(log_debug);
-    Py_INCREF(log_error);
-
-    // d = PyModule_GetDict(module);
-    // bufferedaoerror = PyErr_NewException("bufferedao.error", NULL, NULL);
 
     error = PyErr_NewException("bufferedao.error", NULL, NULL);
     if (error == NULL) {
@@ -550,7 +521,9 @@ PyInit_bufferedao(void) {
     }
     Py_INCREF(error);
     PyModule_AddObject(module, "error", error);
-    // PyDict_SetItemString(d, "error", st->error);
+
+    PyObject *result = PyObject_CallFunction(log_debug, "s", "Initializing ao library in bufferedao module");
+    Py_XDECREF(result);
 
     /* initialize the ao library */
     ao_initialize();
