@@ -31,7 +31,7 @@
 // global state
 
 static PyObject *error = NULL;
-static PyObject *log_debug = NULL; /* currently not used */
+static PyObject *log_debug = NULL;
 static PyObject *log_error = NULL;
 
 
