@@ -474,7 +474,7 @@ static PyMethodDef bufferedao_methods[] = {
     {"quit", (PyCFunction) bufferedao_quit, METH_NOARGS,
      "Stop buffered output thread"
     },
-    {NULL, NULL}  /* Sentinel */
+    {NULL, NULL, 0, NULL}  /* Sentinel */
 };
 
 
